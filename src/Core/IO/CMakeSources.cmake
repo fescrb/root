@@ -1,5 +1,4 @@
-set( sources 	File.cpp
-				Path.cpp )
+set( sources 	 )
 
 set( headers 	File.h
 				Path.h

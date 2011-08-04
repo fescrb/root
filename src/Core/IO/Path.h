@@ -22,6 +22,7 @@
 
 #include "String.h"
 
+class P;
 namespace root {
 	
 	namespace io {
@@ -41,8 +42,12 @@ namespace root {
 			
 				// Static utility functions. If custom allocator is used,
 				// it must be able to allocate any size chunks.
+				static bool 	 isValid(const String path);
 				static bool		 exists(const String path);
+				static bool		 isFile(const String path);
+				static bool		 isDirectory(const String path);
 				static bool		 isFullPath(const String path);
+				static Path		 getFullPath(const String path);
 				static String	 getFilename(const String path, 
 											 Allocator* allocator = DefaultAllocator::getStandardAllocator() );
 				static String	 getFilenameWithoutExtension(const String path, 
@@ -53,29 +58,138 @@ namespace root {
 											  Allocator* allocator = DefaultAllocator::getStandardAllocator());
 				static String	 getInvalidPathCharacters();
 				
-				// Will check for file & correctness.
+				
 				void		 	 setPath(const String path);
 				void			 copy(const Path* path);
 				
-				bool			 exists() const;
+				inline bool		 isValid() {
+					if( !hasBeenValidityChecked() ) 
+						setValidity( isValid( m_pathString ) );
+					return getValidity();
+				}
+				
+				inline bool		 exists() {
+					if( !hasBeenExistanceChecked() )
+						setExistance( exists( m_pathString ) );
+					return getExistance();
+				}
+				
+				inline bool 	 isFile() {
+					if( !hasBeenTypeChecked() )
+						setIsFileType( isFile(m_pathString) );
+					return getIsFileType();
+				}
+				
+				inline bool 	 isDirectory() {
+					if( !hasBeenTypeChecked() )
+						setIsFileType( isFile(m_pathString) );
+					return !getIsFileType();
+				}
+				
 				String			 getFullPath() const;
 				String			 getFilename() const;
 				String			 getFilenameWithoutExtension() const;
 				String			 getExtension() const;
 				String			 getDirectory() const;
-				
-				File			*openFile() const;
+				File			*getFile() ;
 				
 				void			*operator new(size_t size, 
 											  Allocator* allocator) {
 					return allocator->allocate(size);
 				}
+				
+								 operator String() const {
+					return m_pathString;				 
+				}
 			
 			private:
-				String			 m_fullPath;
 				
-				bool			 m_hasFile;
+				/* ********************
+				 * Validity functions *
+				 **********************/
+				
+				bool 			 hasBeenValidityChecked() const {
+					return m_pathState & ValidityChecked;
+				}
+				
+				bool 			 setValidity( bool isValid ) {
+					// We set that we have validity checked the path.
+					m_pathState |= ValidityChecked;
+					
+					// We set whether we are valid or not. We do this by flipping 
+					// the bit if it's not what it's supposed to be.
+					if(!( isValid ^ getValidity() ) ) {
+						m_pathState ^= IsValid;
+					}
+				}
+				
+				bool			 getValidity() const {
+					return m_pathState & IsValid;
+				}
+				
+				/* *********************
+				 * Existance functions *
+				 ***********************/
+				
+				bool 			 hasBeenExistanceChecked() const {
+					return m_pathState & ExistanceChecked;
+				}
+				
+				bool 			 setExistance( bool exists ) {
+					// We set that we have validity checked the path.
+					m_pathState |= ExistanceChecked;
+					
+					// We set whether we exists or not, how philosophical. We do 
+					// this by flipping the bit if it's not what it's supposed to be.
+					if(!( exists ^ getExistance() ) ) {
+						m_pathState ^= Exists;
+					}
+				}
+				
+				bool			 getExistance() const {
+					return m_pathState & Exists;
+				}
+				
+				/* ****************
+				 * Type functions *
+				 ******************/
+				
+				bool			 hasBeenTypeChecked() const {
+					return m_pathState & TypeChecked;
+				}
+				
+				bool 			 setIsFileType( bool isFileType ) {
+					// We set that we have validity checked the path.
+					m_pathState |= TypeChecked;
+					
+					// We set whether we exists or not, how philosophical. We do 
+					// this by flipping the bit if it's not what it's supposed to be.
+					if(!( isFileType ^ getIsFileType() ) ) {
+						m_pathState ^= IsFileType;
+					}
+				}
+				
+				bool			 getIsFileType() const {
+					return m_pathState & IsFileType;
+				}
+				
+				enum ProgramStateFlags {
+					ValidityChecked = 1,
+					IsValid = 2,
+					ExistanceChecked = 4,
+					Exists = 8,
+					TypeChecked = 16,
+					IsFileType = 32
+				};
+				
+				String			 m_pathString;
 			
+				/**
+				 * Encodes the state of the path (for example, whether it has a file/directory,
+				 * or whether any of those qualities has been checked already).
+				 */
+				U8 				 m_pathState;
+				
 				static String	 m_invalidPathCharacters;
 		};
 		

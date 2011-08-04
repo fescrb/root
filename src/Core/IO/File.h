@@ -31,10 +31,13 @@ namespace root{
 									 File();
 				explicit			 File(const String& path);
 				explicit 			 File(const Path& path);
+				
+									~File();
 			
 				enum FileModeFlags {
-					Read  = 0x01,
-					Write = 0x03
+					Read  = 1,
+					Write = 2,
+					Create = 4
 				};
 				
 				/* **************************
@@ -48,7 +51,7 @@ namespace root{
 				/* *******************************
 				 * Open/close file & check state *
 				 *********************************/
-				bool 				 open(FileModeFlags);
+				bool 				 open(FileModeFlags fileFlags);
 				inline bool 		 isOpen() const {
 					return m_isOpen;
 				}
@@ -90,7 +93,7 @@ namespace root{
 				
 			private:
 				Path				 m_filePath;
-				String				 m_fileName;
+				
 				I64 				 m_fileSize;
 				I64 				 m_seekPos;
 				I32 				 m_fileHandle;

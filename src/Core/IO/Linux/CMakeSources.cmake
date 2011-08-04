@@ -1,1 +1,3 @@
-set( sources 	ApplicationEnvironment.cpp )
+set( sources 	File.cpp
+				Path.cpp
+				ApplicationEnvironment.cpp )

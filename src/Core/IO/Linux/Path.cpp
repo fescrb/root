@@ -30,43 +30,42 @@ Path::Path() {
 }
 				
 Path::Path(const String path) {
-	
+	setPath(path);
 }
 
 void Path::setPath(const String path) {
-	m_fullPath = path;
+	m_pathString = path;
 }
 
 void Path::copy(const Path* path) {
-	setPath(path->m_fullPath);
-}
-
-bool Path::exists() const {
-	
+	setPath(path->m_pathString);
+	m_pathState = path->m_pathState;
 }
 
 String Path::getFullPath() const {
-	return m_fullPath;
+	return m_pathString;
 }
 
 String Path::getFilename() const {
-	return getFilename(m_fullPath);
+	return getFilename(m_pathString);
 }
 
 String Path::getFilenameWithoutExtension() const {
-	return getFilenameWithoutExtension(m_fullPath);
+	return getFilenameWithoutExtension(m_pathString);
 }
 
 String Path::getExtension() const {
-	return getExtension(m_fullPath);
+	return getExtension(m_pathString);
 }
 
 String Path::getDirectory() const {
-	return getDirectory(m_fullPath);
+	return getDirectory(m_pathString);
 }
 
-File* Path::openFile() const {
-	
+File* Path::getFile()  {
+	if( isFile() )
+		return new File(*this);
+	return NULL;
 }
 
 /* *************************
