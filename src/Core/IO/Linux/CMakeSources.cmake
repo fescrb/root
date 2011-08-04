@@ -1,0 +1,1 @@
+set( sources 	ApplicationEnvironment.cpp )
