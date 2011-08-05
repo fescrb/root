@@ -17,22 +17,9 @@
  * along with The Root Engine.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * @file Vector.h
- * @brief Allows to include all vector classes in 1 include.
- * 
- * Provides a shorthand to include all vector classes, instead of including one by
- * one.
- */
+#ifndef _ROOT_MATRIX_H
+#define _ROOT_MATRIX_H
 
-#ifndef _ROOT_VECTOR_H
-#define _ROOT_VECTOR_H
 
-#include "Double2.h"
-#include "Float2.h"
-#include "Double3.h"
-#include "Float3.h"
-#include "Double4.h"
-#include "Float4.h"
 
-#endif //_ROOT_VECTOR_H
+#endif //_ROOT_MATRIX_H

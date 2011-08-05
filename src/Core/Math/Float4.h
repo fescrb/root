@@ -17,8 +17,8 @@
  * along with The Root Engine.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef FLOAT4_H
-#define FLOAT4_H
+#ifndef _ROOT_FLOAT4_H
+#define _ROOT_FLOAT4_H
 
 #include "BasicTypes.h"
 #include <cmath>
@@ -117,6 +117,22 @@ namespace root{
 	inline F32 mag(const float4 &vector){
 		return sqrt(fabs(dot(vector,vector)));
 	}
+	
+	inline float4 replicateX(const float4& vector){
+		return float4(vector[0]);
+	}
+	
+	inline float4 replicateY(const float4& vector){
+		return float4(vector[1]);
+	}
+	
+	inline float4 replicateZ(const float4& vector){
+		return float4(vector[2]);
+	}
+	
+	inline float4 replicateW(const float4& vector){
+		return float4(vector[3]);
+	}
 }//namespace root
 
-#endif //FLOAT4_H
+#endif //_ROOT_FLOAT4_H
