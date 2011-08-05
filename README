@@ -1,0 +1,46 @@
+Summary:
+	The Root Engine will be a small rendering engine with the main aim
+	to be completely cross-platform, easy to use and to learn. 
+
+Building from source (only Linux is supported as of now):
+ 
+ Linux:
+ 
+	Dependencies:
+		CMake
+ 
+	Optional:
+		boost (for unit tests)
+ 
+	If you don't want to pollute the source tree, make a separate folder:
+	 
+		$ mkdir build; cd build
+		
+	Then execute:
+	 
+		$ cmake .. 
+		
+	Or, if you want to build with unit tests:
+	
+		$ cmake .. -DCMAKE_BUILD_TYPE="Testing"
+		
+	Then:
+	
+		$ make
+		
+Lincense:
+
+	Copyright (C) 2011  Fernando Escribano Macias
+
+	The Root Engine is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    The Root Engine is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with the Root Engine.  If not, see <http://www.gnu.org/licenses/>.
