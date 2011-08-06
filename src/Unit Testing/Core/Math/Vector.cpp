@@ -292,7 +292,7 @@ BOOST_AUTO_TEST_SUITE(Float4)
 
 BOOST_AUTO_TEST_CASE(Float4Equals){
     float4 vector(2.0f,4.0f,6.0f,8.0f);
-    BOOST_REQUIRE(vector==vector && vector[0]==2.0f && vector[1]==4.0f && vector[2]==6.0f && vector[3]==8.0f);
+    BOOST_REQUIRE(vector==vector && vector.getX()==2.0f && vector.getY()==4.0f && vector.getZ() && vector.getW()==8.0f);
 }
 
 BOOST_AUTO_TEST_CASE(Float4Add){
@@ -328,6 +328,11 @@ BOOST_AUTO_TEST_CASE(Float4Div){
     F32 rhs(5.0f);
     BOOST_REQUIRE(lhs/rhs == float4(3.0f/rhs,-1.0f/rhs,1.0f,4.5f/rhs));
     BOOST_REQUIRE(div(lhs,rhs) == float4(3.0f/rhs,-1.0f/rhs,1.0f,4.5f/rhs));
+}
+
+BOOST_AUTO_TEST_CASE(Float4Sum){
+    float4 vector(6.0f,10.0f,5.0f,-2.0f);
+    BOOST_REQUIRE(sum(vector) == 19.0f);
 }
 
 BOOST_AUTO_TEST_CASE(Float4Dot){
