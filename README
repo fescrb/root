@@ -24,6 +24,12 @@ Building from source (only Linux is supported as of now):
 	
 		$ cmake .. -DCMAKE_BUILD_TYPE="Testing"
 		
+	To use SIMD instructions, use cmake with the following argument:
+	
+		$ cmake .. -DROOT_USE_SIMD=1
+		
+	NOTE: All options can be used together.
+		
 	Then:
 	
 		$ make
