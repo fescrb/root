@@ -66,10 +66,10 @@ namespace root {
 			}
 			
 			inline float4x4 	 operator*(const float4& rightHandSide) {
-				float4 x = replicateX(rightHandSide);
-				float4 y = replicateY(rightHandSide);
-				float4 z = replicateZ(rightHandSide);
-				float4 w = replicateW(rightHandSide);
+				float4 x = rightHandSide.replicateX();
+				float4 y = rightHandSide.replicateY();
+				float4 z = rightHandSide.replicateZ();
+				float4 w = rightHandSide.replicateW();
 				return (m_column1*x) + (m_column2*y) + (m_column3*z) + (m_column4*w);
 			}
 			
@@ -94,42 +94,48 @@ namespace root {
 			 * Static member functions *
 			 ***************************/
 			
-			static float4x4		 identityMatrix() {
+			static inline float4x4		 
+								 identityMatrix() {
 				return float4x4(float4( 1, 0, 0, 0),
 								float4( 0, 1, 0, 0),
 								float4( 0, 0, 1, 0),
 								float4( 0, 0, 0, 1) );
 			}
 			
-			static float4x4		 translationMatrix(F32 x, F32 y, F32 z) {
+			static inline float4x4		 
+								 translationMatrix(F32 x, F32 y, F32 z) {
 				return float4x4(float4( 1, 0, 0, 0),
 								float4( 0, 1, 0, 0),
 								float4( 0, 0, 1, 0),
 								float4( x, y, z, 1) );
 			}
 			
-			static float4x4		 rotationAroundX(F32 radians) {
+			static inline float4x4		 
+								 rotationAroundX(F32 radians) {
 				return float4x4(float4( 1,             0,            0, 0),
 								float4( 0,  cos(radians), sin(radians), 0),
 								float4( 0, -sin(radians), cos(radians), 0),
 								float4( 0,             0,            0, 1) );
 			}
 			
-			static float4x4		 rotationAroundY(F32 radians) {
+			static inline float4x4		 
+								 rotationAroundY(F32 radians) {
 				return float4x4(float4( cos(radians), 0, -sin(radians), 0),
 								float4(            0, 1,             0, 0),
 								float4( sin(radians), 0,  cos(radians), 0),
 								float4(            0, 0,             0, 1) );
 			}
 			
-			static float4x4		 rotationAroundZ(F32 radians) {
+			static inline float4x4		 
+								 rotationAroundZ(F32 radians) {
 				return float4x4(float4( cos(radians), sin(radians), 0, 0),
 								float4(-sin(radians), cos(radians), 0, 0),
 								float4(            0,            0, 1, 0),
 								float4(            0,            0, 0, 1) );
 			}
 			
-			static float4x4		 scalingMatrix(F32 scalingFactor) {
+			static inline float4x4		 
+								 scalingMatrix(F32 scalingFactor) {
 				return float4x4(float4( scalingFactor,             0,             0, 0),
 								float4(             0, scalingFactor,             0, 0),
 								float4(             0,             0, scalingFactor, 0),

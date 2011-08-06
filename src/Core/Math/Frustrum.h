@@ -17,19 +17,31 @@
  * along with The Root Engine.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "Sphere.h"
+#ifndef _ROOT_FRUSTRUM_H
+#define _ROOT_FRUSTRUM_H
 
-using namespace root;
+#include "Plane.h"
 
-bool sphere::intersects(const float4& point) {
-	return getRadius() > mag(sub(getCenterPosition(),point));
-}
+namespace root {
 
-bool sphere::intersects(const sphere& other) {
-	// May need to change later.
-	F32 combinedSize(add(m_positionAndRadius, other.m_positionAndRadius).getW()); 
-	float4 spheresDistance(sub(m_positionAndRadius, other.m_positionAndRadius));
-	spheresDistance.setW(0);
+	struct frustrum {
+		public:
+							 frustrum(){}
+							 
+			explicit 		 frustrum(const frustrum& other)
+			: 	m_near(other.m_near), m_far(other.m_far), m_up(other.m_up),
+				 m_down(other.m_down), m_left(other.m_left), m_right(other.m_right){}
+				 
+			explicit 		 frustrum(const float4& eyePosition,
+									  const float4& lookingDirection,
+									  const float4& centre,
+									  const float4& upVector);
+		
+		private:
+			plane			 m_near, m_far, m_up, m_down, m_left, m_right; // B A Start!
+			
+	};
 	
-	return combinedSize > mag(spheresDistance);
 }
+
+#endif //_ROOT_FRUSTRUM_H

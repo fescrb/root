@@ -17,19 +17,6 @@
  * along with The Root Engine.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "Sphere.h"
+#include "Plane.h"
 
 using namespace root;
-
-bool sphere::intersects(const float4& point) {
-	return getRadius() > mag(sub(getCenterPosition(),point));
-}
-
-bool sphere::intersects(const sphere& other) {
-	// May need to change later.
-	F32 combinedSize(add(m_positionAndRadius, other.m_positionAndRadius).getW()); 
-	float4 spheresDistance(sub(m_positionAndRadius, other.m_positionAndRadius));
-	spheresDistance.setW(0);
-	
-	return combinedSize > mag(spheresDistance);
-}

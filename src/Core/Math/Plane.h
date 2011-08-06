@@ -17,45 +17,45 @@
  * along with The Root Engine.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _ROOT_SPHERE_H
-#define _ROOT_SPHERE_H
+#ifndef _ROOT_PLANE_H
+#define _ROOT_PLANE_H
 
 #include "Float4.h"
 
 namespace root {
 
-	struct sphere {
-		public:
-			
-							 sphere()
-			:	m_positionAndRadius(){}
+	struct plane {
+		
+							 plane() {}
 							 
-			explicit 		 sphere(const sphere& other)
-			:	m_positionAndRadius(other.m_positionAndRadius){
+			explicit 		 plane(const float4& pointInPlane,
+								   const float4& planeNormal )
+			:	m_pointInPlane(pointInPlane),
+				m_normal(planeNormal) {
 			}
 			
-			explicit 		 sphere(const F32 x, F32 y, F32 z, F32 radius)
-			: 	m_positionAndRadius(x,y,z,radius){
+			explicit		 plane(const plane& other)
+			: 	m_pointInPlane(other.m_pointInPlane),
+				m_normal(other.m_normal) {
 			}
 			
-			bool			 intersects(const float4& point);
-			
-			bool			 intersects(const sphere& other);
-			
-			inline F32		 getRadius() {
-				return m_positionAndRadius.getW();
+			inline bool		 liesOnPlane(const float4& point) {
+				return 0 == isInFront(point);
 			}
 			
-			inline float4	 getCenterPosition() {
-				float4 position(m_positionAndRadius);
-				position.setW(1.0f);
-				return position;
+			/**
+			 * @return Bigger than 0 if point is in front. 0 iff point
+			 * lies on the plane. And less than 0 if it's behind.
+			 */
+			F32				 isInFront(const float4& point) {
+				return dot(m_normal, point);
 			}
-			
+		
 		private:
-			float4			 m_positionAndRadius;
+			float4 			 m_pointInPlane;
+			float4 			 m_normal;
 	};
-
+	
 }
 
-#endif //_ROOT_SPHERE_H
+#endif //_ROOT_PLANE_H
