@@ -27,60 +27,91 @@
 namespace root{
 	struct float3{
 		public:
-			explicit float3(): x(0.0f), y(0.0f), z(0.0f){}
-			explicit float3(F32 value): x(value), y(value), z(value){}
-			explicit float3(F32 _x, F32 _y, F32 _z): x(_x), y(_y), z(_z){}
-					float3(const float3 &vector): x(vector.x), y(vector.y), z(vector.z){}
+			explicit float3(): m_x(0.0f), m_y(0.0f), m_z(0.0f){}
+			explicit float3(F32 value): m_x(value), m_y(value), m_z(value){}
+			explicit float3(F32 x, F32 y, F32 z): m_x(x), m_y(y), m_z(z){}
+					 float3(const float3 &vector): m_x(vector.m_x), m_y(vector.m_y), m_z(vector.m_z){}
 
 			inline float3 & operator=(const float3 &rhs){
 				if(this != &rhs){
-					x = rhs.x;
-					y = rhs.y;
-					z = rhs.z;
+					m_x = rhs.m_x;
+					m_y = rhs.m_y;
+					m_z = rhs.m_z;
 				}
 				return *this;
 			}
 
-			inline F32 operator[](const I32 index) const{
-				switch(index){
-					case 0:
-						return x;
-					case 1:
-						return y;
-					case 2:
-						return z;
-				}
-			}
-
 			inline float3 operator+(const float3 &rhs) const{
-				return float3(x+rhs.x, y+rhs.y, z+rhs.z);
+				return float3(m_x+rhs.m_x, m_y+rhs.m_y, m_z+rhs.m_z);
 			}
 
 			inline float3 operator-(const float3 &rhs) const{
-				return float3(x-rhs.x, y-rhs.y, z-rhs.z);
+				return float3(m_x-rhs.m_x, m_y-rhs.m_y, m_z-rhs.m_z);
 			}
 
 			inline float3 operator*(const F32 &rhs) const{
-				return float3(x*rhs, y*rhs, z*rhs);
+				return float3(m_x*rhs, m_y*rhs, m_z*rhs);
 			}
 
 			inline float3 operator*(const float3 &rhs) const{
-				return float3(x*rhs.x,y*rhs.y,z*rhs.z);
+				return float3(m_x*rhs.m_x,m_y*rhs.m_y,m_z*rhs.m_z);
 			}
 
 			inline float3 operator/(const F32 &rhs) const{
-				return float3(x/rhs,y/rhs,z/rhs);
+				return float3(m_x/rhs,m_y/rhs,m_z/rhs);
 			}
 
 			inline bool operator==(const float3 &rhs)const{
-				return x==rhs.x && y==rhs.y && z==rhs.z;
+				return m_x==rhs.m_x && m_y==rhs.m_y && m_z==rhs.m_z;
+			}
+			
+			inline float3 	 replicateX() const{
+				return float3(m_x);
+			}
+			
+			inline float3 	 replicateY() const{
+				return float3(m_y);
+			}
+			
+			inline float3 	 replicateZ() const{
+				return float3(m_z);
+			}
+			
+			inline void   setX(const F32 newX) {
+				m_x = newX;
+			}
+			
+			inline void   setY(const F32 newY) {
+				m_y = newY;
+			}
+
+			inline void   setZ(const F32 newZ) {
+				m_z = newZ;
+			}
+			
+			inline F32   getX() const {
+				return m_x;
+			}
+			
+			inline F32   getY() const {
+				return m_y;
+			}
+
+			inline F32   getZ() const {
+				return m_z;
+			}
+
+			inline void 	 copyToArray(F32 *array) {
+				array[0] = m_x;
+				array[1] = m_z;
+				array[2] = m_y;
 			}
 
 			friend F32 sum(const float3 &vector);
 			friend float3 cross(const float3 &lhs, const float3 &rhs);
-
+			
 		private:
-			F32 x, y, z;
+			F32 m_x, m_y, m_z;
 	};
 
 	inline float3 add(const float3 &lhs, const float3 &rhs){
@@ -104,7 +135,7 @@ namespace root{
 	}
 
 	inline F32 sum(const float3 &vector){
-		return vector.x + vector.y + vector.z;
+		return vector.getX() + vector.getY() + vector.getZ();
 	}
 
 	inline F32 dot(const float3 &lhs, const float3 &rhs){
@@ -116,9 +147,9 @@ namespace root{
 	}
 
 	float3 cross(const float3 &lhs, const float3 &rhs){
-		return float3((lhs.y*rhs.z) - (lhs.z*rhs.y),
-					-((lhs.x*rhs.z) - (lhs.z*rhs.x)),
-					(lhs.x*rhs.y)-(lhs.y*rhs.x));
+		return float3((lhs.getY()*rhs.getZ()) - (lhs.getZ()*rhs.getY()),
+					-((lhs.getX()*rhs.getZ()) - (lhs.getZ()*rhs.getX())),
+					  (lhs.getX()*rhs.getY()) - (lhs.getY()*rhs.getX()));
 	}
 }//namespace root
 

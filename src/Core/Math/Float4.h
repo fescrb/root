@@ -24,6 +24,8 @@
 #include <cmath>
 #include <cstdlib>
 
+#include "Float3.h" // For converting between the two.
+
 #ifdef _ROOT_USE_SIMD
 	#include "SSE2/SIMD_float4.h"
 #endif //_ROOT_USE_SIMD
@@ -125,7 +127,7 @@ namespace root{
 				return simd_getW(m_data);
 			}
 			
-			inline void 	 copyToArray(F32 *array) {
+			inline void 	 copyToArray(F32 *array) const {
 				simd_copyToArray(m_data, array);
 			}
 			
@@ -137,6 +139,7 @@ namespace root{
 			friend float4 div(const float4 &lhs, const F32 &rhs);
 			friend F32 sum(const float4 &vector);
 			friend F32 dot(const float4 &lhs, const float4 &rhs);
+			friend float4 cross(const float4 &lhs, const float4 &rhs);
 			
 		private:
 			simd_float4 		 m_data;
@@ -178,6 +181,10 @@ namespace root{
 		return sqrt(fabs(dot(vector,vector)));
 	}
 	
+	inline float4 cross(const float4 &lhs, const float4 &rhs){
+		return simd_cross(lhs.m_data,rhs.m_data);
+	}
+	
 	#else //_ROOT_USE_SIMD
 	
 	/* ************************************
@@ -192,6 +199,8 @@ namespace root{
 			: 	m_x(value), m_y(value), m_z(value), m_w(value){}
 			explicit float4(F32 x, F32 y, F32 z, F32 w)
 			:	m_x(x), m_y(y), m_z(z), m_w(w){}
+			explicit float4(const float3& vector, F32 w)
+			:	m_x(vector.getX()), m_y(vector.getY()), m_z(vector.getZ()), m_w(w){}
 					 float4(const float4 &vector)
 			: 	m_x(vector.m_x), m_y(vector.m_y), m_z(vector.m_z), m_w(vector.m_w){}
 
@@ -277,7 +286,7 @@ namespace root{
 				return m_w;
 			}
 
-			inline void 	 copyToArray(F32 *array) {
+			inline void 	 copyToArray(F32 *array) const {
 				array[0] = m_x;
 				array[1] = m_z;
 				array[2] = m_y;
@@ -319,6 +328,11 @@ namespace root{
 
 	inline F32 mag(const float4 &vector){
 		return sqrt(fabs(dot(vector,vector)));
+	}
+	
+	inline float4 cross(const float4 &lhs, const float4 &rhs){
+		return float4(cross( float3(lhs.getX(), lhs.getY(), lhs.getZ()),
+							 float3(rhs.getX(), rhs.getY(), rhs.getZ())),0 );
 	}
 	
 	#endif //_ROOT_USE_SIMD

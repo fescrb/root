@@ -154,7 +154,7 @@ BOOST_AUTO_TEST_SUITE(Float3)
 
 BOOST_AUTO_TEST_CASE(Float3Equals){
     float3 vector(2.0f,4.0f,6.0f);
-    BOOST_REQUIRE(vector==vector && vector[0]==2.0f && vector[1]==4.0f && vector[2]==6.0f);
+    BOOST_REQUIRE(vector==vector && vector.getX() ==2.0f && vector.getY()==4.0f && vector.getZ()==6.0f);
 }
 
 BOOST_AUTO_TEST_CASE(Float3Add){
@@ -344,6 +344,28 @@ BOOST_AUTO_TEST_CASE(Float4Dot){
 BOOST_AUTO_TEST_CASE(Float4Mag){
     float4 vector(3.0f,4.0f,5.0f,6.0f);
     BOOST_REQUIRE(mag(vector) == F32(sqrt(86.0f)));
+}
+
+BOOST_AUTO_TEST_CASE(Float4Cross){
+    float4 lhs(6.0f,10.0f,5.0f,1.0f);
+    float4 rhs(7.0f,-2.0f,3.5f,0.0f);
+    float4 crossProduct = cross(lhs,rhs);
+    BOOST_REQUIRE(crossProduct == float4(45.0f,14.0f,-82.0f,0.0f));
+    // Check its perpendicular
+    BOOST_REQUIRE(!dot(crossProduct,lhs));
+    BOOST_REQUIRE(!dot(crossProduct,rhs));
+}
+
+BOOST_AUTO_TEST_CASE(Float4Set){
+    float4 vector(6.0f,10.0f,5.0f,1.0f);
+    vector.setX(2.0f);
+	BOOST_REQUIRE(vector == float4(2.0f,10.0f,5.0f,1.0f));
+	vector.setY(12.0f);
+	BOOST_REQUIRE(vector == float4(2.0f,12.0f,5.0f,1.0f));
+	vector.setZ(9.0f);
+	BOOST_REQUIRE(vector == float4(2.0f,12.0f,9.0f,1.0f));
+	vector.setW(1.5f);
+	BOOST_REQUIRE(vector == float4(2.0f,12.0f,9.0f,1.5f));
 }
 
 BOOST_AUTO_TEST_SUITE_END()

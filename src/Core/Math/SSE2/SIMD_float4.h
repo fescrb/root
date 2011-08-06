@@ -28,7 +28,7 @@
 
 namespace root {
 	
-	// Stored w,z,y,x
+	// Stored a0 = x, a1 = y, a2 = z, a3 = w
 	typedef __m128 simd_float4;
 
 	inline simd_float4  simd_float4_zeros(){
@@ -40,7 +40,7 @@ namespace root {
 	}
 	
 	inline simd_float4  simd_float4_fromValues(const F32 x, const F32 y, const F32 z, const F32 w) {
-		return _mm_set_ps(x,y,z,w);
+		return _mm_setr_ps(x,y,z,w);
 	}
 	
 	inline simd_float4  simd_float4_copy(const simd_float4& other) {
@@ -64,7 +64,7 @@ namespace root {
 	}
 	
 	inline void 	 	simd_copyToArray(const simd_float4& vector ,F32 *array) {
-		_mm_storer_ps(array, vector);
+		_mm_store_ps(array, vector);
 	}
 	
 	inline simd_float4 	 simd_add(const simd_float4 &lhs, const simd_float4 &rhs){
@@ -118,28 +118,36 @@ namespace root {
 		return sqrt(fabs(simd_dot(vector,vector)));
 	}
 	
+	inline simd_float4	 simd_cross(const simd_float4 &lhs, const simd_float4 &rhs){
+		simd_float4 a1 = _mm_shuffle_ps(lhs,lhs, _MM_SHUFFLE(3,0,2,1));
+		simd_float4 b1 = _mm_shuffle_ps(rhs,rhs, _MM_SHUFFLE(3,1,0,2));
+		simd_float4 a2 = _mm_shuffle_ps(lhs,lhs, _MM_SHUFFLE(3,1,0,2));
+		simd_float4 b2 = _mm_shuffle_ps(rhs,rhs, _MM_SHUFFLE(3,0,2,1));
+		return simd_sub(simd_mul(a1, b1), simd_mul(a2, b2));
+	}
+	
 	inline void  		 simd_setX(simd_float4& vector, const F32 newX) {
 		simd_float4 x = simd_float4_replicate(newX);
 		x = _mm_shuffle_ps(x,vector, _MM_SHUFFLE(1,1,0,0));
-		vector = _mm_shuffle_ps(vector,x, _MM_SHUFFLE(3,2,3,0));
+		vector = _mm_shuffle_ps(x,vector, _MM_SHUFFLE(3,2,3,0));
 	}
 	
 	inline void  		 simd_setY(simd_float4& vector, const F32 newY) {
 		simd_float4 y = simd_float4_replicate(newY);
 		y = _mm_shuffle_ps(y, vector, _MM_SHUFFLE(0,0,0,0));
-		vector = _mm_shuffle_ps(vector, y, _MM_SHUFFLE(3,2,0,3));
+		vector = _mm_shuffle_ps(y, vector, _MM_SHUFFLE(3,2,0,3));
 	}
 
 	inline void  		 simd_setZ(simd_float4& vector, const F32 newZ) {
 		simd_float4 z = simd_float4_replicate(newZ);
-		z = _mm_shuffle_ps(vector, z, _MM_SHUFFLE(3,3,0,0));
-		vector = _mm_shuffle_ps(z, vector, _MM_SHUFFLE(3,0,1,0));
+		z = _mm_shuffle_ps(z, vector, _MM_SHUFFLE(3,3,0,0));
+		vector = _mm_shuffle_ps(vector, z, _MM_SHUFFLE(3,0,1,0));
 	}
 	
 	inline void  		 simd_setW(simd_float4& vector, const F32 newW) {
 		simd_float4 w = simd_float4_replicate(newW);
-		w = _mm_shuffle_ps(vector, w, _MM_SHUFFLE(2,2,0,0));
-		vector = _mm_shuffle_ps(w, vector, _MM_SHUFFLE(0,3,1,0));
+		w = _mm_shuffle_ps(w, vector, _MM_SHUFFLE(2,2,0,0));
+		vector = _mm_shuffle_ps(vector, w, _MM_SHUFFLE(0,3,1,0));
 	}
 	
 	inline F32  		 simd_getX(const simd_float4& vector) {
