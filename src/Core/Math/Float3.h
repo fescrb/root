@@ -17,8 +17,8 @@
  * along with The Root Engine.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef FLOAT3_H
-#define FLOAT3_H
+#ifndef _ROOT_FLOAT3_H
+#define _ROOT_FLOAT3_H
 
 #include "BasicTypes.h"
 #include <cmath>
@@ -146,11 +146,7 @@ namespace root{
 		return sqrt(fabs(dot(vector,vector)));
 	}
 
-	float3 cross(const float3 &lhs, const float3 &rhs){
-		return float3((lhs.getY()*rhs.getZ()) - (lhs.getZ()*rhs.getY()),
-					-((lhs.getX()*rhs.getZ()) - (lhs.getZ()*rhs.getX())),
-					  (lhs.getX()*rhs.getY()) - (lhs.getY()*rhs.getX()));
-	}
+	float3 		 cross(const float3 &lhs, const float3 &rhs);
 }//namespace root
 
 #endif //FLOAT3_H

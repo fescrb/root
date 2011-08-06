@@ -1,4 +1,5 @@
-set( sources 	 )
+set( sources 	Float3.cpp
+				Sphere.cpp )
 
 set( headers 	Vector.h
 				Float2.h
@@ -6,4 +7,7 @@ set( headers 	Vector.h
 				Float4.h
 				Double2.h
 				Double3.h
-				Double4.h )
+				Double4.h
+				Matrix.h
+				Float4x4.h
+				Sphere.h )
