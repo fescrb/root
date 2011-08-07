@@ -20,15 +20,14 @@ Building from source (only Linux is supported as of now):
 	 
 		$ cmake .. 
 		
-	Or, if you want to build with unit tests:
+		CMake Options:
+			
+			-DCMAKE_BUILD_TYPE="Testing" (to compile unit tests)
 	
-		$ cmake .. -DCMAKE_BUILD_TYPE="Testing"
+		    -DROOT_USE_SIMD=1 (to use SIMD instructions)
+		    
+		    -DROOT_COMPILE_DEMOS=1 (to compile the demo programs).
 		
-	To use SIMD instructions, use cmake with the following argument:
-	
-		$ cmake .. -DROOT_USE_SIMD=1
-		
-	NOTE: All options can be used together.
 		
 	Then:
 	
