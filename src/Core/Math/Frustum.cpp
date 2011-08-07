@@ -17,31 +17,12 @@
  * along with The Root Engine.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _ROOT_FRUSTRUM_H
-#define _ROOT_FRUSTRUM_H
+#include "Frustum.h"
 
-#include "Plane.h"
+using namespace root;
 
-namespace root {
-
-	struct frustrum {
-		public:
-							 frustrum(){}
-							 
-			explicit 		 frustrum(const frustrum& other)
-			: 	m_near(other.m_near), m_far(other.m_far), m_up(other.m_up),
-				 m_down(other.m_down), m_left(other.m_left), m_right(other.m_right){}
-				 
-			explicit 		 frustrum(const float4& eyePosition,
-									  const float4& lookingDirection,
-									  const float4& centre,
-									  const float4& upVector);
-		
-		private:
-			plane			 m_near, m_far, m_up, m_down, m_left, m_right; // B A Start!
-			
-	};
+frustum::frustum(const float4& eyePosition, const float4& lookingDirection,
+				 const float4& upVector, const F32 nearDistance,
+				 const F32 farDistance, const F32 fieldOfView ) {
 	
 }
-
-#endif //_ROOT_FRUSTRUM_H

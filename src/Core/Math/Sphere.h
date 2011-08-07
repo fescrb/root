@@ -38,15 +38,17 @@ namespace root {
 			: 	m_positionAndRadius(x,y,z,radius){
 			}
 			
-			bool			 intersects(const float4& point);
+			inline bool		 intersects(const float4& point) const {
+				return getRadius() > mag(sub(getCenterPosition(),point));
+			}
 			
-			bool			 intersects(const sphere& other);
+			bool			 intersects(const sphere& other) const;
 			
-			inline F32		 getRadius() {
+			inline F32		 getRadius() const {
 				return m_positionAndRadius.getW();
 			}
 			
-			inline float4	 getCenterPosition() {
+			inline float4	 getCenterPosition() const {
 				float4 position(m_positionAndRadius);
 				position.setW(1.0f);
 				return position;

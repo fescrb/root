@@ -21,11 +21,7 @@
 
 using namespace root;
 
-bool sphere::intersects(const float4& point) {
-	return getRadius() > mag(sub(getCenterPosition(),point));
-}
-
-bool sphere::intersects(const sphere& other) {
+bool sphere::intersects(const sphere& other) const {
 	// May need to change later.
 	F32 combinedSize(add(m_positionAndRadius, other.m_positionAndRadius).getW()); 
 	float4 spheresDistance(sub(m_positionAndRadius, other.m_positionAndRadius));

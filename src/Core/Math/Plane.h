@@ -21,6 +21,7 @@
 #define _ROOT_PLANE_H
 
 #include "Float4.h"
+#include "Sphere.h"
 
 namespace root {
 
@@ -47,8 +48,22 @@ namespace root {
 			 * @return Bigger than 0 if point is in front. 0 iff point
 			 * lies on the plane. And less than 0 if it's behind.
 			 */
-			F32				 isInFront(const float4& point) {
+			inline F32		 isInFront(const float4& point) {
 				return dot(m_normal, point);
+			}
+			
+			/**
+			 * @return Bigger than 0 if sphere is in front or intersects 
+			 * the plane. 0 if its in contact and less than one if its completely
+			 * behind the plane.
+			 */
+			inline F32  	 isInFront(const sphere& sph) {
+				F32 sphereRadius = sph.getRadius();
+				// Move the centre of the sphere a <radius> distance towards the front of
+				// the plane.
+				float4 spherePoint = ( m_normal*sphereRadius ) + sph.getCenterPosition();
+				
+				return isInFront(spherePoint);
 			}
 		
 		private:
