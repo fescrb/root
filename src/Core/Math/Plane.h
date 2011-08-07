@@ -49,7 +49,7 @@ namespace root {
 			 * lies on the plane. And less than 0 if it's behind.
 			 */
 			inline F32		 isInFront(const float4& point) {
-				return dot(m_normal, point);
+				return dot(m_normal, point-m_pointInPlane);
 			}
 			
 			/**

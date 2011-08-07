@@ -24,5 +24,10 @@ using namespace root;
 frustum::frustum(const float4& eyePosition, const float4& lookingDirection,
 				 const float4& upVector, const F32 nearDistance,
 				 const F32 farDistance, const F32 fieldOfView ) {
+	float4 normalizedLookingDirection(normalized(lookingDirection));
+	
+	m_near = plane(eyePosition+(normalizedLookingDirection*nearDistance),normalizedLookingDirection);
+	m_far = plane(eyePosition+(normalizedLookingDirection*farDistance),normalizedLookingDirection*-1);
+	
 	
 }
