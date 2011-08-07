@@ -9,4 +9,4 @@ foreach(submodule ${submodules})
 endforeach(submodule)
 
 add_executable(core_test Core.cpp ${all_test_sources})
-target_link_libraries(core_test ${RootCore_LIBRARY} ${Boost_LIBRARIES})
+target_link_libraries(core_test ${Root_LIBRARIES} ${Boost_LIBRARIES})

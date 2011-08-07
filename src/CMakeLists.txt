@@ -8,7 +8,13 @@ foreach(module ${modules})
 	endforeach(submodule)
 endforeach(module)
 
+set(Root_LIBRARIES ${RootCore_LIBRARY})
+
 if(${_ROOT_COMPILE_UNIT_TESTS})
 	message("Adding unit tests....")
 	add_subdirectory("Unit Testing")
 endif(${_ROOT_COMPILE_UNIT_TESTS})
+
+if(${ROOT_COMPILE_DEMOS})
+	add_subdirectory("Demos")
+endif(${ROOT_COMPILE_DEMOS})

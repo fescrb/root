@@ -103,7 +103,7 @@ namespace root {
 			 * is the default allocator. Which uses the OS's dynamic
 			 * memory allocator.
 			 */
-						 DynamicArray(const U32 initialSize = 0, 
+			explicit	 DynamicArray(const U32 initialSize = 0, 
 									  Allocator *allocator = DefaultAllocator::getStandardAllocator() )
 			:	m_pAllocator(allocator) {
 				// Initialize the array.
@@ -116,8 +116,8 @@ namespace root {
              * with. It will copy the data in the array. 
              * @param data The array to copy.
              * @param arraySize The size of the array, or the amount of elements we
-             * want to copy from it. The default value is -1. Any value less than 0
-             * will make the constructor calculate the size of the array using strlen.
+             * want to copy from it. Any value less than 0 will make the constructor 
+			 * calculate the size of the array using strlen.
              * @param initialSize The array's initial allocated space.The default 
              * is 0, so no dynamic memory allocation happens within the
              * constructor.
@@ -127,7 +127,7 @@ namespace root {
              * memory allocator.
              */
 			explicit	 DynamicArray( const Item* data, 
-									   const I32 arraySize = -1,
+									   const I32 arraySize,
 									   const U32 initialSize = 0, 
 									   Allocator *allocator = DefaultAllocator::getStandardAllocator() )
 			:	m_pAllocator(allocator) {

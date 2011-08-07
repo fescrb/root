@@ -12,7 +12,7 @@ if(${CMAKE_BUILD_TYPE} MATCHES "Testing")
 endif(${CMAKE_BUILD_TYPE} MATCHES "Testing")
 
 if(${ROOT_USE_SIMD})
-	message("Option: SIMD instructions. ")
+	message("Option: SIMD instructions.")
 	
 	add_definitions(-D_ROOT_USE_SIMD)
 	
@@ -26,5 +26,9 @@ if(${ROOT_USE_SIMD})
 	endif(${CMAKE_SYSTEM_PROCESSOR} MATCHES ^x86.*)
 	
 endif(${ROOT_USE_SIMD})
+
+if(${ROOT_COMPILE_DEMOS})
+	message("Option: Compile demonstration programs.")
+endif(${ROOT_COMPILE_DEMOS})
 
 add_subdirectory(src)

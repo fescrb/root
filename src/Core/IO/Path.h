@@ -94,7 +94,7 @@ namespace root {
 				File			*getFile() ;
 				
 				void			*operator new(size_t size, 
-											  Allocator* allocator) {
+											  Allocator* allocator = DefaultAllocator::getStandardAllocator() ) {
 					return allocator->allocate(size);
 				}
 				

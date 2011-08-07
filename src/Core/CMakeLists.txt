@@ -22,5 +22,5 @@ add_library(RootCore ${all_submodule_sources})
 
 set(submodules ${submodules} PARENT_SCOPE)
 
-set(RootCore_LIBRARY ${CMAKE_CURRENT_BINARY_DIR}/libRootCore.a PARENT_SCOPE)
+set(RootCore_LIBRARY RootCore PARENT_SCOPE)
 
