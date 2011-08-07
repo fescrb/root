@@ -208,7 +208,7 @@ BOOST_AUTO_TEST_CASE(Float3Cross){
     float3 rhs(7.0f,-2.0f,3.5f);
     float3 crossProduct = cross(lhs,rhs);
     BOOST_REQUIRE(crossProduct == float3(45,14,-82));
-    // Check its perpendicular
+    // Check that it's perpendicular.
     BOOST_REQUIRE(!dot(crossProduct,lhs));
     BOOST_REQUIRE(!dot(crossProduct,rhs));
 }
@@ -277,7 +277,7 @@ BOOST_AUTO_TEST_CASE(Double3Cross){
     double3 rhs(7.0f,-2.0f,3.5f);
     double3 crossProduct = cross(lhs,rhs);
     BOOST_REQUIRE(crossProduct == double3(45,14,-82));
-    // Check its perpendicular
+    // Check that it's perpendicular.
     BOOST_REQUIRE(!dot(crossProduct,lhs));
     BOOST_REQUIRE(!dot(crossProduct,rhs));
 }
@@ -351,11 +351,22 @@ BOOST_AUTO_TEST_CASE(Float4Cross){
     float4 rhs(7.0f,-2.0f,3.5f,0.0f);
     float4 crossProduct = cross(lhs,rhs);
     BOOST_REQUIRE(crossProduct == float4(45.0f,14.0f,-82.0f,0.0f));
-    // Check its perpendicular
+    // Check that it's perpendicular.
     BOOST_REQUIRE(!dot(crossProduct,lhs));
     BOOST_REQUIRE(!dot(crossProduct,rhs));
 }
 
+BOOST_AUTO_TEST_CASE(Float4Normalize){
+    float4 vector(6.0f,9.0f,5.0f,1.0f);
+    float4 vector2(54.343f,-100.99f,7.4510f,8816.0f);
+	
+	vector.normalize();
+	
+	BOOST_REQUIRE(1.0f == mag(vector));
+    BOOST_REQUIRE(1.0f == mag(normalized(vector2)));
+}
+
+// Created mostly to aid with SIMD vectors, as I have little experience.
 BOOST_AUTO_TEST_CASE(Float4Set){
     float4 vector(6.0f,10.0f,5.0f,1.0f);
     vector.setX(2.0f);

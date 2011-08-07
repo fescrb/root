@@ -109,13 +109,33 @@ namespace root {
 		_mm_store_ss(&sumResult, result);
 		return sumResult;
 	}
+	
+	inline simd_float4 	 simd_sum_vector(const simd_float4 &vector){
+		simd_float4 x = simd_replicateX(vector);
+		simd_float4 y = simd_replicateY(vector);
+		simd_float4 z = simd_replicateZ(vector);
+		simd_float4 w = simd_replicateW(vector);
+		return simd_add( simd_add( simd_add(x, z ) , y ) ,w);
+	}
+	
+	inline simd_float4 	 simd_sqrt_vector(const simd_float4 &vector){
+		return _mm_sqrt_ps(vector);
+	}
 
 	inline F32 			 simd_dot(const simd_float4 &lhs, const simd_float4 &rhs){
 		return simd_sum(simd_mul(lhs,rhs));
 	}
+	
+	inline simd_float4	 simd_dot_vector(const simd_float4 &lhs, const simd_float4 &rhs){
+		return simd_sum_vector(simd_mul(lhs,rhs));
+	}
 
 	inline F32			 simd_mag(const simd_float4 &vector){
-		return sqrt(fabs(simd_dot(vector,vector)));
+		return sqrt(simd_dot(vector,vector));
+	}
+	
+	inline simd_float4	 simd_mag_vector(const simd_float4 &vector){
+		return simd_sqrt_vector(simd_dot_vector(vector,vector));
 	}
 	
 	inline simd_float4	 simd_cross(const simd_float4 &lhs, const simd_float4 &rhs){
@@ -124,6 +144,10 @@ namespace root {
 		simd_float4 a2 = _mm_shuffle_ps(lhs,lhs, _MM_SHUFFLE(3,1,0,2));
 		simd_float4 b2 = _mm_shuffle_ps(rhs,rhs, _MM_SHUFFLE(3,0,2,1));
 		return simd_sub(simd_mul(a1, b1), simd_mul(a2, b2));
+	}
+	
+	inline simd_float4	 simd_normalize(const simd_float4 &vector) {
+		return simd_div(vector,simd_mag_vector(vector));
 	}
 	
 	inline void  		 simd_setX(simd_float4& vector, const F32 newX) {

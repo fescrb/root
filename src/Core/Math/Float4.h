@@ -131,6 +131,10 @@ namespace root{
 				simd_copyToArray(m_data, array);
 			}
 			
+			inline void 	normalize() {
+				m_data = simd_normalize(m_data);
+			}
+			
 			friend float4 add(const float4 &lhs, const float4 &rhs);
 			friend float4 sub(const float4 &lhs, const float4 &rhs);
 			friend float4 mul(const float4 &lhs, const float4 &rhs);
@@ -140,6 +144,7 @@ namespace root{
 			friend F32 sum(const float4 &vector);
 			friend F32 dot(const float4 &lhs, const float4 &rhs);
 			friend float4 cross(const float4 &lhs, const float4 &rhs);
+			friend float4 normalized(const float4 &vector);
 			
 		private:
 			simd_float4 		 m_data;
@@ -185,11 +190,19 @@ namespace root{
 		return simd_cross(lhs.m_data,rhs.m_data);
 	}
 	
+	inline float4 normalized(const float4 &vector){
+		return simd_normalize(vector.m_data);
+	}
+	
 	#else //_ROOT_USE_SIMD
 	
 	/* ************************************
 	 * If we don't want to/can't use SIMD *
 	 **************************************/
+	
+	struct float4;
+	
+	inline float4 normalized(const float4& vector);
 	
 	struct float4{
 		public:
@@ -293,6 +306,10 @@ namespace root{
 				array[3] = m_w;
 			}
 			
+			inline void 	 normalize() {
+				operator=(normalized(*this));
+			}
+			
 		private:
 			
 			F32 m_x, m_y, m_z, m_w;
@@ -327,12 +344,17 @@ namespace root{
 	}
 
 	inline F32 mag(const float4 &vector){
-		return sqrt(fabs(dot(vector,vector)));
+		return sqrt(dot(vector,vector));
 	}
 	
 	inline float4 cross(const float4 &lhs, const float4 &rhs){
 		return float4(cross( float3(lhs.getX(), lhs.getY(), lhs.getZ()),
 							 float3(rhs.getX(), rhs.getY(), rhs.getZ())),0 );
+	}
+	
+	inline float4 normalized(const float4& vector) {
+		F32 magnitude = mag(vector);
+		return div(vector,magnitude);
 	}
 	
 	#endif //_ROOT_USE_SIMD
