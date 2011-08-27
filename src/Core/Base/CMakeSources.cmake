@@ -1,5 +1,4 @@
-set( sources 	Hash.cpp )
+set( sources     )
 
 set( headers 	BasicTypes.h
-				Assert.h
-				Hash.h )
+				Assert.h )

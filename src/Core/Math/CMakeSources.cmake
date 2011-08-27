@@ -1,9 +1,12 @@
-set( sources 	Float3.cpp
+set( sources 	Hash.cpp
+				Float3.cpp
 				Sphere.cpp
 				Plane.cpp
 				Frustum.cpp )
 
-set( headers 	Vector.h
+set( headers 	Math.h
+				Hash.h
+				Vector.h
 				Float2.h
 				Float3.h
 				Float4.h

@@ -1,9 +1,9 @@
 # Create a variable with all submodules in order of compilation.
 set(submodules 	Base
 				Memory
+				Math
 				Containers
 				IO
-				Math
 				 )
 
 # For each submodule we add it to the list of include folders, we 
