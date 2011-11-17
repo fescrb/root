@@ -2,7 +2,8 @@ set( sources 	Hash.cpp
 				Float3.cpp
 				Sphere.cpp
 				Plane.cpp
-				Frustum.cpp )
+				Frustum.cpp
+				Mesh.cpp )
 
 set( headers 	Math.h
 				Hash.h
@@ -17,4 +18,5 @@ set( headers 	Math.h
 				Float4x4.h
 				Sphere.h
 				Plane.h
-				Frumstum.h )
+				Frumstum.h
+				Mesh.h )

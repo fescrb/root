@@ -10,10 +10,8 @@
 using namespace root;
 
 mesh::mesh() {
-	// TODO Auto-generated constructor stub
 
 }
 
 mesh::~mesh() {
-	// TODO Auto-generated destructor stub
 }
