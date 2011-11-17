@@ -24,10 +24,10 @@ namespace root {
 
 	struct mesh {
 	public:
-		mesh();
-		virtual ~mesh();
+		explicit 		 mesh();
+		virtual 		~mesh();
 	};
 
 }
 
-#endif /* _ROOT_MESH_H_ */
+#endif // _ROOT_MESH_H_

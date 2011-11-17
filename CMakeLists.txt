@@ -2,6 +2,11 @@ project(Root)
 
 cmake_minimum_required(VERSION 2.6)
 
+# Look for OGL, mandatory for now.
+find_package(OpenGL REQUIRED)
+set(Graphics_LIBRARIES ${OpenGL_LIBRARIES})
+message("Using OpenGL as graphics library.")
+
 if(${CMAKE_BUILD_TYPE} MATCHES "Testing")
 	message("Option: Unit Tests.")
 
