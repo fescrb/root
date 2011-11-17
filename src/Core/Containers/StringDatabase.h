@@ -33,8 +33,7 @@ namespace root {
 		}
 	} StringCRC32Hash;
 	
-	class StringDatabase
-	:	public HashMap<String,String,StringCRC32Hash> {
+	class StringDatabase {
 		public:
 			
 			// Singleton class.
@@ -45,10 +44,8 @@ namespace root {
 				return m_pStringDataBaseInstance;
 			}
 			
-			
-			inline void				*operator new( size_t size,
-												   Allocator* allocator = DefaultAllocator::getStandardAllocator() ) {
-				return allocator->allocate(size);
+			StringID  				 intern(const MutableString* string) {
+				
 			}
 			
 		private:
@@ -56,7 +53,15 @@ namespace root {
 			// Will allow custom allocators.
 			explicit				 StringDatabase();
 			
+			inline void				*operator new( size_t size,
+												   Allocator* allocator = DefaultAllocator::getStandardAllocator() ) {
+				return allocator->allocate(size);
+			}
+			
 			static StringDatabase 	*m_pStringDataBaseInstance;
+			
+			HashMap<String,String,StringCRC32Hash,StringID>
+									 m_database;
 	};
 	
 }

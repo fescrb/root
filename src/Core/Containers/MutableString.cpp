@@ -33,23 +33,43 @@
 using namespace root;
 
 MutableString::MutableString(Allocator* allocator)
-:	DynamicArray<I8>(0,allocator) {
+:	DynamicArray<I8>(0,allocator),
+	m_hasBeenInterned(false),
+	m_internID(0) {
 }
 
 MutableString::MutableString(const I8* data, 
 							 const I32 arraySize, 
-							 Allocator* allocator) 
-:	DynamicArray<I8>(data,arraySize < 0? strlen(data):arraySize,0,allocator) {
+							 Allocator* allocator)
+:	DynamicArray<I8>(data,arraySize < 0? strlen(data):arraySize,0,allocator),
+	m_hasBeenInterned(false),
+	m_internID(0) {
 }
 
 MutableString::MutableString(const MutableString* string, 
 							 Allocator* allocator)
-:	DynamicArray<I8>(string,0,allocator) {
+:	DynamicArray<I8>(string,0,allocator),
+	m_hasBeenInterned(false),
+	m_internID(0){
 }
 
 MutableString::MutableString(const String* string, 
 							 Allocator* allocator)
-:	DynamicArray<I8>(string->getCString(),string->getSize(),0,allocator) {
+:	DynamicArray<I8>(string->getCString(),string->getSize(),0,allocator),
+	m_hasBeenInterned(false),
+	m_internID(0){
+}
+
+void MutableString::replaceOcurrences(const MutableString* occurenceString,
+									  const MutableString* replacingString) {
+	iterator it = start();
+	// While there are occurrences of the string in this string.
+	while(it.find(occurenceString->getCString(),occurenceString->getSize())) {
+		// We replace the occurrence.
+		swap(it,it+occurenceString->getSize()-1,replacingString);
+		// We skip the string we just replaced just in case it contains an occurrence.
+		it+=replacingString->getSize();
+	}
 }
 
 bool MutableString::operator<(const MutableString& rightHandSide){

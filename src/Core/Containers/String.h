@@ -47,6 +47,35 @@ namespace root{
 			inline const U32	 getSize() const {
 				return m_pPrivateString->getSize();
 			}
+			
+			inline String 		*getSubtring(U32 start, 
+											 U32 end, 
+											 Allocator *stringDataAllocator = NULL,
+											 Allocator *instanceAllocator = DefaultAllocator::getStandardAllocator()) {
+				return new (instanceAllocator) String(m_pPrivateString->getSubtring(start, end,stringDataAllocator,instanceAllocator));
+			}
+			
+			/* ***********
+			 * Operators *
+			 *************/
+			
+			inline void 		*operator new(size_t sizeInBytes,
+											  Allocator* allocator){
+				return allocator->allocate(sizeInBytes);
+			}
+			
+			/* *********************
+			 * Interning functions *
+			 ***********************/
+			
+			inline bool 		 isInterned() const {
+				
+			}
+			
+			inline bool 		 intern() { 
+				
+			}
+			
 		
 		private:
 		

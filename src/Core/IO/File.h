@@ -22,6 +22,8 @@
 
 #include "Path.h"
 
+//#include "FileHandle.h"
+
 namespace root{
 	
 	namespace io{
@@ -55,17 +57,19 @@ namespace root{
 				inline bool 		 isOpen() const {
 					return m_isOpen;
 				}
-				inline I32			 getFileHandle() {
-					return m_fileHandle;
-				}
 				bool				 close();
 				
 				/* ************************************
 				 * Map/unmap fro memory & check state *
 				 **************************************/
-				U8*					 mapToMemory(U64 offsetFromStart, 
+				void*				 mapToMemory(U64 offsetFromStart, 
 												 U64 bytesToMap, 
+												 FileModeFlags mappingFlags,
 												 Allocator* allocator = DefaultAllocator::getStandardAllocator());
+				bool 				 mapToMemoryAddress(void* memoryAddress,
+														U64 offsetFromStart, 
+														U64 bytesToMap, 
+														FileModeFlags mappingFlags);
 				inline bool			 isMemoryMapped() const {
 					return m_isMemoryMapped;
 				}
@@ -96,10 +100,11 @@ namespace root{
 				
 				I64 				 m_fileSize;
 				I64 				 m_seekPos;
-				I32 				 m_fileHandle;
 				
 				bool 				 m_isOpen;
 				bool				 m_isMemoryMapped;
+				
+				//FileHandle			 m_platformDependentFileData;
 		};
 	}//namespace io
 }//namespace root

@@ -1,7 +1,8 @@
 set( sources 	MutableString.cpp
 				ReferenceCountedMutableString.cpp
 				String.cpp
-				StringDatabase.cpp )
+				#StringDatabase.cpp 
+				)
 
 set( headers 	Pair.h
 				DynamicArray.h
@@ -9,4 +10,5 @@ set( headers 	Pair.h
 				MutableString.h
 				ReferenceCountedMutableString.h
 				String.h
-				StringDatabase.h )
+				#StringDatabase.h 
+				)

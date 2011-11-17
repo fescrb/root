@@ -619,6 +619,19 @@ namespace root {
 						return false;
 					}
 					
+					bool	 			 reverseFind(const Item &item) {
+						// Iterate over the array to search for the item.
+						while(m_index >= 0){
+							// If the item is found. We are now pointing to it so we return true.
+							if(item==element())
+								return true;
+							--m_index;
+						}
+						// If the index becomes m_pDynamicArray.getSize() we 
+						// didn't find the item.
+						return false;
+					}
+					
 					/**
 					 * Linearly search for the first occurrence of a sequence of
 					 * items.
@@ -649,6 +662,30 @@ namespace root {
 							}
 							// Continue.
 							++m_index;
+						}
+						// We didn't find the sequence, we return false.
+						return false;
+					}
+					
+					bool	 			 reverseFind(const Item *items, const U32 numItems) {
+						// We haven't started searching, so we found nothing yet.
+						U32 itemsFound = numItems - 1;
+						while(m_index >= 0){
+							// If the item is the next one in the sequence,
+							// we increment how many items we found.
+							if(items[itemsFound]==element()) {	
+								--itemsFound;
+								// If itemsFound == numItems we have found the sequence.
+								// We point to the first element and return true.
+								if(itemsFound == 0){
+									return true;
+								}
+							} else {
+								// That wasn't the sequence, we start from the begining.
+								itemsFound = numItems - 1;
+							}
+							// Continue.
+							--m_index;
 						}
 						// We didn't find the sequence, we return false.
 						return false;
@@ -844,6 +881,12 @@ namespace root {
 				return it;
 			}
 			
+			iterator		 reverseFind(const Item &item) const {
+				iterator it = end();
+				it.reverseFind(item);
+				return it;
+			}
+			
 			/**
 			 * A function to find the first instance of a sequence of elements.
 			 * Since the DynamicArray is not guarranteed to be sorted, this 
@@ -855,6 +898,12 @@ namespace root {
 			iterator		 find(const Item *items, const U32 numItems) const {
 				iterator it = start();
 				it.find(items,numItems);
+				return it;
+			}
+			
+			iterator		 reverseFind(const Item *items, const U32 numItems) const {
+				iterator it = end();
+				it.reverseFind(items,numItems);
 				return it;
 			}
 			

@@ -27,27 +27,35 @@
 
 namespace root{
 	
-	template <class HashType, class ValueType>
+	template <class HashType, class KeyType, class ValueType>
 	struct HashCompareLessOperator {
-		inline bool		 operator()(const Pair<HashType,ValueType>& leftHandSide, 
-									const Pair<HashType,ValueType>& rightHandSide){
+		inline bool		 operator()(const Pair<HashType,Pair<KeyType,ValueType> >& leftHandSide, 
+									const Pair<HashType,Pair<KeyType,ValueType> >& rightHandSide){
 			return leftHandSide.first() < rightHandSide.first();
 		}
 	};
 	
-	template <class HashType, class ValueType>
+	template <class HashType, class KeyType, class ValueType>
 	struct HashCompareEqualityOperator {
-		inline bool		 operator()(const Pair<HashType,ValueType>& leftHandSide,
-									const Pair<HashType,ValueType>& rightHandSide) const{
+		inline bool		 operator()(const Pair<HashType,Pair<KeyType,ValueType> >& leftHandSide,
+									const Pair<HashType,Pair<KeyType,ValueType> >& rightHandSide) const{
 			return leftHandSide.first() == rightHandSide.first();				
 		}
 	};
 	
-	template <class HashType, class ValueType>
+	template <class HashType, class KeyType, class ValueType>
+	struct KeyCompareEqualityOperator {
+		inline bool		 operator()(const Pair<HashType,Pair<KeyType,ValueType> >& leftHandSide,
+									const Pair<HashType,Pair<KeyType,ValueType> >& rightHandSide) const{
+			return leftHandSide.second().first() == rightHandSide.second().first();				
+		}
+	};
+	
+	template <class HashType, class KeyType, class ValueType>
 	struct ValueCompareEqualityOperator {
-		inline bool		 operator()(const Pair<HashType,ValueType>& leftHandSide,
-									const Pair<HashType,ValueType>& rightHandSide) const{
-			return leftHandSide.second() == rightHandSide.second();				
+		inline bool		 operator()(const Pair<HashType,Pair<KeyType,ValueType> >& leftHandSide,
+									const Pair<HashType,Pair<KeyType,ValueType> >& rightHandSide) const{
+			return leftHandSide.second().second() == rightHandSide.second().second();				
 		}
 	};
 	
@@ -55,6 +63,7 @@ namespace root{
 			  class Value, 
 			  class HashFunc, 
 			  class HashType = U32,
+			  class KeyTypeEquality = KeyCompareEqualityOperator,
 			  class HashTypePrecedence = HashCompareLessOperator<HashType,Value> >
 	class HashMap {
 		public:
@@ -95,11 +104,6 @@ namespace root{
 				m_data.reallocate();
 			}
 			
-			inline HashType	 hash(const Key& key) const {
-				HashFunc hF;
-				return hF(key);
-			}
-			
 			inline bool		 getAddsAutomatically() const {
 				return m_addAutomatically;
 			}
@@ -115,10 +119,13 @@ namespace root{
 				HashType hashValue = hash(key);
 				iterator it = start();
 				
-				if(!it.findHash(hashValue)) {
-					addAt(it,hashValue,value);
-				} else
-					it.element() = value;
+				if(it.findHash(hashValue)) {
+					if(it.findAdjacentWithKey(key)) {
+						it.value() = value;
+						return;
+					}
+				}
+				addAt(it,hashValue,value);
 			}
 			
 			void			 add(const Pair<Key,Value>& pair) {
@@ -144,13 +151,33 @@ namespace root{
 						return m_pHashMap->m_data[m_index].first();
 					}
 					
-					inline Value&	 element() const{
-						return m_pHashMap->m_data[m_index].second();
+					inline Key&		 key() const{
+						return m_pHashMap->m_data[m_index].second().first();
 					}
 					
-					bool 		 find(const Key& key){
-						HashType hashValue = hash(key);
-						return findHash(hashValue);
+					inline Value&	 value() const{
+						return m_pHashMap->m_data[m_index].second().second();
+					}
+					
+					bool 		 find(const Key& keyToFind){
+						HashFunc hF;
+						HashType hashValue = hF(keyToFind);
+						if(findHash(hashValue)) {
+							return findAdjacentWithKey(keyToFind);
+						}
+						return false;
+					}
+					
+					bool 		 findAdjacentWithKey(const Key& keyToFind) {
+						while(m_index < m_pHashMap->getSize()-1){
+								if(key() == keyToFind){
+									return true;
+								} else if ( hash()+1 == this->operator+(1).hash()) {
+									m_index++;
+								} else {
+									return false;
+								}
+							}
 					}
 					
 					bool 		 findHash(const HashType& keyHash){
@@ -162,11 +189,11 @@ namespace root{
 						m_index = closestIndex;
 					}
 					
-					bool 		 findValue(const Value& keyHash) {
+					bool 		 findValue(const Value& valueToFind) {
 						// Iterate over the array to search for the item.
 						while(m_index < m_pHashMap->getSize()){
 							// If the hash is found. We are now pointing to it so we return true.
-							if(keyHash==element())
+							if(valueToFind==value())
 								return true;
 							++m_index;
 						}
@@ -366,13 +393,18 @@ namespace root{
 		
 		protected:
 			
+			inline HashType	 hash(const Key& key) const {
+				HashFunc hF;
+				return hF(key);
+			}
+			
 			inline void		 addAt(U32 index, const HashType& hashValue, Value& value){
 				m_data.insert(index, Pair<HashType,Value>(hashValue,value));
 			};
 			
 			bool			 m_addAutomatically;
 			
-			DynamicArray<Pair<HashType,Value> >	 
+			DynamicArray<Pair<HashType,Pair<Key,Value> > >	 
 							 m_data;
 		
 	};

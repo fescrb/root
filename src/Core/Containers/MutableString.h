@@ -28,6 +28,7 @@
 #define _ROOT_MUTABLE_STRING_H
 
 #include "DynamicArray.h"
+#include "StringID.h"
 
 namespace root {
 	
@@ -114,10 +115,10 @@ namespace root {
 			 * the character array). The default is the default
 			 * allocator instance.
 			 */
-			MutableString		*getSubtring(U32 start, 
-											 U32 end, 
-											 Allocator *stringDataAllocator = NULL,
-											 Allocator *instanceAllocator = DefaultAllocator::getStandardAllocator()) const {
+			inline MutableString *getSubtring(U32 start, 
+											  U32 end, 
+											  Allocator *stringDataAllocator = NULL,
+											  Allocator *instanceAllocator = DefaultAllocator::getStandardAllocator()) const {
 				return new (instanceAllocator) MutableString(&getCString()[start],
 															 (end-start)+1,
 															 stringDataAllocator?stringDataAllocator:m_pAllocator);
@@ -132,15 +133,14 @@ namespace root {
 			 * @param replacingString The string it will be replaced by.
 			 */
 			void 				 replaceOcurrences(const MutableString* occurenceString,
-												   const MutableString* replacingString) {
-				iterator it = start();
-				// While there are occurrences of the string in this string.
-				while(it.find(occurenceString->getCString(),occurenceString->getSize())) {
-					// We replace the occurrence.
-					swap(it,it+occurenceString->getSize()-1,replacingString);
-					// We skip the string we just replaced just in case it contains an occurrence.
-					it+=replacingString->getSize();
-				}
+												   const MutableString* replacingString);
+			
+			inline bool 		 isInterned() {
+				return m_hasBeenInterned;
+			}
+			
+			inline bool 		 intern() {
+				
 			}
 			
 			/**
@@ -196,6 +196,11 @@ namespace root {
 			 * to the given one.
 			 */
 			bool 				 operator>=(const MutableString& rightHandSide);
+			
+		private:
+			
+			bool				 m_hasBeenInterned;
+			StringID			 m_internID;
 	}; 
 	
 }//namespace root
