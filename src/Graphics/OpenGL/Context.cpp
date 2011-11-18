@@ -36,8 +36,27 @@ int testAttributes[] = {
 };
 
 class Context::ExtraInfo {
-	GLXContext 			 m_context;
-	Display 			*m_pDisplay;
-	Window				 m_win;
-
+	public:
+		GLXContext 			 m_context;
+		Display 			*m_pDisplay;
+		GLXFBConfig         *m_pFrameBufferConfig;
 };
+
+Context::Context() {
+	m_pExtraInfo = new ExtraInfo;
+	
+    m_pExtraInfo->m_pDisplay = XOpenDisplay(NULL);
+    if (!m_pExtraInfo->m_pDisplay) {
+		// No display opened
+    }
+
+    int numberOfAttributes;
+    m_pExtraInfo->m_pFrameBufferConfig = glXChooseFBConfig(m_pExtraInfo->m_pDisplay, DefaultScreen(m_pExtraInfo->m_pDisplay), testAttributes, &numberOfAttributes);
+                                   
+	if (!m_pExtraInfo->m_pFrameBufferConfig) {  
+      // No such configuration available
+	}
+
+    /* Create a GLX context for OpenGL rendering */
+    m_pExtraInfo->m_context = glXCreateNewContext(m_pExtraInfo->m_pDisplay, m_pExtraInfo->m_pFrameBufferConfig[0], GLX_RGBA_TYPE, NULL, True);                       
+}
