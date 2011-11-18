@@ -1,7 +1,9 @@
-set(modules Core)
+set(modules Core
+			Graphics )
 
 foreach(module ${modules})
 	add_subdirectory(${module})
+	include_directories(${CMAKE_CURRENT_SOURCE_DIR}/${module})
 	foreach(submodule ${submodules})
 		include_directories(${CMAKE_CURRENT_SOURCE_DIR}/${module}/${submodule})
 		message("Adding include directory " ${module}/${submodule} ".")

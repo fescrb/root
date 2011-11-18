@@ -17,11 +17,9 @@
  * along with The Root Engine.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "Path.h"
+#include "Context.h"
 
 using namespace root;
 
 int main(int argc, char** argv) {
-	DynamicArray<U8> *dyn = new DynamicArray<U8>(0);
-	return 0;
 }
