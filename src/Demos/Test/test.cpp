@@ -18,6 +18,7 @@
  */
 
 #include "Context.h"
+#include "Surface.h"
 
 using namespace root;
 
