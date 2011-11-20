@@ -26,8 +26,6 @@ os.chdir('obj')
 cmake_command = 'cmake .. -DROOT_USE_SIMD=1 -DEXTRA_FLAGS="' + extra_flags + '" '
 make_command = 'make ' + verbose
 
-print(cmake_command)
-
 if not os.system(cmake_command):
     os.system(make_command)
 else:
