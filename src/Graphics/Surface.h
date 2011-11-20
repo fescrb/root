@@ -17,22 +17,23 @@
  * along with The Root Engine.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef ROOT_GRAPHICS_CONTEXT_H
-#define ROOT_GRAPHICS_CONTEXT_H
+#ifndef ROOT_GRAPHICS_SURFACE_H
+#define ROOT_GRAPHICS_SURFACE_H
 
 namespace root {
 
 	namespace graphics {
 
-		class Context {
+		class Surface {
 			public:
-				static Context*		 create(/*flags*/ /*mem_alloc*/);
+				static Surface 				*create(/*type*/ /*options*/ /*alloc*/);
 
-				virtual void 		 makeCurrent() = 0;
+				virtual Context				*getContext() = 0;
+				virtual void				 swapBuffers() = 0;
 		};
 
 	}
 
 }
 
-#endif //ROOT_GRAPHICS_CONTEXT_H
+#endif //ROOT_GRAPHICS_SURFACE_H
