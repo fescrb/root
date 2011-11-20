@@ -3,7 +3,7 @@ include(CMakeSources.cmake)
 
 # We add the name of the folder to each source to get the complete names.
 foreach(source ${sources})
-	set(complete_source_names ${complete_source_names} Linux/${source})
+	set(complete_source_names ${complete_source_names} Unix/${source})
 endforeach(source)
 
 # Send the sources to the parent CMakeLists.txt.
