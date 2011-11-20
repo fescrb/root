@@ -17,22 +17,30 @@
  * along with The Root Engine.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef ROOT_GRAPHICS_CONTEXT_H
-#define ROOT_GRAPHICS_CONTEXT_H
+#ifndef ROOT_GRAPHICS_OEPNGL_GLX_CONTEXT_H
+#define ROOT_GRAPHICS_OEPNGL_GLX_CONTEXT_H
+
+#include <GL/gl.h>
+#include <GL/glx.h>
 
 namespace root {
 
 	namespace graphics {
 
-		class Context {
+		class OpenGLGLXContext {
 			public:
-				static Context*		 create(/*flags*/ /*mem_alloc*/);
+				explicit 			 OpenGLGLXContext(/*flags*/ /*mem_alloc*/);
 
 				void 				 makeCurrent();
+
+			private:
+				GLXContext 			 m_context;
+				Display 			*m_pDisplay;
+				GLXFBConfig         *m_pFrameBufferConfig;
 		};
 
 	}
 
 }
 
-#endif //ROOT_GRAPHICS_CONTEXT_H
+#endif //ROOT_GRAPHICS_OEPNGL_GLX_CONTEXT_H

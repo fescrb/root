@@ -1,1 +1,3 @@
-set(sources Context.cpp)
+set(sources GLXContext.cpp)
+
+set(headers GLXContext.h)

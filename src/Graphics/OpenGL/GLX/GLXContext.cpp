@@ -17,10 +17,7 @@
  * along with The Root Engine.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "Context.h"
-
-#include <GL/gl.h>
-#include <GL/glx.h>
+#include "GLXContext.h"
 
 using namespace root;
 using namespace graphics;
@@ -35,28 +32,20 @@ int testAttributes[] = {
     None
 };
 
-class Context::ExtraInfo {
-	public:
-		GLXContext 			 m_context;
-		Display 			*m_pDisplay;
-		GLXFBConfig         *m_pFrameBufferConfig;
-};
 
-Context::Context() {
-	m_pExtraInfo = new ExtraInfo;
-	
-    m_pExtraInfo->m_pDisplay = XOpenDisplay(NULL);
-    if (!m_pExtraInfo->m_pDisplay) {
+OpenGLGLXContext::OpenGLGLXContext() {
+    m_pDisplay = XOpenDisplay(NULL);
+    if (!m_pDisplay) {
 		// No display opened
     }
 
     int numberOfAttributes;
-    m_pExtraInfo->m_pFrameBufferConfig = glXChooseFBConfig(m_pExtraInfo->m_pDisplay, DefaultScreen(m_pExtraInfo->m_pDisplay), testAttributes, &numberOfAttributes);
+    m_pFrameBufferConfig = glXChooseFBConfig(m_pDisplay, DefaultScreen(m_pDisplay), testAttributes, &numberOfAttributes);
                                    
-	if (!m_pExtraInfo->m_pFrameBufferConfig) {  
+	if (!m_pFrameBufferConfig) {
       // No such configuration available
 	}
 
     /* Create a GLX context for OpenGL rendering */
-    m_pExtraInfo->m_context = glXCreateNewContext(m_pExtraInfo->m_pDisplay, m_pExtraInfo->m_pFrameBufferConfig[0], GLX_RGBA_TYPE, NULL, True);                       
+    m_context = glXCreateNewContext(m_pDisplay, m_pFrameBufferConfig[0], GLX_RGBA_TYPE, NULL, True);
 }
