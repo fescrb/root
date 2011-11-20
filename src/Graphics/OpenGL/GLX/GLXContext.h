@@ -34,7 +34,7 @@ namespace root {
 			public:
 				explicit 			 OpenGLGLXContext(/*flags*/ /*mem_alloc*/);
 
-				void 				 makeCurrent();
+				bool 		 		 makeCurrent(Surface *surface);
 
 				GLXContext 			 getGLXContext();
 				Display 			*getDisplay();

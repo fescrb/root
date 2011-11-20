@@ -24,11 +24,16 @@ namespace root {
 
 	namespace graphics {
 
+		class Surface;
+
 		class Context {
 			public:
 				static Context*		 create(/*flags*/ /*mem_alloc*/);
 
-				virtual void 		 makeCurrent() = 0;
+				/**
+				 * @return true iff success.
+				 */
+				virtual bool 		 makeCurrent(Surface *surface) = 0;
 		};
 
 	}

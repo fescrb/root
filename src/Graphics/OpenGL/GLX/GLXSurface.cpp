@@ -19,6 +19,8 @@
 
 #include "GLXSurface.h"
 
+#include <unistd.h>
+
 using namespace root::graphics;
 
 GLXSurface::GLXSurface()
@@ -33,21 +35,40 @@ GLXSurface::GLXSurface(OpenGLGLXContext *context)
 
 void GLXSurface::initialiseGLX() {
 	int visualInfoNum;
-	m_pVisualInfo = glXGetVisualFromFBConfig(m_pContext->getDisplay(), m_pContext->getFrameBufferConfig());
+	Display *display = m_pContext->getDisplay();
+	GLXFBConfig frameBufferConfig = m_pContext->getFrameBufferConfig();
+
+	m_pVisualInfo = glXGetVisualFromFBConfig(display, frameBufferConfig);
 
 	m_xWindowAttributes.border_pixel = 0;
 	m_xWindowAttributes.event_mask = StructureNotifyMask;
-	m_xWindowAttributes.colormap = XCreateColormap(m_pContext->getDisplay(), RootWindow(m_pContext->getDisplay(), m_pVisualInfo->screen), m_pVisualInfo->visual, AllocNone);
+	m_xWindowAttributes.colormap = XCreateColormap(display, RootWindow(display, m_pVisualInfo->screen), m_pVisualInfo->visual, AllocNone);
 
 	int valueMask = CWBorderPixel | CWColormap | CWEventMask;
 
-	m_window = XCreateWindow(m_pContext->getDisplay(), RootWindow(m_pContext->getDisplay(), m_pVisualInfo->screen), 0, 0, 256, 256, 0, m_pVisualInfo->depth, InputOutput, m_pVisualInfo->visual, valueMask, &m_xWindowAttributes);
+	m_window = XCreateWindow(display, RootWindow(display, m_pVisualInfo->screen), 0, 0, 256, 256, 0, m_pVisualInfo->depth, InputOutput, m_pVisualInfo->visual, valueMask, &m_xWindowAttributes);
+
+	m_glxWindow = glXCreateWindow( display, frameBufferConfig, m_window, NULL );
+
+	XMapWindow( display, m_window );
 }
 
 Context* GLXSurface::getContext() {
 	return m_pContext;
 }
 
+Window GLXSurface::getWindow() {
+	return m_window;
+}
+
+void GLXSurface::makeContextCurrent() {
+	m_pContext->makeCurrent(this);
+}
+
 void GLXSurface::swapBuffers() {
 	glXSwapBuffers(m_pContext->getDisplay(), m_window);
+}
+
+Surface* Surface::create() {
+	return new GLXSurface;
 }

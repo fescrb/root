@@ -20,19 +20,25 @@
 #ifndef ROOT_GRAPHICS_GLX_SURFACE_H
 #define ROOT_GRAPHICS_GLX_SURFACE_H
 
+#include "Surface.h"
+
 #include "GLXContext.h"
 
 namespace root {
 
 	namespace graphics {
 
-		class GLXSurface {
+		class GLXSurface
+		: 	public Surface {
 			public:
 				explicit 					 GLXSurface();
 				explicit 					 GLXSurface(OpenGLGLXContext *context);
 
 				virtual Context				*getContext();
+				Window						 getWindow();
+
 				virtual void				 swapBuffers();
+				void						 makeContextCurrent();
 
 			private:
 				void						 initialiseGLX();

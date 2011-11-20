@@ -20,6 +20,8 @@
 #ifndef ROOT_GRAPHICS_SURFACE_H
 #define ROOT_GRAPHICS_SURFACE_H
 
+#include "Context.h"
+
 namespace root {
 
 	namespace graphics {
