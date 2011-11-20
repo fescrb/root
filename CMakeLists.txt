@@ -2,6 +2,8 @@ project(Root)
 
 cmake_minimum_required(VERSION 2.6)
 
+set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} ${EXTRA_FLAGS})
+
 # Look for OGL, mandatory for now.
 find_package(OpenGL REQUIRED)
 set(Graphics_LIBRARIES ${OpenGL_LIBRARIES})
