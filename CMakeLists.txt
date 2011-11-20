@@ -6,7 +6,8 @@ set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} ${EXTRA_FLAGS})
 
 # Look for OGL, mandatory for now.
 find_package(OpenGL REQUIRED)
-set(Graphics_LIBRARIES ${OpenGL_LIBRARIES})
+find_package(X11 REQUIRED)
+set(Graphics_LIBRARIES ${OPENGL_LIBRARIES} ${X11_LIBRARIES})
 message("Using OpenGL as graphics library.")
 
 if(${CMAKE_BUILD_TYPE} MATCHES "Testing")

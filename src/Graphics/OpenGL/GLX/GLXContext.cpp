@@ -76,7 +76,3 @@ bool OpenGLGLXContext::makeCurrent(Surface *surface) {
 	GLXSurface *glxSurface = (GLXSurface*)surface;
 	return  glXMakeCurrent( m_pDisplay, glxSurface->getWindow(), m_context);
 }
-
-Context* Context::create(/*flags*/ /*mem_alloc*/){
-	return new OpenGLGLXContext;
-}

@@ -2,6 +2,7 @@ set(modules Core
 			Graphics )
 
 foreach(module ${modules})
+	set(submodules )
 	add_subdirectory(${module})
 	include_directories(${CMAKE_CURRENT_SOURCE_DIR}/${module})
 	foreach(submodule ${submodules})
@@ -10,7 +11,7 @@ foreach(module ${modules})
 	endforeach(submodule)
 endforeach(module)
 
-set(Root_LIBRARIES ${RootCore_LIBRARY})
+set(Root_LIBRARIES ${RootCore_LIBRARY} ${RootGraphics_LIBRARY})
 
 if(${_ROOT_COMPILE_UNIT_TESTS})
 	message("Adding unit tests....")

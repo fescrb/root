@@ -28,8 +28,6 @@ namespace root {
 
 		class Context {
 			public:
-				static Context*		 create(/*flags*/ /*mem_alloc*/);
-
 				/**
 				 * @return true iff success.
 				 */

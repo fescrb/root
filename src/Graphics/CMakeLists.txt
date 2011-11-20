@@ -18,5 +18,9 @@ endforeach(subforder)
 # We create the library with that dummy file and add the rest of the libraries.
 add_library(RootGraphics ${all_subforder_sources})
 
+message("These are the graphic libraries " ${Graphics_LIBRARIES})
+
+target_link_libraries(RootGraphics ${Graphics_LIBRARIES})
+
 set(RootGraphics_LIBRARY RootGraphics PARENT_SCOPE)
 

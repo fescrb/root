@@ -19,8 +19,6 @@
 
 #include "GLXSurface.h"
 
-#include <unistd.h>
-
 using namespace root::graphics;
 
 GLXSurface::GLXSurface()

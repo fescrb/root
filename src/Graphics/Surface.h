@@ -32,6 +32,7 @@ namespace root {
 
 				virtual Context				*getContext() = 0;
 				virtual void				 swapBuffers() = 0;
+				virtual void				 makeContextCurrent() = 0;
 		};
 
 	}

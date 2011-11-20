@@ -20,7 +20,23 @@
 #include "Context.h"
 #include "Surface.h"
 
+#include <GL/gl.h>
+
+#include <unistd.h>
+
 using namespace root;
 
 int main(int argc, char** argv) {
+	root::graphics::Surface* surface = root::graphics::Surface::create();
+
+	surface->makeContextCurrent();
+
+	glClearColor( 1.0, 1.0, 0.0, 1.0 );
+	glClear( GL_COLOR_BUFFER_BIT );
+
+	surface->swapBuffers();
+
+	sleep( 10 );
+
+	return 0;
 }
