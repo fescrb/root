@@ -17,41 +17,37 @@
  * along with The Root Engine.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef ROOT_GRAPHICS_OEPNGL_GLX_CONTEXT_H
-#define ROOT_GRAPHICS_OEPNGL_GLX_CONTEXT_H
+#ifndef ROOT_GRAPHICS_GLX_SURFACE_H
+#define ROOT_GRAPHICS_GLX_SURFACE_H
 
-#include "Context.h"
-
-#include <GL/gl.h>
-#include <GL/glx.h>
+#include "GLXContext.h"
 
 namespace root {
 
 	namespace graphics {
 
-		class OpenGLGLXContext
-		: public Context {
+		class GLXSurface {
 			public:
-				explicit 			 OpenGLGLXContext(/*flags*/ /*mem_alloc*/);
+				explicit 					 GLXSurface();
+				explicit 					 GLXSurface(OpenGLGLXContext *context);
 
-				void 				 makeCurrent();
-
-				GLXContext 			 getGLXContext();
-				Display 			*getDisplay();
-				GLXFBConfig          getFrameBufferConfig();
-
-				int 				*getRawAttributes();
+				virtual Context				*getContext();
+				virtual void				 swapBuffers();
 
 			private:
-				GLXContext 			 m_context;
-				Display 			*m_pDisplay;
-				GLXFBConfig          m_pFrameBufferConfig;
+				void						 initialiseGLX();
 
-				int 				*m_pRawAttributes;
+				OpenGLGLXContext			*m_pContext;
+
+				Window						 m_window;
+				XSetWindowAttributes		 m_xWindowAttributes;
+				GLXWindow					 m_glxWindow;
+
+				XVisualInfo					*m_pVisualInfo;
 		};
 
 	}
 
 }
 
-#endif //ROOT_GRAPHICS_OEPNGL_GLX_CONTEXT_H
+#endif //ROOT_GRAPHICS_GLX_SURFACE_H

@@ -34,18 +34,38 @@ int testAttributes[] = {
 
 
 OpenGLGLXContext::OpenGLGLXContext() {
+	m_pRawAttributes = testAttributes;
+
     m_pDisplay = XOpenDisplay(NULL);
     if (!m_pDisplay) {
 		// No display opened
     }
 
     int numberOfAttributes;
-    m_pFrameBufferConfig = glXChooseFBConfig(m_pDisplay, DefaultScreen(m_pDisplay), testAttributes, &numberOfAttributes);
+    GLXFBConfig* frameBufferConfigs = glXChooseFBConfig(m_pDisplay, DefaultScreen(m_pDisplay), m_pRawAttributes, &numberOfAttributes);
                                    
-	if (!m_pFrameBufferConfig) {
+	if (!frameBufferConfigs) {
       // No such configuration available
 	}
 
+	m_pFrameBufferConfig = frameBufferConfigs[0];
+
     /* Create a GLX context for OpenGL rendering */
-    m_context = glXCreateNewContext(m_pDisplay, m_pFrameBufferConfig[0], GLX_RGBA_TYPE, NULL, True);
+    m_context = glXCreateNewContext(m_pDisplay, m_pFrameBufferConfig, GLX_RGBA_TYPE, NULL, True);
+}
+
+GLXContext OpenGLGLXContext::getGLXContext() {
+	return m_context;
+}
+
+Display* OpenGLGLXContext::getDisplay() {
+	return m_pDisplay;
+}
+
+GLXFBConfig OpenGLGLXContext::getFrameBufferConfig() {
+	return m_pFrameBufferConfig;
+}
+
+int* OpenGLGLXContext::getRawAttributes() {
+	return m_pRawAttributes;
 }

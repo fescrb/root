@@ -1,3 +1,5 @@
-set(sources GLXContext.cpp)
+set(sources GLXContext.cpp
+			GLXSurface.cpp )
 
-set(headers GLXContext.h)
+set(headers GLXContext.h
+			GLXSurface.h )
