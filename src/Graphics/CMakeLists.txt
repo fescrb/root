@@ -4,9 +4,9 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 set(subforders 	OpenGL # This will later be optional.
 				 )
 
-# For each submodule we add it to the list of include folders, we 
-# add its CMakeLists.txt and finally we add its library to the list 
-# of libraries to add to the Core module.
+# For each subfolder we add it to the list of include folders, we 
+# add its CMakeLists.txt and finally we add its sources to the list 
+# of sources to add to the Graphics module.
 foreach(subforder ${subforders})
 	include_directories(${subforder})
 	add_subdirectory(${subforder})
@@ -15,10 +15,8 @@ foreach(subforder ${subforders})
 	endforeach(source)
 endforeach(subforder)
 
-# We create the library with that dummy file and add the rest of the libraries.
+# We create the library and add the rest of the libraries.
 add_library(RootGraphics ${all_subforder_sources})
-
-message("These are the graphic libraries " ${Graphics_LIBRARIES})
 
 target_link_libraries(RootGraphics ${Graphics_LIBRARIES})
 

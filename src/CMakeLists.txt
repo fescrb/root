@@ -1,5 +1,6 @@
 set(modules Core
-			Graphics )
+			Graphics
+			Asset )
 
 foreach(module ${modules})
 	set(submodules )
@@ -11,7 +12,7 @@ foreach(module ${modules})
 	endforeach(submodule)
 endforeach(module)
 
-set(Root_LIBRARIES ${RootCore_LIBRARY} ${RootGraphics_LIBRARY})
+set(Root_LIBRARIES ${RootCore_LIBRARY} ${RootGraphics_LIBRARY} ${RootAsset_LIBRARY})
 
 if(${_ROOT_COMPILE_UNIT_TESTS})
 	message("Adding unit tests....")

@@ -17,33 +17,26 @@
  * along with The Root Engine.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef ROOT_WAVEFRONT_OBJ_FILE_H
-#define ROOT_WAVEFRONT_OBJ_FILE_H
+#include <WavefrontOBJFile.h>
 
-#include "String.h"
+#include <File.h>
+#include <Mesh.h>
 
-namespace root {
+using namespace root;
+using namespace asset;
 
-	class mesh;
-
-	namespace io {
-		class File;
-	}
-
-	namespace asset {
-
-		class WavefrontOBJFile {
-			public:
-				explicit				 WavefrontOBJFile(String path);
-
-				mesh					*getMathMesh();
-
-			private:
-				io::File				*m_pFile;
-		};
-
-	}
-
+WavefrontOBJFile::WavefrontOBJFile(String path)
+:	m_pFile(new io::File(path)){
 }
 
-#endif //ROOT_WAVEFRONT_OBJ_FILE_H
+mesh* WavefrontOBJFile::getMathMesh() {
+	mesh *objMesh = new mesh();
+
+	// Parse file
+	// For all vertices
+	// objMesh.addVertex(vertex);
+	// For all faces
+	// objMesh.addTriangle(triangle);
+
+	return objMesh;
+}
