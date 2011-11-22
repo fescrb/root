@@ -54,11 +54,13 @@ namespace root {
 			return 0 < mmap( memoryAddress, bytesToMap, protectFlags, MAP_FIXED | MAP_SHARED, fileDescriptor, offsetFromStart);
 		}
 
-		inline I32 readFile( ) {
-
+		inline I32 readFile(I32 fileDescriptor, void* memoryAddress, I32 sizeOfBuffer, U64 offsetFromStart) {
+			return pread(fileDescriptor, memoryAddress, sizeOfBuffer, offsetFromStart);
 		}
 
-
+		inline I32 writeFile(I32 fileDescriptor, void* memoryAddress, I32 sizeOfBuffer, U64 offsetFromStart) {
+			return pwrite(fileDescriptor, memoryAddress, sizeOfBuffer, offsetFromStart);
+		}
 	}
 
 }

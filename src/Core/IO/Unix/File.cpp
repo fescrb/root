@@ -19,64 +19,10 @@
 
 #include "File.h"
 
-#include <unistd.h> // close, etc.
-#include <fcntl.h> // open, etc.
-#include <sys/mman.h> // mmap, etc.
+#include "FileUtils.h"
 
 using namespace root;
 using namespace root::io;
-
-/* ******************************************************************************
- * To allow compilation (and make our lives easier) we provide a layer over the *
- * system's io API. This is needed since we use functions with the same names.  *
- ********************************************************************************/
-
-typedef struct LinuxFileData {
-	I32			fileDescriptor;
-};
-
-I32	translateFlagsToFileStatusFlags( File::FileModeFlags flags ) {
-	I32 statusFlags = 0;
-	if( flags & File::Read && flags & File::Write )
-		statusFlags |= O_RDWR;
-	else if( flags & File::Write )
-		statusFlags |= O_WRONLY;
-	else if( flags & File::Read )
-		statusFlags |= O_RDONLY;
-	if( flags & File::Create )
-		statusFlags |= O_CREAT;
-	return statusFlags;
-}
-
-I32	translateFlagsToProtectFlags( File::FileModeFlags flags ) {
-	I32 protectFlags = 0;
-	if( flags & File::Write )
-		protectFlags |= PROT_WRITE;
-	if( flags & File::Read )
-		protectFlags |= PROT_READ;
-	return protectFlags;
-}
-
-inline I32 openFileC( const Path& path, File::FileModeFlags flags ) {
-	return open( ((String)path).getCString(), translateFlagsToFileStatusFlags(flags) );
-}
-
-inline I32 closeFileC( I32 fileDescriptor ) {
-	return close(fileDescriptor);
-}
-
-inline bool memoryMapC( I32 fileDescriptor, void* memoryAddress, U64 offsetFromStart, U64 bytesToMap, File::FileModeFlags mappingFlags) {
-	I32 protectFlags = translateFlagsToProtectFlags(mappingFlags);
-	return 0 < mmap( memoryAddress, bytesToMap, protectFlags, MAP_FIXED | MAP_SHARED, fileDescriptor, offsetFromStart);
-}
-
-inline I32 readFileC( ) {
-	
-}
-
-inline I32 getFileHandle(void* fileData) {
-	return ((LinuxFileData*)fileData)->fileDescriptor;
-}
 
 File::File() 
 :	m_fileSize(-1),
@@ -94,26 +40,27 @@ File::~File() {
 	close();
 }
 
-File::File(const Path& path) {
+/*File::File(const Path& path) {
 	setFile(path);
-}
+}*/
 
 bool File::setFile(const String& path) {
-	setFile(Path(path));
+	if(!isOpen())
+		m_filePath = path;
+	return !isOpen();
 }
 
-bool File::setFile(const Path& path) {
+/*bool File::setFile(const Path& path) {
 	m_filePath.copy(&path);
-}
+}*/
 
 bool File::exists() {
 	if(!isOpen()) {
 		bool canOpen = open(Read);
 		close();
 		return canOpen;
-	} else {
-		//return m_fileHandle > 0;
 	}
+	return true;
 }
 
 String File::getFileName() {
@@ -121,14 +68,14 @@ String File::getFileName() {
 }
 
 bool File::open(FileModeFlags fileFlags) {
-	//m_fileHandle = openFileC(m_filePath,fileFlags);
+	m_fileHandle = openFile(m_filePath,fileFlags);
 	
-	//return m_fileHandle > 0;
+	return m_fileHandle > 0;
 }
 
 bool File::close() {
 	if (isOpen()) {
-		//return 0 == closeFileC(m_fileHandle);
+		return 0 == closeFile(m_fileHandle);
 	}
 	// Nothing to close.
 	return false;
@@ -164,7 +111,7 @@ bool File::mapToMemoryAddress(void* memoryAddress, U64 offsetFromStart,  U64 byt
 		if(!unmapFromMemory())
 			return false;
 		
-	//m_isMemoryMapped = memoryMapC( getFileHandle() ,memoryAddress, offsetFromStart, bytesToMap, mappingFlags);
+	m_isMemoryMapped = memoryMap( m_fileHandle ,memoryAddress, offsetFromStart, bytesToMap, mappingFlags);
 	
 	return isMemoryMapped();
 }
@@ -176,19 +123,29 @@ bool File::unmapFromMemory() {
 }
 
 bool File::resize(U64 newSize) {
-	
+	// TODO
 }
 
 bool File::seek(I64 offsetFromStart) {
-	
+	// TODO
 }
 
 U64 File::read(I8* dataArray, U64 maxRead) {
-	
+	I64 amountRead = readFile( m_fileHandle, (void*)dataArray, maxRead, m_seekPos);
+	m_seekPos+=amountRead;
+	return amountRead;
 }
 
 U64	File::readLine(I8* dataArray, U64 maxRead) {
-	
+	bool foundLine = false;
+	while(!foundLine) {
+		I64 amountRead = readFile( m_fileHandle, (void*)dataArray, maxRead, m_seekPos);
+		if(amountRead!=0){
+
+		} else {
+
+		}
+	}
 }
 
 DynamicArray<I8>* File::readAll(Allocator *allocator) {

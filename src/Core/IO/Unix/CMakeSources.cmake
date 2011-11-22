@@ -1,2 +1,5 @@
 set( sources 	File.cpp
-		Path.cpp )
+				FileUtils.cpp
+				Path.cpp )
+				
+set( headers 	FileUtils.h )

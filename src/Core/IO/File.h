@@ -22,8 +22,6 @@
 
 #include "Path.h"
 
-//#include "FileHandle.h"
-
 namespace root{
 	
 	namespace io{
@@ -32,7 +30,8 @@ namespace root{
 			public:
 									 File();
 				explicit			 File(const String& path);
-				explicit 			 File(const Path& path);
+				// No need to implement Path ATM
+				//explicit 			 File(const Path& path);
 				
 									~File();
 			
@@ -46,7 +45,7 @@ namespace root{
 				 * Filepath setters/getters *
 				 ****************************/
 				bool				 setFile(const String& path);
-				bool				 setFile(const Path& path);
+				//bool				 setFile(const Path& path);
 				bool 				 exists();
 				String 				 getFileName();
 				
@@ -96,15 +95,18 @@ namespace root{
 				U64					 write(I8* dataArray, U64 arraySize);
 				
 			private:
-				Path				 m_filePath;
+				void				 updateStats();
+
+				String				 m_filePath;
 				
+				//! @TODO TODO make this have platform-dependent implementations.
+				I32					 m_fileHandle;
+
 				I64 				 m_fileSize;
 				I64 				 m_seekPos;
 				
 				bool 				 m_isOpen;
 				bool				 m_isMemoryMapped;
-				
-				//FileHandle			 m_platformDependentFileData;
 		};
 	}//namespace io
 }//namespace root
