@@ -27,3 +27,17 @@ mesh::mesh() {
 
 mesh::~mesh() {
 }
+
+void mesh::addVertex(float4 vertex) {
+	m_aVertices.pushBack(vertex);
+}
+void mesh::addTriangle(int3 triangle) {
+	m_aTriangles.pushBack(triangle);
+}
+
+float4 mesh::getVertex(U32 index) {
+	return m_aVertices[index];
+}
+void mesh::getTriangle(U32 index) {
+
+}

@@ -17,33 +17,21 @@
  * along with The Root Engine.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _ROOT_MESH_H_
-#define _ROOT_MESH_H_
-
-#include <Float4.h>
-#include <Int3.h>
-
-#include <DynamicArray.h>
+#ifndef ROOT_AXIS_ALIGNED_BOUNDING_BOX_H
+#define ROOT_AXIS_ALIGNED_BOUNDING_BOX_H
 
 namespace root {
 
-	struct mesh {
+	struct aaboundingbox {
 		public:
-			explicit 		 	 mesh();
-			virtual 			~mesh();
+			explicit 			 aaboundingbox();
 
-			void				 addVertex(float4 vertex);
-			void				 addTriangle(int3 triangle);
-
-			float4				 getVertex(U32 index);
-			void				 getTriangle(U32 index);
-
+			mesh				*cull(mesh *meshToCull);
 
 		private:
-			DynamicArray<float4> m_aVertices;
-			DynamicArray<int3> 	 m_aTriangles;
+			float4				 m_cornerAndSize;
 	};
 
 }
 
-#endif // _ROOT_MESH_H_
+#endif //ROOT_AXIS_ALIGNED_BOUNDING_BOX_H
