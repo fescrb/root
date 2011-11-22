@@ -14,6 +14,8 @@ set( headers 	Math.h
 				Double2.h
 				Double3.h
 				Double4.h
+				Int3.h
+				Long3.h
 				Matrix.h
 				Float4x4.h
 				Sphere.h

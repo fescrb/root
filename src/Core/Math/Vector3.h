@@ -67,6 +67,19 @@ namespace root{
 				return m_x==rhs.m_x && m_y==rhs.m_y && m_z==rhs.m_z;
 			}
 
+			inline t	     operator[](const I32 &index)const{
+				switch(index){
+					case 0:
+						return m_x;
+					case 1:
+						return m_y;
+					case 2:
+						return m_z;
+					default:
+						return 0;
+				}
+			}
+
 			inline vector3	 replicateX() const{
 				return vector3(m_x);
 			}

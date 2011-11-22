@@ -17,33 +17,16 @@
  * along with The Root Engine.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _ROOT_MESH_H_
-#define _ROOT_MESH_H_
+#ifndef ROOT_LONG_3_H
+#define ROOT_LONG_3_H
 
-#include <Float4.h>
-#include <Int3.h>
+#include <BasicTypes.h>
+#include <Vector3.h>
 
-#include <DynamicArray.h>
+namespace root{
 
-namespace root {
+	typedef vector3<I64> long3;
 
-	struct mesh {
-		public:
-			explicit 		 	 mesh();
-			virtual 			~mesh();
+}//namespace root
 
-			void				 addVertex(float4 vertex);
-			void				 addTriangle(int3 triangle);
-
-			void				 getVertex(U32 index);
-			void				 getTriangle(U32 index);
-
-
-		private:
-			DynamicArray<float4> m_aVertices;
-			DynamicArray<int3> 	 m_aTriangles;
-	};
-
-}
-
-#endif // _ROOT_MESH_H_
+#endif //ROOT_LONG_3_H
