@@ -1,5 +1,4 @@
 set( sources 	Hash.cpp
-				Float3.cpp
 				Sphere.cpp
 				Plane.cpp
 				Frustum.cpp
@@ -8,6 +7,7 @@ set( sources 	Hash.cpp
 set( headers 	Math.h
 				Hash.h
 				Vector.h
+				Vector3.h
 				Float2.h
 				Float3.h
 				Float4.h
