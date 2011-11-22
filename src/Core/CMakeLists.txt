@@ -1,8 +1,9 @@
 # Create a variable with all submodules in order of compilation.
 set(submodules 	Base
 				Memory
-				Math
 				Containers
+				Math
+				String
 				IO
 				 )
 
