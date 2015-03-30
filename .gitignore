@@ -2,6 +2,7 @@
 doc/*
 dump/*
 obj/*
+build/*
 demos/*
 *~
 /.pydevproject
