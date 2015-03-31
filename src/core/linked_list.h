@@ -24,16 +24,115 @@
  * < A more in depth description >
  */
 
-#ifndef ROOT_LINKED_LIST_H_ //TODO: Fill define guard
+#ifndef ROOT_LINKED_LIST_H_ 
 #define ROOT_LINKED_LIST_H_
+
+#include "root/core/allocator.h"
+#include "root/core/assert.h"
 
 namespace root
 {
-    template <class t>
+    template <class data_type>
     class linked_list
     {
-        
+        public:
+            
+            inline                       linked_list(allocator *alloc = allocator::get_default_allocator())
+            {
+                m_p_head = NULL;
+                m_p_tail = NULL;
+                m_p_allocator = alloc;
+            }
+             
+            class node 
+            {
+                public:
+                    inline               node(const data_type &data)
+                    {
+                        m_data = data;
+                        m_p_next = NULL;
+                    }
+                                         
+                    data_type            m_data;
+                    node                *m_p_next;
+            };
+                         
+            class iterator
+            {
+                public:
+                                         iterator(const iterator &copy_iterator)
+                    {
+                        m_current_node = copy_iterator.m_current_node;
+                    }
+                    
+                    inline iterator&     operator++()
+                    {
+                        if(m_current_node)
+                            m_current_node = m_current_node->m_p_next;
+                        return *this;
+                    }
+                    
+                    inline iterator      operator++(int)
+                    {
+                        iterator temp = *this;
+                        this->operator++();
+                        return temp;
+                    }
+                    
+                    inline data_type&    operator*() const
+                    {
+                        ROOT_ASSERT(m_current_node != NULL;)
+                        return m_current_node->m_data;
+                    }
+                    
+                    inline iterator&     operator=(const iterator &rhs)
+                    {
+                        if(this != &rhs)
+                        {
+                            this->m_current_node = rhs.m_current_node;
+                        }
+                        return *this;
+                    }
+                    
+                    inline bool          operator==(const iterator &rhs) const
+                    {
+                        return m_current_node == rhs.m_current_node;
+                    }
+                    
+                    inline bool          operator!=(const iterator &rhs) const
+                    {
+                        return !this->operator==(rhs);
+                    }
+                    
+                    friend class linked_list;
+                private:
+                    inline               iterator(node *starting_node);
+                    
+                    node                *m_current_node;
+            };
+            
+            inline iterator      begin()
+            {
+                return iterator(m_p_head);
+            }
+            
+            inline iterator      end()
+            {
+                return iterator(NULL);
+            }
+            
+            inline void          push_back(data_type &data)
+            {
+                m_p_tail->m_p_next = m_p_allocator->malloc(sizeof(node));
+                m_p_tail = m_p_tail->m_p_next;
+            }
+        private:
+            
+            node                *m_p_head;
+            // Makes insertion easier easier
+            node                *m_p_tail;
+            allocator           *m_p_allocator;
     };
-}
+} //namespace root
 
 #endif //ROOT_LINKED_LIST_H_

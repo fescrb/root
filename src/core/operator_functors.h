@@ -18,34 +18,32 @@
  */
 
 /** TODO: Fill file documentation
- * @file <file_name> 
+ * @file operator_functors.h
  * @brief < A brief description of the file's contents >
  * 
  * < A more in depth description >
  */
 
-#ifndef ROOT_STRING_H_ 
-#define ROOT_STRING_H_
+#ifndef ROOT_OPERATOR_FUNCTORS_H_ 
+#define ROOT_OPERATOR_FUNCTORS_H_
 
-#include "root/code/basic_types.h"
-#include "root/code/static_array.h"
-
-#include <cstring>
-
-namespace root 
+namespace root
 {
-    // TODO docu
-    class string : public static_array<I8>
-    {
-        public:
-            explicit inline          string(const char * const &c_str) :
-                static_array<I8>(c_str, strlen(c_str)){}
-                
-            inline                   string(const string &copy_string) :
-                static_array<I8>(copy_string) {}
-                
-            inline HASHTYPE          hash() const;
+    template <class data_type>
+    struct equals {
+        inline bool      operator()(const data_type& lhs,
+                                    const data_type& rhs) const{
+            return lhs == rhs;               
+        }
     };
-} //namespace root
+    
+    template <class data_type>
+    struct less {
+        inline bool      operator()(const data_type& lhs,
+                                    const data_type& rhs) const{
+            return lhs < rhs;               
+        }
+    };
+}
 
-#endif //ROOT_STRING_H_
+#endif //ROOT_OPERATOR_FUNCTORS_H_
