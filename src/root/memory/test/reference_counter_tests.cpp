@@ -23,7 +23,7 @@
 
 #include <thread>
 
-class reference_counter : public ::testing::Test {
+class reference_counter_tests : public ::testing::Test {
 protected:
     virtual void SetUp() override {
         counter = new root::reference_counter();
@@ -36,23 +36,23 @@ protected:
     root::reference_counter *counter = nullptr;  
 };
 
-TEST_F(reference_counter, correct_initialization) {
+TEST_F(reference_counter_tests, correct_initialization) {
     EXPECT_EQ(counter->strong_refs(), 1);
     EXPECT_EQ(counter->weak_refs(), 0);
 }
 
-TEST_F(reference_counter, abandoning) {
+TEST_F(reference_counter_tests, abandoning) {
     EXPECT_TRUE(counter->decrement_strong());
     EXPECT_TRUE(counter->abandoned());
 }
 
-TEST_F(reference_counter, no_increments_after_abandonement) {
+TEST_F(reference_counter_tests, no_increments_after_abandonement) {
     EXPECT_TRUE(counter->decrement_strong());
     EXPECT_FALSE(counter->try_increment_strong());
     EXPECT_FALSE(counter->try_increment_weak());
 }
 
-TEST_F(reference_counter, no_lost_changes) {
+TEST_F(reference_counter_tests, no_lost_changes) {
     constexpr int NUM_THREADS = 100;
     std::thread threads[NUM_THREADS];
     counter->try_increment_weak(); // So that we can check all decrement weak calls to be false

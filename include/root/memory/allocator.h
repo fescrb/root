@@ -21,6 +21,8 @@
 
 #include <cstdlib>
 
+#include <iostream>
+
 namespace root {
 
 class allocator {
@@ -28,7 +30,7 @@ public:
     template<typename C, typename... Args>
     inline auto make(Args... args) -> C* {
         C* ptr = static_cast<C*>(malloc(sizeof(C)));
-        *ptr = C(args...);
+        new (ptr) C(args...);
         return ptr;
     }
 

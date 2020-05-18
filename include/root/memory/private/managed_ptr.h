@@ -21,6 +21,8 @@
 
 #include <root/memory/private/reference_counter.h>
 
+#include <iostream>
+
 namespace root {
 template<typename C>
 class managed_ptr {

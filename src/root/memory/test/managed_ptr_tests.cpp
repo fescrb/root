@@ -22,11 +22,7 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
-class mock_allocator : public root::allocator {
-public:
-    MOCK_METHOD(void*, malloc, (const size_t&));
-    MOCK_METHOD(void, free, (void*, const size_t&));
-};
+#include "mock_allocator.h"
 
 class managed_ptr_tests : public ::testing::Test {
 public:
@@ -48,10 +44,11 @@ public:
     void SetUp() override {
         counter = new root::reference_counter;
         data = new int;
-        ptr = stub_ptr<int>(data, counter, allocator);
+        ptr = new stub_ptr<int>(data, counter, allocator);
     }
 
     void TearDown() override {
+        delete ptr;
         delete counter;
         delete data;
     }
@@ -59,9 +56,16 @@ public:
     root::reference_counter* counter;
     mock_allocator allocator;
     int* data;
-    stub_ptr<int> ptr;
+    stub_ptr<int> *ptr;
 };
 
 TEST_F(managed_ptr_tests, counter_does_not_change) {
-    
+    EXPECT_EQ(counter->strong_refs(), 1);
+    EXPECT_EQ(counter->weak_refs(), 0);
+}
+
+TEST_F(managed_ptr_tests, delete_abandoned_counter) {
+    counter->decrement_strong();
+    EXPECT_TRUE(counter->abandoned()); // Ensure it is abandoned
+    EXPECT_CALL(allocator, free(counter, sizeof(root::reference_counter))).Times(1);
 }
