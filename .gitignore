@@ -11,3 +11,7 @@ demos/*
 include/gtest/*
 include/gmock/*
 lib/*
+Makefile
+*.mk
+*.Makefile
+*/out/*

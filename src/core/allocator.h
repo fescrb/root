@@ -27,13 +27,6 @@
 
 #include "root/core/basic_types.h"
 
-// TODO
-#define ROOT_NEW(__allocator__, __constructor__) \
-    something? 
-    
-#define ROOT_DELETE(__object__,__class__) \
-    __object__->~__class__()
-
 namespace root {
 
     /**
