@@ -8,3 +8,6 @@ demos/*
 /.pydevproject
 /.project
 /.cproject
+include/gtest/*
+include/gmock/*
+lib/*
