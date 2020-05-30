@@ -19,57 +19,117 @@
 
 #pragma once
 
-#include <root/memory/private/reference_counter.h>
+#include <root/memory/private/managed_ptr.h>
 #include <root/memory/allocator.h>
 
 namespace root {
 
+template<typename C> class weak_ptr;
+
 template<typename C>
-class strong_ptr final : public managed_ptr<C> {
+class strong_ptr final {
 public:
     template<typename... Args>
-    static strong_ptr<C> make(Args... args, allocator& alloc) {
-        C* memory = alloc<C>.make(args);
-        reference_counter* ref_counter = alloc<reference_counter>.make();
+    static strong_ptr<C> make(allocator* alloc, Args... args) {
+        C* memory = alloc->make<C>(args...);
+        reference_counter* ref_counter = alloc->make<reference_counter>();
         strong_ptr<C> ptr = strong_ptr<C>(memory, ref_counter, alloc);
-        ref_counter->decrement_strong();
+        return ptr;
     }
 
     strong_ptr(const strong_ptr& other)
-    :   strong_ptr(other.m_memory, other.m_ref_counter, other.m_allocator){}
+    :   m_ptr(other.m_ptr){
+        lock();
+    }
 
-    virtual ~strong_ptr() {
-        if(m_ref_count && m_ref_count->decrement_strong()) {
-            m_allocator.del<C>(m_memory);
-        }
+    strong_ptr(strong_ptr&& other) {
+        m_ptr.m_memory = std::move(other.m_ptr.m_memory);
+        m_ptr.m_ref_count = std::move(other.m_ptr.m_ref_count);
+        m_ptr.m_allocator = std::move(other.m_ptr.m_allocator);
+    };
+
+    strong_ptr() {}
+
+    auto operator=(const strong_ptr<C>& other) -> strong_ptr<C>& {
+        if(this != &other) {
+            unlock();
+            m_ptr.m_memory = other.m_ptr.m_memory;
+            m_ptr.m_ref_count = other.m_ptr.m_ref_count;
+            m_ptr.m_allocator = other.m_ptr.m_allocator;
+            lock();
+        } 
+        return *this;
+    }
+
+    auto operator=(strong_ptr<C>&& other) -> strong_ptr<C>& {
+        unlock();
+        m_ptr.m_memory = std::move(other.m_ptr.m_memory);
+        m_ptr.m_ref_count = std::move(other.m_ptr.m_ref_count);
+        m_ptr.m_allocator = std::move(other.m_ptr.m_allocator);
+        lock();
+        return *this;
+    }
+
+    ~strong_ptr() {
+        unlock();
     }
 
     inline auto operator*() const -> C& {
-        return *m_memory;
+        return *m_ptr.m_memory;
     }
 
     inline auto operator->() const -> C* {
-        return m_memory;
+        return m_ptr.m_memory;
     }
 
     inline auto valid() const -> bool {
-        return m_memory != nullptr;
+        return m_ptr.m_memory != nullptr;
     }
 
     inline operator bool() const {
         return valid();
     }
 
-private:
-    strong_ptr(C* memory, reference_counter* counter, allocator& alloc)
-    :   managed_ptr(memory, counter, alloc) {
-        if(!m_ref_count || !m_ref_count->try_increment_strong()) {
-            m_memory = nullptr;
-            m_ref_count = nullptr;
-        }
-
+    inline auto clear() -> void {
+        unlock();
+        m_ptr.m_memory = nullptr;
+        m_ptr.m_ref_count = nullptr;   
     }
 
+private:
+    strong_ptr(C* memory, reference_counter* counter, allocator* alloc)
+    :   m_ptr(memory, counter, alloc) {
+    }
+
+    auto lock() -> void ;
+    inline auto unlock() -> void;
+
+    static auto check_ref_count_for_deletion(managed_ptr<C>& man_ptr) -> void;
+
+    managed_ptr<C> m_ptr;
     friend class weak_ptr<C>;
 };
+
+template <typename C>
+inline auto strong_ptr<C>::check_ref_count_for_deletion(managed_ptr<C>& man_ptr) -> void {
+    if(man_ptr.m_ref_count && man_ptr.m_allocator && man_ptr.m_ref_count->abandoned()) {
+        man_ptr.m_allocator->template del<reference_counter>(man_ptr.m_ref_count);
+    }
+}
+
+template <typename C>
+inline auto strong_ptr<C>::unlock() -> void {
+    if(m_ptr.m_ref_count && m_ptr.m_allocator && m_ptr.m_ref_count->decrement_strong()) {
+        m_ptr.m_allocator->template del<C>(m_ptr.m_memory);
+        check_ref_count_for_deletion(m_ptr);
+    }
+}
+
+template <typename C>
+inline auto strong_ptr<C>::lock() -> void {
+    if(!m_ptr.m_ref_count || !m_ptr.m_ref_count->try_increment_strong()) {
+        m_ptr.m_memory = nullptr;
+        m_ptr.m_ref_count = nullptr;
+    }
+}
 } // namespace root

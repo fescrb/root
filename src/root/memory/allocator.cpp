@@ -22,6 +22,6 @@
 
 namespace root {
 
-allocator& allocator::m_default_allocator = system_allocator::universal_instance;
+allocator* allocator::m_default_allocator = &system_allocator::universal_instance;
 
 } // namespace root

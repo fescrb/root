@@ -25,31 +25,38 @@
 
 namespace root {
 template<typename C>
-class managed_ptr {
-public:
+struct managed_ptr final {
+    C                   *m_memory{nullptr};
+    reference_counter   *m_ref_count{nullptr};
+    allocator           *m_allocator{allocator::default_allocator()};
+
+    /*
+     * Assigning this struct is probably unintentional. 
+     * Do it manually with the appropriate weak/strong increments.
+     */ 
     auto operator=(const managed_ptr& other) -> managed_ptr& = delete;
     auto operator=(managed_ptr&& other) -> managed_ptr& = delete;
-    
-protected:
-    virtual ~managed_ptr() {
-        if(m_ref_count && m_ref_count->abandoned()) {
-            m_allocator.del<reference_counter>(m_ref_count);
-        }
-    }
 
-    managed_ptr(const managed_ptr& other)
-    :   managed_ptr(other.m_memory, other.m_ref_count, other.m_allocator) {}
-
-    managed_ptr(managed_ptr&& other) 
-    :   managed_ptr(other.m_memory, other.m_ref_count, other.m_allocator) {}
-
-    managed_ptr(C* memory, reference_counter* ref_counter, allocator& alloc)
-    :   m_memory(memory),
-        m_ref_count(ref_counter),
-        m_allocator(alloc) {}
-
-    C                   *m_memory;
-    reference_counter   *m_ref_count;
-    allocator           &m_allocator;
+    managed_ptr(C* memory, reference_counter* ref_counter, allocator* alloc);
+    managed_ptr(const managed_ptr& other);
+    managed_ptr(managed_ptr&& other);
+    managed_ptr() {}
 };
+
+template <typename C> 
+inline managed_ptr<C>::managed_ptr(C* memory, reference_counter* ref_counter, allocator* alloc) 
+:   m_memory(memory),
+    m_ref_count(ref_counter),
+    m_allocator(alloc) {}
+
+template <typename C>
+inline managed_ptr<C>::managed_ptr(const managed_ptr& other)
+:   managed_ptr(other.m_memory, other.m_ref_count, other.m_allocator) {}
+
+template <typename C>
+inline managed_ptr<C>::managed_ptr(managed_ptr&& other)
+:   m_memory(std::move(other.m_memory)), 
+    m_ref_count(std::move(other.m_ref_count)), 
+    m_allocator(std::move(other.m_allocator)) {}
+
 } // namespace root

@@ -24,56 +24,96 @@
 namespace root {
 
 template<typename C>
-class weak_ptr final : managed_ptr<C> {
+class weak_ptr final {
 public:
     explicit weak_ptr(const strong_ptr<C>& ptr) 
-    :   weak_ptr(ptr.m_memory, ptr.m_ref_count, ptr.m_allocator) {}
+    :   weak_ptr(ptr.m_ptr.m_memory, ptr.m_ptr.m_ref_count, ptr.m_ptr.m_allocator) {}
 
     explicit weak_ptr(const weak_ptr<C>& other) 
-    :   weak_ptr(other.m_memory, other.m_ref_count, other.m_allocator) {}
+    :   weak_ptr(other.m_ptr.m_memory, other.m_ptr.m_ref_count, other.m_ptr.m_allocator) {}
 
-    inline auto promote() const -> strong_ptr<C> {
-        strong_ptr<C> ptr(m_memory, m_ref_count, m_allocator);
-        if(!ptr) {
-            abandon();
-        }
-        return ptr;
+    explicit weak_ptr(weak_ptr<C>&& other) {
+        m_ptr.m_memory = std::move(other.m_ptr.m_memory);
+        m_ptr.m_ref_count = std::move(other.m_ptr.m_ref_count);
+        m_ptr.m_allocator = std::move(other.m_ptr.m_allocator);
     }
 
+    
+    auto operator=(const weak_ptr<C>& other) -> weak_ptr<C>& {
+        if(this != &other) {
+            unlock();
+            m_ptr.m_memory = other.m_ptr.m_memory;
+            m_ptr.m_ref_count = other.m_ptr.m_ref_count;
+            m_ptr.m_allocator = other.m_ptr.m_allocator;
+            lock();
+        } 
+        return *this;
+    }
+
+    auto operator=(weak_ptr<C>&& other) -> weak_ptr<C>& {
+        unlock();
+        m_ptr.m_memory = std::move(other.m_ptr.m_memory);
+        m_ptr.m_ref_count = std::move(other.m_ptr.m_ref_count);
+        m_ptr.m_allocator = std::move(other.m_ptr.m_allocator);
+        lock();
+        return *this;
+    }
+
+    inline auto promote() -> strong_ptr<C>;
+
     inline auto valid() const -> bool {
-        return m_memory != nullptr;
+        return m_ptr.m_memory != nullptr;
     }
 
     inline operator bool() const {
         return valid();
     }
 
-    virtual ~weak_ptr() {
-        if(m_ref_count) {
-            m_ref_count->decrement_weak();
-        }
+    inline auto clear() -> void;
+
+    inline ~weak_ptr() {
+        unlock();
     }
 
 private:
-    auto abandon() -> void {
-        if(m_ref_count) {
-            if(m_ref_count->decrement_weak()) {
-                if(m_ref_count->abandoned()) {
-                    m_allocator->del<reference_counter>(m_ref_count);
-                    m_ref_count = nullptr;
-                    m_memory = nullptr;
-                }
-            }
-        }
+    auto unlock() -> void;
+    auto lock() -> void;
+
+    weak_ptr(C* memory, reference_counter* ref_count, allocator* alloc) 
+    :   m_ptr(memory, ref_count, alloc) {
+        lock();
     }
 
-    explicit weak_ptr(C* memory, reference_counter* ref_count, allocator& alloc) 
-    :   managed_ptr(memory, ref_count, alloc) {
-        if(!ref_count || !ref_count->try_increment_weak()) {
-            m_memory = nullptr;
-            m_ref_count = nullptr;
-        }
-    }
-
+    managed_ptr<C> m_ptr;
 };
+
+template <typename C>
+inline auto weak_ptr<C>::unlock() -> void {  
+    if(m_ptr.m_ref_count && m_ptr.m_ref_count->decrement_weak()) {
+        strong_ptr<C>::check_ref_count_for_deletion(m_ptr);
+    }
+}
+
+template<typename C>
+inline auto weak_ptr<C>::lock() -> void {
+    if(!m_ptr.m_ref_count || !m_ptr.m_ref_count->try_increment_weak()) {
+        m_ptr.m_memory = nullptr;
+        m_ptr.m_ref_count = nullptr;
+    }
+}
+
+template<typename C>
+inline auto weak_ptr<C>::clear() -> void {
+    unlock();
+    m_ptr.m_memory = nullptr;
+    m_ptr.m_ref_count = nullptr;
+}
+
+template<typename C>
+inline auto weak_ptr<C>::promote() -> strong_ptr<C> {
+    strong_ptr<C> ptr(m_ptr.m_memory, m_ptr.m_ref_count, m_ptr.m_allocator);
+    ptr.lock(); // Increment strong
+    if(!ptr) clear();
+    return ptr;
+}
 } // namespace root

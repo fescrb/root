@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015  Fernando Escribano Macias
+ * Copyright (C) 2020  Fernando Escribano Macias 
  *
  * This file is part of the Root Engine.
  * 
@@ -17,16 +17,28 @@
  * along with The Root Engine.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * @file debug_utils.h
- * @brief Provides a multitude of utility functions for debugging purposes.
- * 
- * TODO this bit
- */
+#pragma once
 
-#ifndef ROOT_DEBUG_UTILS_H_
-#define ROOT_DEBUG_UTILS_H_
+namespace root {
 
-void debug_break();
+using i64 = long long int;
 
-#endif //ROOT_DEBUG_UTILS_H_
+using i32 = int;
+
+using i16 = short;
+
+using i8 = char;
+
+using u64 = unsigned long long int;
+
+using u32 = unsigned int;
+
+using u16 = unsigned short;
+
+using u8 = unsigned char;
+
+using f64 = double;
+
+using f32 = float;
+
+} // namespace root

@@ -26,25 +26,10 @@
 
 class managed_ptr_tests : public ::testing::Test {
 public:
-    template<typename C>
-    class stub_ptr : public root::managed_ptr<C> {
-    public:
-        stub_ptr() : root::managed_ptr<C>(nullptr, nullptr, root::allocator::default_allocator()) {}
-        stub_ptr(C* memory, root::reference_counter* counter, root::allocator& alloc) 
-        :   root::managed_ptr<C>(memory, counter, alloc) {}   
-
-        auto operator=(const stub_ptr<C>& other) -> stub_ptr<C>& {
-            this->m_memory = other.m_memory;
-            this->m_ref_count = other.m_ref_count;
-            this->m_allocator = other.m_allocator;
-            return *this;
-        }
-    };
-
     void SetUp() override {
         counter = new root::reference_counter;
         data = new int;
-        ptr = new stub_ptr<int>(data, counter, allocator);
+        ptr = new root::managed_ptr<int>(data, counter, &allocator);
     }
 
     void TearDown() override {
@@ -56,16 +41,10 @@ public:
     root::reference_counter* counter;
     mock_allocator allocator;
     int* data;
-    stub_ptr<int> *ptr;
+    root::managed_ptr<int> *ptr;
 };
 
 TEST_F(managed_ptr_tests, counter_does_not_change) {
     EXPECT_EQ(counter->strong_refs(), 1);
     EXPECT_EQ(counter->weak_refs(), 0);
-}
-
-TEST_F(managed_ptr_tests, delete_abandoned_counter) {
-    counter->decrement_strong();
-    EXPECT_TRUE(counter->abandoned()); // Ensure it is abandoned
-    EXPECT_CALL(allocator, free(counter, sizeof(root::reference_counter))).Times(1);
 }

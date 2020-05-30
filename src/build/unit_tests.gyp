@@ -3,8 +3,12 @@
         {
             'target_name': 'unit_tests',
             'type' : 'executable',
+            'cflags' : [
+                '-g'
+            ],
             'includes' : [
                 '../root/root_common.gypi',
+                '../root/core/test/core_tests.gypi',
                 '../root/memory/test/memory_tests.gypi'
             ],
             'dependencies' : [

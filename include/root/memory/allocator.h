@@ -43,15 +43,15 @@ public:
     virtual auto malloc(const size_t& byte_size) -> void* = 0;
     virtual auto free(void* mem, const size_t& byte_size) -> void = 0;
 
-    inline static auto default_allocator() -> allocator& {
+    inline static auto default_allocator() -> allocator* {
         return m_default_allocator;
     }
 
-    inline static auto set_default_allocator(allocator& alloc) -> void{
+    inline static auto set_default_allocator(allocator* alloc) -> void{
         m_default_allocator = alloc;
     }
 
 private:
-    static allocator& m_default_allocator;
+    static allocator* m_default_allocator;
 };
 } // namespace root
