@@ -87,3 +87,7 @@ TEST_F(weak_ptr_tests, destroy_strong_first) {
     EXPECT_EQ(counter->strong_refs(), 0);
     EXPECT_EQ(counter->weak_refs(), 0);
 }
+
+TEST_F(weak_ptr_tests, fail_on_purpose) {
+    EXPECT_TRUE(false);
+}
