@@ -26,18 +26,19 @@ namespace root {
 template<typename C>
 class weak_ptr final {
 public:
+    weak_ptr() {}
+
     explicit weak_ptr(const strong_ptr<C>& ptr) 
     :   weak_ptr(ptr.m_ptr.m_memory, ptr.m_ptr.m_ref_count, ptr.m_ptr.m_allocator) {}
 
-    explicit weak_ptr(const weak_ptr<C>& other) 
+    weak_ptr(const weak_ptr<C>& other) 
     :   weak_ptr(other.m_ptr.m_memory, other.m_ptr.m_ref_count, other.m_ptr.m_allocator) {}
 
-    explicit weak_ptr(weak_ptr<C>&& other) {
+    weak_ptr(weak_ptr<C>&& other) {
         m_ptr.m_memory = std::move(other.m_ptr.m_memory);
         m_ptr.m_ref_count = std::move(other.m_ptr.m_ref_count);
         m_ptr.m_allocator = std::move(other.m_ptr.m_allocator);
     }
-
     
     auto operator=(const weak_ptr<C>& other) -> weak_ptr<C>& {
         if(this != &other) {

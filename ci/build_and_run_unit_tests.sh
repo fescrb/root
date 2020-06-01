@@ -12,6 +12,18 @@ cd $DIR/../src
 
 gyp build/unit_tests.gyp
 
+
+if [ ! $? -eq 0 ]; then
+    echo 'GYP failed. Quitting.'
+    exit 1
+fi
+
 make
+
+
+if [ ! $? -eq 0 ]; then
+    echo 'Make failed. Quitting.'
+    exit 1
+fi
 
 ./out/Default/unit_tests
