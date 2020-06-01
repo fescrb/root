@@ -7,7 +7,7 @@ jobs:
     steps:
       - checkout
       - run: git submodule init thirdparty/googletest
-      - run: git submodule update thirparty/googletest
+      - run: git submodule update thirdparty/googletest
       - run: ci/build_and_run_unit_tests.sh
 
 workflows:
