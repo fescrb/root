@@ -1,4 +1,5 @@
 version: 2.1
+
 jobs:
   unit_tests:
     docker: 
@@ -10,3 +11,9 @@ jobs:
       - run: git submodule init thirdparty/googletest
       - run: git submodule update thirparty/googletest
       - run: ci/build_and_run_unit_tests.sh
+
+workflows:
+  version: 2.1
+  tests:
+    jobs:
+      - unit_tests
