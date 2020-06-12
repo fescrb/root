@@ -28,7 +28,8 @@ TEST(allocator_tests, correct_construction_destruction) {
     mock_allocator allocator;
     bool constructor_called = false;
     bool destructor_called = false;
-    class Class {
+    constexpr size_t align = 64;
+    class alignas(align) Class {
     public:
         Class() {}
 
@@ -50,8 +51,8 @@ TEST(allocator_tests, correct_construction_destruction) {
     Sequence s;
     Class c;
 
-    EXPECT_CALL(allocator, malloc(sizeof(Class))).Times(1).InSequence(s).WillRepeatedly(Return(&c));
-    EXPECT_CALL(allocator, free(&c, sizeof(Class))).Times(1).InSequence(s);
+    EXPECT_CALL(allocator, malloc(sizeof(Class), align)).Times(1).InSequence(s).WillRepeatedly(Return(&c));
+    EXPECT_CALL(allocator, free(&c, sizeof(Class), align)).Times(1).InSequence(s);
     
     EXPECT_EQ(allocator.make<Class>(&constructor_called, &destructor_called), &c);
     EXPECT_TRUE(constructor_called);

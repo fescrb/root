@@ -23,6 +23,6 @@
 
 class mock_allocator : public root::allocator {
 public:
-    MOCK_METHOD(void*, malloc, (const size_t&));
-    MOCK_METHOD(void, free, (void*, const size_t&));
+    MOCK_METHOD(void*, malloc, (const size_t&, const size_t&));
+    MOCK_METHOD(void, free, (void*, const size_t&, const size_t&));
 };

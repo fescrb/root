@@ -56,37 +56,37 @@ using ::testing::Sequence;
 
 TEST_F(strong_ptr_tests, creation_and_destruction) {
     Sequence s_ref, s_class;
-    EXPECT_CALL(allocator, malloc(sizeof(Class))).Times(1).InSequence(s_class).WillOnce(Return(memory));
-    EXPECT_CALL(allocator, malloc(sizeof(root::reference_counter))).Times(1).InSequence(s_ref).WillOnce(Return(counter));
+    EXPECT_CALL(allocator, malloc(sizeof(Class), alignof(Class))).Times(1).InSequence(s_class).WillOnce(Return(memory));
+    EXPECT_CALL(allocator, malloc(sizeof(root::reference_counter), alignof(root::reference_counter))).Times(1).InSequence(s_ref).WillOnce(Return(counter));
     auto _ = root::strong_ptr<Class>::make(&allocator, 5);
     EXPECT_EQ(counter->strong_refs(), 1);
     EXPECT_EQ(counter->weak_refs(), 0);
-    EXPECT_CALL(allocator, free(memory, sizeof(Class))).Times(1).InSequence(s_class);
-    EXPECT_CALL(allocator, free(counter, sizeof(root::reference_counter))).Times(1).InSequence(s_ref);
+    EXPECT_CALL(allocator, free(memory, sizeof(Class), alignof(Class))).Times(1).InSequence(s_class);
+    EXPECT_CALL(allocator, free(counter, sizeof(root::reference_counter), alignof(root::reference_counter))).Times(1).InSequence(s_ref);
 }
 
 TEST_F(strong_ptr_tests, validity) {
     Sequence s_ref, s_class;
-    EXPECT_CALL(allocator, malloc(sizeof(Class))).Times(1).InSequence(s_class).WillOnce(Return(memory));
-    EXPECT_CALL(allocator, malloc(sizeof(root::reference_counter))).Times(1).InSequence(s_ref).WillOnce(Return(counter));
+    EXPECT_CALL(allocator, malloc(sizeof(Class), alignof(Class))).Times(1).InSequence(s_class).WillOnce(Return(memory));
+    EXPECT_CALL(allocator, malloc(sizeof(root::reference_counter), alignof(root::reference_counter))).Times(1).InSequence(s_ref).WillOnce(Return(counter));
     auto ptr = root::strong_ptr<Class>::make(&allocator, 5);
     EXPECT_EQ(counter->strong_refs(), 1);
     EXPECT_EQ(counter->weak_refs(), 0);
     EXPECT_TRUE(ptr.valid());
     EXPECT_TRUE(ptr);
-    EXPECT_CALL(allocator, free(memory, sizeof(Class))).Times(1).InSequence(s_class);
-    EXPECT_CALL(allocator, free(counter, sizeof(root::reference_counter))).Times(1).InSequence(s_ref);
+    EXPECT_CALL(allocator, free(memory, sizeof(Class), alignof(Class))).Times(1).InSequence(s_class);
+    EXPECT_CALL(allocator, free(counter, sizeof(root::reference_counter), alignof(root::reference_counter))).Times(1).InSequence(s_ref);
 }
 
 TEST_F(strong_ptr_tests, clear) {
     Sequence s_ref, s_class;
-    EXPECT_CALL(allocator, malloc(sizeof(Class))).Times(1).InSequence(s_class).WillOnce(Return(memory));
-    EXPECT_CALL(allocator, malloc(sizeof(root::reference_counter))).Times(1).InSequence(s_ref).WillOnce(Return(counter));
+    EXPECT_CALL(allocator, malloc(sizeof(Class), alignof(Class))).Times(1).InSequence(s_class).WillOnce(Return(memory));
+    EXPECT_CALL(allocator, malloc(sizeof(root::reference_counter), alignof(root::reference_counter))).Times(1).InSequence(s_ref).WillOnce(Return(counter));
     auto ptr = root::strong_ptr<Class>::make(&allocator, 5);
     EXPECT_EQ(counter->strong_refs(), 1);
     EXPECT_EQ(counter->weak_refs(), 0);
-    EXPECT_CALL(allocator, free(memory, sizeof(Class))).Times(1).InSequence(s_class);
-    EXPECT_CALL(allocator, free(counter, sizeof(root::reference_counter))).Times(1).InSequence(s_ref);
+    EXPECT_CALL(allocator, free(memory, sizeof(Class), alignof(Class))).Times(1).InSequence(s_class);
+    EXPECT_CALL(allocator, free(counter, sizeof(root::reference_counter), alignof(root::reference_counter))).Times(1).InSequence(s_ref);
     ptr.clear();
     EXPECT_EQ(counter->strong_refs(), 0);
     EXPECT_EQ(counter->weak_refs(), 0);
@@ -96,8 +96,8 @@ TEST_F(strong_ptr_tests, clear) {
 
 TEST_F(strong_ptr_tests, single_sequential_copy) {
     Sequence s_ref, s_class;
-    EXPECT_CALL(allocator, malloc(sizeof(Class))).Times(1).InSequence(s_class).WillOnce(Return(memory));
-    EXPECT_CALL(allocator, malloc(sizeof(root::reference_counter))).Times(1).InSequence(s_ref).WillOnce(Return(counter));
+    EXPECT_CALL(allocator, malloc(sizeof(Class), alignof(Class))).Times(1).InSequence(s_class).WillOnce(Return(memory));
+    EXPECT_CALL(allocator, malloc(sizeof(root::reference_counter), alignof(root::reference_counter))).Times(1).InSequence(s_ref).WillOnce(Return(counter));
     auto original = root::strong_ptr<Class>::make(&allocator, 5);
     {
         auto copy = original;
@@ -114,15 +114,15 @@ TEST_F(strong_ptr_tests, single_sequential_copy) {
     EXPECT_EQ(counter->weak_refs(), 0);
     EXPECT_FALSE(second_copy.valid());
     EXPECT_FALSE(second_copy);
-    EXPECT_CALL(allocator, free(memory, sizeof(Class))).Times(1).InSequence(s_class);
-    EXPECT_CALL(allocator, free(counter, sizeof(root::reference_counter))).Times(1).InSequence(s_ref);
+    EXPECT_CALL(allocator, free(memory, sizeof(Class), alignof(Class))).Times(1).InSequence(s_class);
+    EXPECT_CALL(allocator, free(counter, sizeof(root::reference_counter), alignof(root::reference_counter))).Times(1).InSequence(s_ref);
 }
 
 TEST_F(strong_ptr_tests, multiple_concurrent_copies){
     constexpr int NUM_THREADS = 100;
     Sequence s_ref, s_class;
-    EXPECT_CALL(allocator, malloc(sizeof(Class))).Times(1).InSequence(s_class).WillOnce(Return(memory));
-    EXPECT_CALL(allocator, malloc(sizeof(root::reference_counter))).Times(1).InSequence(s_ref).WillOnce(Return(counter));
+    EXPECT_CALL(allocator, malloc(sizeof(Class), alignof(Class))).Times(1).InSequence(s_class).WillOnce(Return(memory));
+    EXPECT_CALL(allocator, malloc(sizeof(root::reference_counter), alignof(root::reference_counter))).Times(1).InSequence(s_ref).WillOnce(Return(counter));
     auto original = root::strong_ptr<Class>::make(&allocator, 5);
     root::strong_ptr<Class> copies[NUM_THREADS];
     std::thread threads[NUM_THREADS];
@@ -139,8 +139,8 @@ TEST_F(strong_ptr_tests, multiple_concurrent_copies){
     original = root::strong_ptr<Class>();;
     EXPECT_EQ(counter->strong_refs(), NUM_THREADS);
     EXPECT_EQ(counter->weak_refs(), 0);
-    EXPECT_CALL(allocator, free(memory, sizeof(Class))).Times(1).InSequence(s_class);
-    EXPECT_CALL(allocator, free(counter, sizeof(root::reference_counter))).Times(1).InSequence(s_ref);
+    EXPECT_CALL(allocator, free(memory, sizeof(Class), alignof(Class))).Times(1).InSequence(s_class);
+    EXPECT_CALL(allocator, free(counter, sizeof(root::reference_counter), alignof(root::reference_counter))).Times(1).InSequence(s_ref);
     for(int i = 0; i < NUM_THREADS; i++) {
         threads[i] = std::thread([&copies, i](){
             copies[i] = root::strong_ptr<Class>();
@@ -159,8 +159,8 @@ TEST_F(strong_ptr_tests, dereference) {
     constexpr int SECOND_VALUE = 42;
     constexpr int THIRD_VALUE = 7;
     constexpr int LAST_VALUE = 360;
-    EXPECT_CALL(allocator, malloc(sizeof(Class))).Times(1).InSequence(s_class).WillOnce(Return(memory));
-    EXPECT_CALL(allocator, malloc(sizeof(root::reference_counter))).Times(1).InSequence(s_ref).WillOnce(Return(counter));
+    EXPECT_CALL(allocator, malloc(sizeof(Class), alignof(Class))).Times(1).InSequence(s_class).WillOnce(Return(memory));
+    EXPECT_CALL(allocator, malloc(sizeof(root::reference_counter), alignof(root::reference_counter))).Times(1).InSequence(s_ref).WillOnce(Return(counter));
     auto ptr = root::strong_ptr<Class>::make(&allocator, 5);
     EXPECT_EQ(counter->strong_refs(), 1);
     EXPECT_EQ(counter->weak_refs(), 0);
@@ -178,6 +178,6 @@ TEST_F(strong_ptr_tests, dereference) {
     EXPECT_EQ(LAST_VALUE, ptr->m_data);
     EXPECT_EQ(LAST_VALUE, (*ptr).m_data);
     EXPECT_EQ(LAST_VALUE, memory->m_data);
-    EXPECT_CALL(allocator, free(memory, sizeof(Class))).Times(1).InSequence(s_class);
-    EXPECT_CALL(allocator, free(counter, sizeof(root::reference_counter))).Times(1).InSequence(s_ref);
+    EXPECT_CALL(allocator, free(memory, sizeof(Class), alignof(Class))).Times(1).InSequence(s_class);
+    EXPECT_CALL(allocator, free(counter, sizeof(root::reference_counter), alignof(root::reference_counter))).Times(1).InSequence(s_ref);
 }

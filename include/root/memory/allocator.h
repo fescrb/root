@@ -29,7 +29,7 @@ class allocator {
 public:
     template<typename C, typename... Args>
     inline auto make(Args... args) -> C* {
-        C* ptr = static_cast<C*>(malloc(sizeof(C)));
+        C* ptr = static_cast<C*>(malloc(sizeof(C), alignof(C)));
         new (ptr) C(args...);
         return ptr;
     }
@@ -37,11 +37,11 @@ public:
     template<typename C>
     inline auto del(C* ptr) -> void {
         ptr->~C();
-        free(ptr, sizeof(C));
+        free(ptr, sizeof(C), alignof(C));
     }
 
-    virtual auto malloc(const size_t& byte_size) -> void* = 0;
-    virtual auto free(void* mem, const size_t& byte_size) -> void = 0;
+    virtual auto malloc(const size_t& bytes, const size_t& alignment) -> void* = 0;
+    virtual auto free(void* mem, const size_t& bytes, const size_t& alignment) -> void = 0;
 
     inline static auto default_allocator() -> allocator* {
         return m_default_allocator;

@@ -17,20 +17,10 @@
  * along with The Root Engine.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <cstdlib>
-
-auto& c_free = free;
-
-#include <root/memory/system_allocator.h>
+#pragma once
 
 namespace root {
-system_allocator system_allocator::universal_instance = system_allocator();
 
-auto system_allocator::malloc(const size_t& byte_size, const size_t& alignment) -> void* {
-    return aligned_alloc(alignment, byte_size);
-}
 
-auto system_allocator::free(void* mem, const size_t&, const size_t&) -> void {
-    c_free(mem);
-}
+
 } // namespace root
