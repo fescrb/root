@@ -1,5 +1,7 @@
 {
     'sources' : [
-        'types_tests.cpp'
+        'primitives_tests.cpp',
+        'array_tests.cpp',
+        'string_tests.cpp'
     ]
 }

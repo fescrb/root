@@ -21,14 +21,13 @@
 #include <gmock/gmock.h>
 
 #include <root/memory/allocator.h>
-
-#include "mock_allocator.h"
+#include <root/memory/test/mock_allocator.h>
 
 TEST(allocator_tests, correct_construction_destruction) {
-    mock_allocator allocator;
+    root::mock_allocator allocator;
     bool constructor_called = false;
     bool destructor_called = false;
-    constexpr size_t align = 64;
+    constexpr root::u64 align = 64;
     class alignas(align) Class {
     public:
         Class() {}

@@ -17,34 +17,30 @@
  * along with The Root Engine.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <root/memory/private/managed_ptr.h>
-#include <root/memory/test/mock_allocator.h>
+#pragma once
 
-#include <gtest/gtest.h>
-#include <gmock/gmock.h>
+#ifndef ROOT_ASSERT
 
+#define root_assert(_expr_) ((void) 0)
 
-class managed_ptr_tests : public ::testing::Test {
-public:
-    void SetUp() override {
-        counter = new root::reference_counter;
-        data = new int;
-        ptr = new root::managed_ptr<int>(data, counter, &allocator);
+#define root_static_assert(_expr_) ((void) 0)
+
+#else 
+
+#define root_assert(_expr_) root::assert(_expr_, "_expr_", __FILE__, __LINE__)
+
+#define root_static_assert(_expr_) static_assert(_expr_)
+
+namespace root {
+
+auto _assert_fail(const char* expr_str, const char* file, const int line_num) -> void;
+
+auto inline assert(const bool expr_result, const char* expr_str, const char* file, const int line_num) -> void {
+    if(!expr_result) {
+        _asert_fail(expr_str, file, line_num);
     }
-
-    void TearDown() override {
-        delete ptr;
-        delete counter;
-        delete data;
-    }
-
-    root::reference_counter* counter;
-    root::mock_allocator allocator;
-    int* data;
-    root::managed_ptr<int> *ptr;
-};
-
-TEST_F(managed_ptr_tests, counter_does_not_change) {
-    EXPECT_EQ(counter->strong_refs(), 1);
-    EXPECT_EQ(counter->weak_refs(), 0);
 }
+
+} // namespace root
+
+#endif

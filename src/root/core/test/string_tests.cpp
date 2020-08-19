@@ -17,34 +17,45 @@
  * along with The Root Engine.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <root/memory/private/managed_ptr.h>
+#include <root/core/string.h>
 #include <root/memory/test/mock_allocator.h>
 
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
+#include <cstdlib>
 
-class managed_ptr_tests : public ::testing::Test {
+class string_tests : public ::testing::Test {
 public:
     void SetUp() override {
-        counter = new root::reference_counter;
-        data = new int;
-        ptr = new root::managed_ptr<int>(data, counter, &allocator);
+        memory = malloc(ALLOCATION_SIZE);
     }
 
     void TearDown() override {
-        delete ptr;
-        delete counter;
-        delete data;
+        free(memory);
     }
 
-    root::reference_counter* counter;
+    constexpr static size_t ALLOCATION_SIZE = 512;
+
     root::mock_allocator allocator;
-    int* data;
-    root::managed_ptr<int> *ptr;
+    void* memory;
 };
 
-TEST_F(managed_ptr_tests, counter_does_not_change) {
-    EXPECT_EQ(counter->strong_refs(), 1);
-    EXPECT_EQ(counter->weak_refs(), 0);
+
+using ::testing::Return;
+
+TEST_F(string_tests, string_literal_initializer) {
+    const char* TEST_STRING = "Hello Tests!";
+    const int STRING_LENGTH = strlen(TEST_STRING);
+    EXPECT_CALL(allocator, malloc(sizeof(char) * STRING_LENGTH, alignof(char))).Times(1).WillOnce(Return(memory));
+    
+    root::string str(TEST_STRING, &allocator);
+
+    EXPECT_EQ(str.length(), STRING_LENGTH);
+
+    for(int i = 0; i < STRING_LENGTH; i++) {
+        EXPECT_EQ(str[i], TEST_STRING[i]);
+    }
+
+    EXPECT_CALL(allocator, free(memory, sizeof(char) * STRING_LENGTH, alignof(char))).Times(1);
 }

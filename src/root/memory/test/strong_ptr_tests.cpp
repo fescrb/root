@@ -21,11 +21,10 @@
 #include <gmock/gmock.h>
 
 #include <root/memory/private/reference_counter.h>
+#include <root/memory/test/mock_allocator.h>
 #include <root/memory/strong_ptr.h>
 
 #include <thread>
-
-#include "mock_allocator.h"
 
 class strong_ptr_tests : public ::testing::Test {
 public:
@@ -48,7 +47,7 @@ public:
 
     root::reference_counter* counter;
     Class* memory;
-    mock_allocator allocator;
+    root::mock_allocator allocator;
 };
 
 using ::testing::Return;

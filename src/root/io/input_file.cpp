@@ -17,12 +17,23 @@
  * along with The Root Engine.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <root/memory/allocator.h>
+#include <root/io/input_file.h>
+#include <root/io/private/file_interface.h>
+#include <root/core/assert.h>
 
-#include <gmock/gmock.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
 
-class mock_allocator : public root::allocator {
-public:
-    MOCK_METHOD(void*, malloc, (const size_t&, const size_t&));
-    MOCK_METHOD(void, free, (void*, const size_t&, const size_t&));
-};
+namespace root {
+
+auto input_file::read(buffer* dst) -> u64 {
+    root_assert(m_file);
+    return m_file->read(dst);
+}
+
+input_file::~input_file() {
+    
+}
+
+} // namespace root

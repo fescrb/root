@@ -17,13 +17,13 @@
  * along with The Root Engine.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <root/core/types.h>
+#include <root/core/primitives.h>
 
 #include <gtest/gtest.h>
 
 #include <type_traits>
 
-TEST(type_test, sizes) {
+TEST(primitives_test, sizes) {
     EXPECT_EQ(sizeof(root::i64), 8);
     EXPECT_EQ(sizeof(root::i32), 4);
     EXPECT_EQ(sizeof(root::i16), 2);
@@ -36,7 +36,7 @@ TEST(type_test, sizes) {
     EXPECT_EQ(sizeof(root::f32), 4);
 }
 
-TEST(type_test, signedness) {
+TEST(primitives_test, signedness) {
     EXPECT_TRUE(std::is_signed<root::i64>::value);
     EXPECT_TRUE(std::is_signed<root::i32>::value);
     EXPECT_TRUE(std::is_signed<root::i16>::value);
@@ -47,4 +47,30 @@ TEST(type_test, signedness) {
     EXPECT_TRUE(std::is_unsigned<root::u32>::value);
     EXPECT_TRUE(std::is_unsigned<root::u16>::value);
     EXPECT_TRUE(std::is_unsigned<root::u8>::value);
+}
+
+TEST(primitives_test, fp) {
+    EXPECT_FALSE(std::is_floating_point<root::i64>::value);
+    EXPECT_FALSE(std::is_floating_point<root::i32>::value);
+    EXPECT_FALSE(std::is_floating_point<root::i16>::value);
+    EXPECT_FALSE(std::is_floating_point<root::i8>::value);
+    EXPECT_TRUE(std::is_floating_point<root::f64>::value);
+    EXPECT_TRUE(std::is_floating_point<root::f32>::value);
+    EXPECT_FALSE(std::is_floating_point<root::u64>::value);
+    EXPECT_FALSE(std::is_floating_point<root::u32>::value);
+    EXPECT_FALSE(std::is_floating_point<root::u16>::value);
+    EXPECT_FALSE(std::is_floating_point<root::u8>::value);
+}
+
+TEST(primitives_test, arithmetic) {
+    EXPECT_TRUE(std::is_arithmetic<root::i64>::value);
+    EXPECT_TRUE(std::is_arithmetic<root::i32>::value);
+    EXPECT_TRUE(std::is_arithmetic<root::i16>::value);
+    EXPECT_TRUE(std::is_arithmetic<root::i8>::value);
+    EXPECT_TRUE(std::is_arithmetic<root::f64>::value);
+    EXPECT_TRUE(std::is_arithmetic<root::f32>::value);
+    EXPECT_TRUE(std::is_arithmetic<root::u64>::value);
+    EXPECT_TRUE(std::is_arithmetic<root::u32>::value);
+    EXPECT_TRUE(std::is_arithmetic<root::u16>::value);
+    EXPECT_TRUE(std::is_arithmetic<root::u8>::value);
 }

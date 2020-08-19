@@ -20,8 +20,7 @@
 #pragma once
 
 #include <cstdlib>
-
-#include <iostream>
+#include <root/core/primitives.h>
 
 namespace root {
 
@@ -40,8 +39,8 @@ public:
         free(ptr, sizeof(C), alignof(C));
     }
 
-    virtual auto malloc(const size_t& bytes, const size_t& alignment) -> void* = 0;
-    virtual auto free(void* mem, const size_t& bytes, const size_t& alignment) -> void = 0;
+    virtual auto malloc(const u64& bytes, const u64& alignment) -> void* = 0;
+    virtual auto free(void* mem, const u64& bytes, const u64& alignment) -> void = 0;
 
     inline static auto default_allocator() -> allocator* {
         return m_default_allocator;
@@ -50,6 +49,8 @@ public:
     inline static auto set_default_allocator(allocator* alloc) -> void{
         m_default_allocator = alloc;
     }
+
+    virtual ~allocator() {}
 
 private:
     static allocator* m_default_allocator;

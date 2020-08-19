@@ -26,11 +26,11 @@ auto& c_free = free;
 namespace root {
 system_allocator system_allocator::universal_instance = system_allocator();
 
-auto system_allocator::malloc(const size_t& byte_size, const size_t& alignment) -> void* {
+auto system_allocator::malloc(const u64& byte_size, const u64& alignment) -> void* {
     return aligned_alloc(alignment, byte_size);
 }
 
-auto system_allocator::free(void* mem, const size_t&, const size_t&) -> void {
+auto system_allocator::free(void* mem, const u64&, const u64&) -> void {
     c_free(mem);
 }
 } // namespace root

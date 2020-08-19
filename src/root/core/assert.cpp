@@ -17,34 +17,18 @@
  * along with The Root Engine.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <root/memory/private/managed_ptr.h>
-#include <root/memory/test/mock_allocator.h>
+#include <root/core/assert.h>
 
-#include <gtest/gtest.h>
-#include <gmock/gmock.h>
+#include <iostream>
 
+namespace root {
 
-class managed_ptr_tests : public ::testing::Test {
-public:
-    void SetUp() override {
-        counter = new root::reference_counter;
-        data = new int;
-        ptr = new root::managed_ptr<int>(data, counter, &allocator);
-    }
-
-    void TearDown() override {
-        delete ptr;
-        delete counter;
-        delete data;
-    }
-
-    root::reference_counter* counter;
-    root::mock_allocator allocator;
-    int* data;
-    root::managed_ptr<int> *ptr;
-};
-
-TEST_F(managed_ptr_tests, counter_does_not_change) {
-    EXPECT_EQ(counter->strong_refs(), 1);
-    EXPECT_EQ(counter->weak_refs(), 0);
+#ifdef ROOT_ASSERT
+auto _assert_fail(const char* expr_str, const char* file, const int line_num) -> void {
+    // TODO must refactor
+    std::cout << "assert(" << expr_str << ") failed at " << file << ":" << line_num << std::endl;
+    exit(1); // probs should crash instead
 }
+#endif
+
+} // namespace root

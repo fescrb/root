@@ -21,12 +21,11 @@
 #include <gmock/gmock.h>
 
 #include <root/memory/private/reference_counter.h>
+#include <root/memory/test/mock_allocator.h>
 #include <root/memory/strong_ptr.h>
 #include <root/memory/weak_ptr.h>
 
 #include <thread>
-
-#include "mock_allocator.h"
 
 using ::testing::NiceMock;
 using ::testing::Test;
@@ -58,7 +57,7 @@ public:
     root::reference_counter* counter;
     Class* memory;
     root::strong_ptr<Class> strong;
-    NiceMock<mock_allocator> allocator;
+    NiceMock<root::mock_allocator> allocator;
 };
 
 TEST_F(weak_ptr_tests, creation) {
