@@ -19,6 +19,7 @@
 
 #pragma once
 
+#include <utility>
 #include <initializer_list>
 
 #include <root/core/assert.h>
@@ -29,6 +30,11 @@ namespace root {
 template<typename T>
 class array {
 public:
+    inline array()
+    :   m_length(0),
+        m_allocator(0),
+        m_data(0) {}
+
     explicit inline array(const std::initializer_list<T>& init_l, allocator* alloc = allocator::default_allocator())
     :   m_length(init_l.size()), 
         m_allocator(alloc) {
@@ -37,6 +43,23 @@ public:
         for(auto item = init_l.begin(); item != init_l.end(); item++, data_iter++) {
             *data_iter = *item;
         }
+    }
+
+    array(const array&) = delete;
+    inline array(array&& other)
+    :   m_length(std::move(other.m_length)),
+        m_allocator(std::move(other.m_allocator)),
+        m_data(std::move(other.m_data)) {
+        other.clear();
+    }
+
+    auto operator=(const array&) -> array& = delete;
+    inline auto operator=(array&& other) -> array& {
+        m_length = std::move(other.m_length);
+        m_allocator = std::move(other.m_allocator);
+        m_data = std::move(other.m_data);
+        other.clear();
+        return *this;
     }
 
     explicit inline array(const u64& length, allocator* alloc = allocator::default_allocator())
@@ -63,14 +86,26 @@ public:
         return m_data;
     }
 
+    inline operator bool() const {
+        return m_data && m_allocator && m_length;
+    }
+
     ~array() {
-        m_allocator->free(m_data, sizeof(T) * m_length, alignof(T));
+        root_assert((m_allocator && m_data && m_length) ^ (!m_allocator && !m_data && !m_length));
+        if(m_allocator && m_data && m_length)
+            m_allocator->free(m_data, sizeof(T) * m_length, alignof(T));
     }
 
 protected:
     T *m_data;
     u64 m_length;
     allocator* m_allocator;
+
+    inline auto clear() -> void {
+        m_data = nullptr;
+        m_length = 0;
+        m_allocator = nullptr;
+    }
 };
 
 } // namespace root

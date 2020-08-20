@@ -59,3 +59,20 @@ TEST_F(string_tests, string_literal_initializer) {
 
     EXPECT_CALL(allocator, free(memory, sizeof(char) * STRING_LENGTH, alignof(char))).Times(1);
 }
+
+TEST_F(string_tests, move_init) {
+    const char* TEST_STRING = "Hello Tests!";
+    const int STRING_LENGTH = strlen(TEST_STRING);
+    EXPECT_CALL(allocator, malloc(sizeof(char) * STRING_LENGTH, alignof(char))).Times(1).WillOnce(Return(memory));
+    
+    root::string str(TEST_STRING, &allocator);
+    root::string moved_str(std::move(str));
+
+    EXPECT_EQ(moved_str.length(), STRING_LENGTH);
+
+    for(int i = 0; i < STRING_LENGTH; i++) {
+        EXPECT_EQ(moved_str[i], TEST_STRING[i]);
+    }
+
+    EXPECT_CALL(allocator, free(memory, sizeof(char) * STRING_LENGTH, alignof(char))).Times(1);
+}

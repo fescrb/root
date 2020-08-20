@@ -17,32 +17,26 @@
  * along with The Root Engine.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#pragma once
+#include <root/core/buffer.h>
+#include <root/memory/test/mock_allocator.h>
 
-#include <root/core/array.h>
-#include <root/core/primitives.h>
+#include <gtest/gtest.h>
+#include <gmock/gmock.h>
 
-namespace root {
+#include <cstdlib>
 
-constexpr auto strlen(const char* str) -> u64 {
-    return *str ? strlen(str+1) + 1 : 0;
-}
-
-class string : public array<i8> {
+class buffer_tests : public ::testing::Test {
 public:
-    explicit inline string(const char* str, allocator* alloc = allocator::default_allocator()) 
-    :   array(strlen(str), alloc) {
-        for(u64 i = 0; i < m_length; i++) {
-            m_data[i] = str[i];
-        }
+    void SetUp() override {
+        memory = malloc(ALLOCATION_SIZE);
     }
 
-    explicit inline string(const u64& length, allocator* alloc = allocator::default_allocator()) 
-    : array(length, alloc) {}
+    void TearDown() override {
+        free(memory);
+    }
 
-    string(const string&) = delete;
-    inline string(string&& other) 
-    : array(std::move(other)) {}
+    constexpr static size_t ALLOCATION_SIZE = 512;
+
+    root::mock_allocator allocator;
+    void* memory;
 };
-
-} // namespace root

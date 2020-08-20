@@ -48,11 +48,12 @@ public:
     }
 
     buffer(const buffer& other) = delete;
-    
     inline buffer(buffer&& other)
     :   m_data(std::move(other.m_data)),
         m_byte_size(std::move(other.m_byte_size)),
-        m_alloc(std::move(other.m_alloc)) {}
+        m_alloc(std::move(m_alloc)) {
+        other.clear();
+    }
 
     inline auto raw() const -> void* {
         return reinterpret_cast<void*>(m_data);
@@ -62,12 +63,12 @@ public:
         return m_byte_size;
     }
 
-    inline auto write(const off64_t dst_offset, const buffer& src, const off64_t src_offset, const u64 bytes) -> void {
+    inline auto write(const u64 dst_offset, const buffer& src, const u64 src_offset, const u64 bytes) -> void {
         root_assert(src_offset+bytes < src.m_byte_size);
         write(dst_offset, src.raw(), src_offset, bytes);
     }
 
-    inline auto write(const off64_t dst_offset, const void* src, const off64_t src_offset, const u64 bytes) -> void {
+    inline auto write(const u64 dst_offset, const void* src, const u64 src_offset, const u64 bytes) -> void {
         root_assert(dst_offset+bytes < m_byte_size);
         memcpy(m_data+dst_offset, src+src_offset, bytes);
     }
@@ -89,6 +90,12 @@ private:
     u8 *m_data;
     u64 m_byte_size;
     allocator* m_alloc;
+
+    inline auto clear() -> void {
+        m_data = nullptr;
+        m_byte_size = 0;
+        m_alloc = nullptr;
+    }
 };
 
 } // namespace root

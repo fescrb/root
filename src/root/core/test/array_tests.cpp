@@ -44,6 +44,13 @@ public:
 
 using ::testing::Return;
 
+TEST_F(array_tests, empty_init) {
+    root::array<int> array;
+
+    EXPECT_EQ(array.length(), 0);
+    EXPECT_FALSE(array);
+}
+
 TEST_F(array_tests, blank_init) {
     constexpr uint64_t ARRAY_SIZE = 6;
     EXPECT_CALL(allocator, malloc(sizeof(int) * ARRAY_SIZE, alignof(int))).Times(1).WillOnce(Return(memory));
@@ -51,6 +58,7 @@ TEST_F(array_tests, blank_init) {
     root::array<int> array(ARRAY_SIZE, &allocator);
 
     EXPECT_EQ(array.length(), ARRAY_SIZE);
+    EXPECT_TRUE(array);
 
     EXPECT_CALL(allocator, free(memory, sizeof(int) * ARRAY_SIZE, alignof(int))).Times(1);
 }
@@ -82,10 +90,57 @@ TEST_F(array_tests, initializer_lists) {
 
     
     EXPECT_EQ(array.length(), ARRAY_SIZE);
+    EXPECT_TRUE(array);
 
     for(int i = 0; i < ARRAY_SIZE; i++) {
         EXPECT_EQ(array[i], basic_array[i]);
     }
+
+    EXPECT_CALL(allocator, free(memory, sizeof(int) * ARRAY_SIZE, alignof(int))).Times(1);
+}
+
+TEST_F(array_tests, move_constructor) {
+    constexpr uint64_t ARRAY_SIZE = 6;
+    EXPECT_CALL(allocator, malloc(sizeof(int) * ARRAY_SIZE, alignof(int))).Times(1).WillOnce(Return(memory));
+    
+    root::array<int> array({1, 2, 3, 4, 5, 6}, &allocator);
+    int basic_array[ARRAY_SIZE] = {1, 2, 3, 4, 5, 6};
+
+    root::array<int> moved_array(std::move(array));    
+
+    EXPECT_EQ(moved_array.length(), ARRAY_SIZE);
+    EXPECT_TRUE(moved_array);
+
+    for(int i = 0; i < ARRAY_SIZE; i++) {
+        EXPECT_EQ(moved_array[i], basic_array[i]);
+    }
+
+    // Check cleared
+    EXPECT_EQ(array.length(), 0);
+    EXPECT_FALSE(array);
+
+    EXPECT_CALL(allocator, free(memory, sizeof(int) * ARRAY_SIZE, alignof(int))).Times(1);
+}
+
+TEST_F(array_tests, move_make_operator) {
+    constexpr uint64_t ARRAY_SIZE = 6;
+    EXPECT_CALL(allocator, malloc(sizeof(int) * ARRAY_SIZE, alignof(int))).Times(1).WillOnce(Return(memory));
+    
+    root::array<int> array({1, 2, 3, 4, 5, 6}, &allocator);
+    int basic_array[ARRAY_SIZE] = {1, 2, 3, 4, 5, 6};
+
+    root::array<int> moved_array;
+    moved_array = std::move(array);    
+
+    EXPECT_EQ(moved_array.length(), ARRAY_SIZE);
+
+    for(int i = 0; i < ARRAY_SIZE; i++) {
+        EXPECT_EQ(moved_array[i], basic_array[i]);
+    }
+
+    // Check cleared
+    EXPECT_EQ(array.length(), 0);
+    EXPECT_FALSE(array);
 
     EXPECT_CALL(allocator, free(memory, sizeof(int) * ARRAY_SIZE, alignof(int))).Times(1);
 }
