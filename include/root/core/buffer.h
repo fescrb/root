@@ -51,8 +51,17 @@ public:
     inline buffer(buffer&& other)
     :   m_data(std::move(other.m_data)),
         m_byte_size(std::move(other.m_byte_size)),
-        m_alloc(std::move(m_alloc)) {
+        m_alloc(std::move(other.m_alloc)) {
         other.clear();
+    }
+
+    inline auto operator=(const buffer& other) -> buffer& = delete;
+    inline auto operator=(buffer&& other) -> buffer&{
+        m_data = std::move(other.m_data);
+        m_byte_size = std::move(other.m_byte_size);
+        m_alloc = std::move(other.m_alloc);
+        other.clear();
+        return *this;
     }
 
     inline auto raw() const -> void* {
@@ -70,11 +79,11 @@ public:
 
     inline auto write(const u64 dst_offset, const void* src, const u64 src_offset, const u64 bytes) -> void {
         root_assert(dst_offset+bytes < m_byte_size);
-        memcpy(m_data+dst_offset, src+src_offset, bytes);
+        memcpy(m_data + dst_offset, reinterpret_cast<const u8*>(src) + src_offset, bytes);
     }
 
-    inline auto abandoned() const -> bool {
-        return !m_data || !m_byte_size || !m_alloc; 
+    inline operator bool() const {
+        return m_data && m_byte_size && m_alloc; 
     }
 
     ~buffer() {
