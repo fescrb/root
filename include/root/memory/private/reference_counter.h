@@ -69,8 +69,13 @@ public:
         return (m_weak_references.load() == 0) && (m_strong_references.load() == 0);
     }
 
+    inline auto can_release() -> bool {
+        return --m_release_lock == 0;
+    }
+
 private:
     std::atomic<uint32_t>     m_strong_references{1};
     std::atomic<uint32_t>     m_weak_references{0};
+    std::atomic<uint32_t>     m_release_lock{1};
 };
 } // namespace root

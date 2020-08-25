@@ -112,7 +112,7 @@ private:
 
 template <typename C>
 inline auto strong_ptr<C>::check_ref_count_for_deletion(managed_ptr<C>& man_ptr) -> void {
-    if(man_ptr.m_ref_count && man_ptr.m_allocator && man_ptr.m_ref_count->abandoned()) {
+    if(man_ptr.m_ref_count && man_ptr.m_allocator && man_ptr.m_ref_count->abandoned() &&  man_ptr.m_ref_count->can_release()) {
         man_ptr.m_allocator->template del<reference_counter>(man_ptr.m_ref_count);
     }
 }
