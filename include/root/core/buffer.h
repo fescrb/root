@@ -24,14 +24,9 @@
 #include <root/core/assert.h>
 
 #include <utility>
+#include <cstring>
 
 namespace root {
-
-inline auto memcpy(void* dst, const void* source, const u64 bytes) -> void {
-    for(int i = 0; i < bytes; i++) {
-        reinterpret_cast<u8*>(dst)[i] = reinterpret_cast<const u8*>(source)[i];
-    }
-}
 
 class buffer {
 public:
@@ -72,18 +67,12 @@ public:
         return m_byte_size;
     }
 
-    inline auto write(const u64 dst_offset, const buffer& src, const u64 src_offset, const u64 bytes) -> void {
-        root_assert(src_offset+bytes < src.m_byte_size);
-        write(dst_offset, src.raw(), src_offset, bytes);
-    }
-
-    inline auto write(const u64 dst_offset, const void* src, const u64 src_offset, const u64 bytes) -> void {
-        root_assert(dst_offset+bytes < m_byte_size);
-        memcpy(m_data + dst_offset, reinterpret_cast<const u8*>(src) + src_offset, bytes);
-    }
-
     inline operator bool() const {
         return m_data && m_byte_size && m_alloc; 
+    }
+
+    inline operator void*() const {
+        return raw();
     }
 
     ~buffer() {
@@ -93,9 +82,69 @@ public:
         }
     }
 
-private:
+    class offset_view {
+    public:
+        inline offset_view(offset_view&& other) 
+        :   target(other.target),
+            offset(std::move(other.offset)) {}
+
+        offset_view(const offset_view&) = delete;
+
+        auto operator=(const offset_view&) -> offset_view& = delete;
+        auto operator=(offset_view&&) -> offset_view& = delete;
+
+        inline auto size() const -> u64 {
+            return target.size() - offset;
+        }
+
+        inline auto raw() const -> void* {
+            return reinterpret_cast<void*>(reinterpret_cast<u8*>(target.raw()) + offset);
+        }
+
+        inline operator void*() const {
+            return raw();
+        }
+
+        inline operator bool() const {
+            return target;
+        }
+        
+        template<typename T>
+        inline auto at(const T& extra_offset) const -> offset_view {
+            root_assert(offset + extra_offset >= 0);
+            root_assert(offset + extra_offset < target.size());
+            return offset_view(target, static_cast<u64>(offset + extra_offset));
+        } 
+
+        template<typename T>
+        inline auto operator+(const T& extra_offset) const -> offset_view {
+            return at(extra_offset);
+        }
+
+        const buffer& target;
+        const u64 offset;
+    private:
+        inline offset_view(const buffer& b, const u64& o) 
+        :  target(b), offset(o) {}
+
+        friend class buffer;
+    };
+
+    template<typename T>
+    inline auto at(const T& offset) const -> offset_view {
+        root_assert(offset >= 0);
+        root_assert(offset < m_byte_size);
+        return offset_view(*this, static_cast<u64>(offset));
+    } 
+
+    template<typename T>
+    inline auto operator+(const T& offset) const -> offset_view {
+        return at(offset);
+    }
+
     static constexpr u64 ALIGNMENT = 0; // TODO should probably be a conservative aligment
 
+private:
     u8 *m_data;
     u64 m_byte_size;
     allocator* m_alloc;
@@ -106,5 +155,4 @@ private:
         m_alloc = nullptr;
     }
 };
-
 } // namespace root

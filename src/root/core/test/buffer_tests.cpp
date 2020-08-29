@@ -109,7 +109,38 @@ TEST_F(buffer_tests, move_assign) {
     EXPECT_CALL(allocator, free(memory, ALLOCATION_SIZE, 0)).Times(1);
 }
 
-TEST_F(buffer_tests, write_raw_buffer) {
+TEST_F(buffer_tests, buffer_offset) {
+    EXPECT_CALL(allocator, malloc(ALLOCATION_SIZE, 0)).Times(1).WillOnce(Return(memory));
+    constexpr size_t OFFSET = ALLOCATION_SIZE/2;
+    constexpr size_t REMAINDER = ALLOCATION_SIZE - OFFSET;
+    constexpr size_t SECOND_OFFSET = REMAINDER/2;
+    constexpr size_t SECOND_REMAINDER = REMAINDER - SECOND_OFFSET;
+    root::buffer buffer(ALLOCATION_SIZE, &allocator);
+
+    root::buffer::offset_view view = buffer + OFFSET;
+
+    EXPECT_TRUE(view);
+
+    EXPECT_NE(buffer.raw(), view.raw());
+    EXPECT_EQ(view.size(), REMAINDER);
+
+    root::buffer::offset_view second_view = view + SECOND_OFFSET;
+    
+    EXPECT_TRUE(second_view);
+
+    EXPECT_NE(buffer.raw(), second_view.raw());
+    EXPECT_NE(view.raw(), second_view.raw());
+    EXPECT_EQ(second_view.size(), SECOND_REMAINDER);
+
+    root::buffer moved_buffer(std::move(buffer));
+    
+    EXPECT_FALSE(view);
+    EXPECT_FALSE(second_view);
+
+    EXPECT_CALL(allocator, free(memory, ALLOCATION_SIZE, 0)).Times(1);
+}
+
+TEST_F(buffer_tests, memcpy_buffer) {
     char const* MESSAGE = "Hello failing test";
     const size_t MESSAGE_LENGTH = strlen(MESSAGE);
     EXPECT_CALL(allocator, malloc(MESSAGE_LENGTH, 0)).Times(1).WillOnce(Return(memory));
@@ -120,7 +151,7 @@ TEST_F(buffer_tests, write_raw_buffer) {
     EXPECT_TRUE(buffer);
     EXPECT_EQ(buffer.raw(), memory);
 
-    buffer.write(0, MESSAGE, 0, MESSAGE_LENGTH);
+    memcpy(buffer, MESSAGE, MESSAGE_LENGTH);
 
     EXPECT_EQ(memcmp(MESSAGE, buffer.raw(), MESSAGE_LENGTH), 0);
 
@@ -129,60 +160,9 @@ TEST_F(buffer_tests, write_raw_buffer) {
     const size_t MODIFICATION_START = 6; // Just after "Hello "
     char const* MODIFIED_MESSAGE = "Hello passing test";
 
-    buffer.write(MODIFICATION_START, MODIFICATION, 0, MODIFICATION_LENGTH);
+    memcpy(buffer + MODIFICATION_START, MODIFICATION, MODIFICATION_LENGTH);
 
     EXPECT_EQ(memcmp(MODIFIED_MESSAGE, buffer.raw(), MESSAGE_LENGTH), 0);
 
     EXPECT_CALL(allocator, free(memory, MESSAGE_LENGTH, 0)).Times(1);
-}
-
-TEST_F(buffer_tests, write_buffer) {
-    char const* MESSAGE = "Hello failing test";
-    const size_t MESSAGE_LENGTH = strlen(MESSAGE);
-    void* mem2 = malloc(ALLOCATION_SIZE);
-    EXPECT_CALL(allocator, malloc(MESSAGE_LENGTH, 0)).Times(1).WillOnce(Return(memory));
-    
-    root::buffer buffer(MESSAGE_LENGTH, &allocator);
-
-    EXPECT_EQ(buffer.size(), MESSAGE_LENGTH);
-    EXPECT_TRUE(buffer);
-    EXPECT_EQ(buffer.raw(), memory);
-
-    {
-        EXPECT_CALL(allocator, malloc(MESSAGE_LENGTH, 0)).Times(1).WillOnce(Return(mem2));
-        root::buffer src_buffer(MESSAGE_LENGTH, &allocator);
-        src_buffer.write(0, MESSAGE, 0, MESSAGE_LENGTH);
-        buffer.write(0, src_buffer, 0, MESSAGE_LENGTH);
-
-        EXPECT_EQ(memcmp(MESSAGE, buffer.raw(), MESSAGE_LENGTH), 0);
-        EXPECT_EQ(memcmp(src_buffer.raw(), buffer.raw(), MESSAGE_LENGTH), 0);
-        EXPECT_NE(src_buffer.raw(), buffer.raw());
-
-        EXPECT_CALL(allocator, free(mem2, MESSAGE_LENGTH, 0)).Times(1);
-    }
-
-    char const* MODIFICATION = "passing";
-    const size_t MODIFICATION_LENGTH = strlen(MODIFICATION);
-    const size_t MODIFICATION_START = 6; // Just after "Hello "
-    char const* MODIFIED_MESSAGE = "Hello passing test";
-    
-    {
-        EXPECT_CALL(allocator, malloc(MODIFICATION_LENGTH, 0)).Times(1).WillOnce(Return(mem2));
-        root::buffer src_buffer(MODIFICATION_LENGTH, &allocator);
-        src_buffer.write(0, MODIFICATION, 0, MODIFICATION_LENGTH);
-        buffer.write(MODIFICATION_START, src_buffer, 0, MODIFICATION_LENGTH);
-
-        EXPECT_EQ(memcmp(MODIFIED_MESSAGE, buffer.raw(), MESSAGE_LENGTH), 0);
-        EXPECT_NE(src_buffer.raw(), buffer.raw());
-
-        EXPECT_CALL(allocator, free(mem2, MODIFICATION_LENGTH, 0)).Times(1);
-    }
-
-    buffer.write(MODIFICATION_START, MODIFICATION, 0, MODIFICATION_LENGTH);
-    
-    EXPECT_EQ(memcmp(MODIFIED_MESSAGE, buffer.raw(), MESSAGE_LENGTH), 0);
-
-    EXPECT_CALL(allocator, free(memory, MESSAGE_LENGTH, 0)).Times(1);
-    
-    free(mem2);
 }
