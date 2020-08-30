@@ -13,7 +13,7 @@ function try_remove_tree {
 try_remove_tree $DIR/../lib
 try_remove_tree $DIR/../include/gmock
 try_remove_tree $DIR/../include/gtest
-try_remove_tree $DIR/../thidparty/googletest/build
+try_remove_tree $DIR/../thirdparty/googletest/build
 
 # Get rid of our own artifacts
 find .. -type f | grep Makefile | grep -v thirdparty | xargs rm
