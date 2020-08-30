@@ -20,7 +20,6 @@ fi
 
 make
 
-
 if [ ! $? -eq 0 ]; then
     echo 'Make failed. Quitting.'
     exit 1

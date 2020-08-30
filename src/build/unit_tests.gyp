@@ -4,7 +4,7 @@
             'target_name': 'unit_tests',
             'type' : 'executable',
             'cflags' : [
-                '-g'
+                '-g -fPIC'
             ],
             'includes' : [
                 '../root/root_common.gypi',
@@ -17,9 +17,9 @@
             ],
             'link_settings': {
                 'libraries': [
-                    '-lgtest_main',
-                    '-lgtest',
-                    '-lgmock',
+                    '-lgtest_maind',
+                    '-lgtestd',
+                    '-lgmockd',
                     '-pthread'
                 ],
                 'library_dirs': [
