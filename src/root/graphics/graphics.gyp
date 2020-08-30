@@ -7,7 +7,8 @@
                 '../root_common.gypi'
             ],
             'sources' : [
-                'instance.cpp'
+                'instance.cpp',
+                'physical_device.cpp'
             ],
             'link_settings': {
                 'libraries': [

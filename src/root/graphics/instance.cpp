@@ -36,17 +36,32 @@ auto instance::init() -> void {
     create_info.enabledExtensionCount = 0;
     create_info.ppEnabledExtensionNames = nullptr;
 
-    instance* i = new instance(); // TODO: maybe provide allocator?
-    if (vkCreateInstance(&create_info, nullptr, &(i->handle)) != VK_SUCCESS) {
-        // TODO: error
+    VkInstance handle;
+    if (vkCreateInstance(&create_info, nullptr, &handle) != VK_SUCCESS) {
+        // TODO: handle error
     }
+    m_instance = new instance(handle); // TODO: maybe provide allocator?
 }
 
-auto instance::devices(allocator* alloc) const -> array<device> {
+auto instance::physical_devices(allocator* alloc) const -> array<physical_device> {
     u32 num;
-    vkEnumeratePhysicalDevices(handle, &num, nullptr);
-    array<device> devices(num, alloc);
+    if (vkEnumeratePhysicalDevices(handle, &num, nullptr) != VK_SUCCESS) {
+        // TODO: handle error
+    }
     
+    VkPhysicalDevice phys_devices[num];
+    
+    if (vkEnumeratePhysicalDevices(handle, &num, phys_devices) != VK_SUCCESS) {
+        // TODO: handle error
+    }
+
+    array<physical_device> devices(num, alloc);
+
+    for(int i = 0; i < num; i++) {
+        devices[i] = physical_device(phys_devices[i]);
+    }
+
+    return devices;
 }
 
 } // namespace graphics

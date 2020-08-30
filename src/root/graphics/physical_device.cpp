@@ -17,35 +17,38 @@
  * along with The Root Engine.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#pragma once
-
-#include <vulkan/vulkan.h>
-
 #include <root/core/array.h>
 #include <root/graphics/physical_device.h>
 
 namespace root {
+
 namespace graphics {
 
-class instance final {
-public:
+auto physical_device::properties() -> VkPhysicalDeviceProperties* {
+    if(m_properties == nullptr)
+        vkGetPhysicalDeviceProperties(handle, m_properties);
+    return m_properties;
+}
 
-    static auto init() -> void;
+auto physical_device::memory_properties() -> VkPhysicalDeviceMemoryProperties* {
+    if(m_memory_properties == nullptr) 
+        vkGetPhysicalDeviceMemoryProperties(handle, m_memory_properties);
+    return m_memory_properties;
+}
 
-    static inline auto get() -> instance* {
-        return m_instance;
+auto physical_device::queue_family_properties(allocator* alloc) -> array<VkQueueFamilyProperties>& {
+    if(!m_family_properties) {
+        u32 num;
+        vkGetPhysicalDeviceQueueFamilyProperties(handle, &num, nullptr);
+
+        array<VkQueueFamilyProperties> props(num, alloc);
+        vkGetPhysicalDeviceQueueFamilyProperties(handle, &num, props.raw());
+
+        m_family_properties = std::move(props);
     }
-
-    auto physical_devices(allocator* alloc = allocator::default_allocator()) const -> array<physical_device>;
-
-    VkInstance handle;
-
-private:
-    inline instance(const VkInstance& h)
-    :   handle(h) {}
-
-    static instance* m_instance;
-};
+    return m_family_properties;
+}
 
 } // namespace graphics
+
 } // namespace root

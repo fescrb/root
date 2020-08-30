@@ -21,22 +21,29 @@
 
 #include <vulkan/vulkan.h>
 
+#include <root/memory/allocator.h>
+
 namespace root {
 
 namespace graphics {
 
-class device final {
-    VkDevice handle;
+class physical_device final {
+public:
+    explicit physical_device(const VkPhysicalDevice& h)
+    :   handle(h),
+        m_properties(nullptr),
+        m_memory_properties(nullptr) {}
 
-    class info {
-    public:
-        u32 foo;
-    };
+    VkPhysicalDevice handle;
 
-    //info *info();
+    auto properties() -> VkPhysicalDeviceProperties*;
+    auto memory_properties() -> VkPhysicalDeviceMemoryProperties*;
+    auto queue_family_properties(allocator* alloc = allocator::default_allocator()) -> array<VkQueueFamilyProperties>&;
 
 private:
-    //info* m_info;
+    VkPhysicalDeviceProperties *m_properties;
+    VkPhysicalDeviceMemoryProperties *m_memory_properties;
+    array<VkQueueFamilyProperties> m_family_properties;
 };
 
 } // namespace graphics
