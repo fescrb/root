@@ -25,19 +25,18 @@ namespace root {
 
 namespace graphics {
 
-class device {
-
-
+class device final {
     VkDevice handle;
 
     class info {
+    public:
         u32 foo;
     };
 
-    info *info();
+    //info *info();
 
 private:
-    info m_info;
+    //info* m_info;
 };
 
 } // namespace graphics

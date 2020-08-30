@@ -21,18 +21,29 @@
 
 #include <vulkan/vulkan.h>
 
+#include <root/core/array.h>
+#include <root/graphics/device.h>
+
 namespace root {
 namespace graphics {
 
 class instance final {
 public:
 
-    static inline auto init() -> void {
+    static auto init() -> void;
 
+    static inline auto get() -> instance* {
+        return m_instance;
     }
 
+    auto devices(allocator* alloc = allocator::default_allocator()) const -> array<device>;
 
     VkInstance handle;
+
+private:
+    inline instance() {}
+
+    static instance* m_instance;
 };
 
 } // namespace graphics
