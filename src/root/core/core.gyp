@@ -7,7 +7,8 @@
                 '../root_common.gypi'
             ],
             'sources' : [
-                'assert.cpp'
+                'assert.cpp'#,
+                #'string.cpp'
             ]
         }
     ]

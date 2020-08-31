@@ -22,10 +22,29 @@
 #include <root/core/array.h>
 #include <root/core/primitives.h>
 
+#include <cstring>
+
 namespace root {
 
-constexpr auto strlen(const char* str) -> u64 {
-    return *str ? strlen(str+1) + 1 : 0;
+template<typename T>
+auto to_string(const T& object) -> const char* {
+    return nullptr;
+}
+
+template<typename T> 
+auto strlen(const T& object) -> u64;
+
+auto strlen(const char* str) -> u64 {
+    return ::strlen(str);
+}
+
+// Returns the new position along the char str
+// TODO: maybe use a stream?
+template<typename T>
+auto to_string(char* str, const T& object, const u64& len) -> char*;
+
+auto to_string(char* str, const char* strlit, const u64& len) -> char* {
+    memcpy(str, strlit, strlen(strlit)); return str + len;
 }
 
 class string : public array<i8> {

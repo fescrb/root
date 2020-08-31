@@ -41,6 +41,16 @@ public:
     void* memory;
 };
 
+// TODO
+/*#include <root/core/stringify.h>
+
+TEST(stringify_tests, i32) {
+    EXPECT_EQ(root::strlen(static_cast<root::i32>(10)), 5);
+}
+
+TEST(stringify_tests, to_string_i32) {
+    EXPECT_EQ(strcmp(root::to_string(static_cast<root::i32>(10)), "something"), 0);
+}*/
 
 using ::testing::Return;
 
