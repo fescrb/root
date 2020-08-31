@@ -19,28 +19,21 @@
 
 #pragma once
 
-#include <root/core/primitives.h>
+#include <root/io/stream.h>
 
 #include <limits>
 
 namespace root {
 
-class stream {
+class buffer_stream final : public stream {
 public:
-    enum class relativity : u8 {
-        start = 0,
-        current = 1,
-        end = 2
-    };
 
-    constexpr static u64 INVALID_SIZE = std::numeric_limits<u64>::max();
+    u64 read(void* dst, const u64& len) override;
+    u64 write(void* src, const u64& len) override;
+    void seek(const i64& offset, const relativity& offset_relativity = relativity::start) override;
+    u64 tell(const relativity& tell_relativity = relativity::start) override;
 
-    virtual u64 read(void* dst, const u64& len) = 0;
-    virtual u64 write(void* src, const u64& len) = 0;
-    virtual void seek(const i64& offset, const relativity& offset_relativity = relativity::start) = 0;
-    virtual u64 tell(const relativity& tell_relativity = relativity::start) = 0;
-
-    virtual ~stream() {}
+    virtual ~buffer_stream() {}
 };
 
 } // namespace root
