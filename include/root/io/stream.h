@@ -20,6 +20,7 @@
 #pragma once
 
 #include <root/core/primitives.h>
+#include <root/core/error.h>
 
 #include <limits>
 
@@ -27,18 +28,18 @@ namespace root {
 
 class stream {
 public:
-    enum class relativity : u8 {
+    enum class relative_to : u8 {
         start = 0,
-        current = 1,
+        current_position = 1,
         end = 2
     };
 
     constexpr static u64 INVALID_SIZE = std::numeric_limits<u64>::max();
 
-    virtual u64 read(void* dst, const u64& len) = 0;
-    virtual u64 write(void* src, const u64& len) = 0;
-    virtual void seek(const i64& offset, const relativity& offset_relativity = relativity::start) = 0;
-    virtual u64 tell(const relativity& tell_relativity = relativity::start) = 0;
+    virtual auto read(void* dst, const u64& len) -> error = 0;
+    virtual auto write(void* src, const u64& len) -> error = 0;
+    virtual auto seek(const i64& offset, const relative_to& relative_to = relative_to::start) -> error = 0;
+    virtual auto tell(const relative_to& relative_to = relative_to::start) const -> value_or_error<i64> = 0;
 
     virtual ~stream() {}
 };
