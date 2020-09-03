@@ -67,6 +67,7 @@ public:
         return m_byte_size;
     }
 
+    // TODO: write a named function equivalent
     inline operator bool() const {
         return m_data && m_byte_size && m_alloc; 
     }
@@ -80,6 +81,9 @@ public:
         if(m_data && m_alloc && m_byte_size) {
             m_alloc->free(m_data, m_byte_size, ALIGNMENT);
         }
+        m_data = nullptr;
+        m_alloc = nullptr;
+        m_byte_size = 0;
     }
 
     class offset_view {
