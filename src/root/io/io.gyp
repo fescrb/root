@@ -1,13 +1,13 @@
 {
     'targets' : [
         {
-            'target_name': 'core',
+            'target_name': 'io',
             'type' : 'static_library',
             'includes' : [
                 '../root_common.gypi'
             ],
             'sources' : [
-                'file.cpp'
+                'buffer_stream.cpp'
             ]
         }
     ]

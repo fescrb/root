@@ -10,7 +10,8 @@
                 '../root/root_common.gypi',
                 '../root/core/test/core_tests.gypi',
                 '../root/math/test/math_tests.gypi',
-                '../root/memory/test/memory_tests.gypi'
+                '../root/memory/test/memory_tests.gypi',
+                '../root/io/test/io_tests.gypi'
             ],
             'dependencies' : [
                 'root_library.gyp:root'

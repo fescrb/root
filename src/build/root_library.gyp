@@ -9,6 +9,7 @@
             'dependencies' : [
                 '../root/memory/memory.gyp:memory',
                 '../root/core/core.gyp:core',
+                '../root/io/io.gyp:io',
                 '../root/graphics/graphics.gyp:graphics'
             ]
         }
