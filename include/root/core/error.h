@@ -45,6 +45,11 @@ struct value_or_error final {
     }
 
     template<typename O>
+    inline auto operator!=(const O v) const {
+        return valid() && value != v;
+    }
+
+    template<typename O>
     inline auto operator<(const O v) const {
         return valid() && value < v;
     }
@@ -57,6 +62,11 @@ struct value_or_error final {
     template<typename O>
     inline auto operator>(const O v) const {
         return valid() && value > v;
+    }
+
+    template<typename O>
+    inline auto operator>=(const O v) const {
+        return valid() && value >= v;
     }
 
     template<>
