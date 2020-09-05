@@ -86,16 +86,16 @@ public:
         m_byte_size = 0;
     }
 
-    class offset_view {
+    class view {
     public:
-        inline offset_view(offset_view&& other) 
+        inline view(view&& other) 
         :   target(other.target),
             offset(std::move(other.offset)) {}
 
-        offset_view(const offset_view&) = delete;
+        view(const view&) = delete;
 
-        auto operator=(const offset_view&) -> offset_view& = delete;
-        auto operator=(offset_view&&) -> offset_view& = delete;
+        auto operator=(const view&) -> view& = delete;
+        auto operator=(view&&) -> view& = delete;
 
         inline auto size() const -> u64 {
             return target.size() - offset;
@@ -114,35 +114,35 @@ public:
         }
         
         template<typename T>
-        inline auto at(const T& extra_offset) const -> offset_view {
+        inline auto at(const T& extra_offset) const -> view {
             root_assert(offset + extra_offset >= 0);
             root_assert(offset + extra_offset < target.size());
-            return offset_view(target, static_cast<u64>(offset + extra_offset));
+            return view(target, static_cast<u64>(offset + extra_offset));
         } 
 
         template<typename T>
-        inline auto operator+(const T& extra_offset) const -> offset_view {
+        inline auto operator+(const T& extra_offset) const -> view {
             return at(extra_offset);
         }
 
         const buffer& target;
         const u64 offset;
     private:
-        inline offset_view(const buffer& b, const u64& o) 
+        inline view(const buffer& b, const u64& o) 
         :  target(b), offset(o) {}
 
         friend class buffer;
     };
 
     template<typename T>
-    inline auto at(const T& offset) const -> offset_view {
+    inline auto at(const T& offset) const -> view {
         root_assert(offset >= 0);
         root_assert(offset < m_byte_size);
-        return offset_view(*this, static_cast<u64>(offset));
+        return view(*this, static_cast<u64>(offset));
     } 
 
     template<typename T>
-    inline auto operator+(const T& offset) const -> offset_view {
+    inline auto operator+(const T& offset) const -> view {
         return at(offset);
     }
 

@@ -117,14 +117,14 @@ TEST_F(buffer_tests, buffer_offset) {
     constexpr size_t SECOND_REMAINDER = REMAINDER - SECOND_OFFSET;
     root::buffer buffer(ALLOCATION_SIZE, &allocator);
 
-    root::buffer::offset_view view = buffer + OFFSET;
+    root::buffer::view view = buffer + OFFSET;
 
     EXPECT_TRUE(view);
 
     EXPECT_NE(buffer.raw(), view.raw());
     EXPECT_EQ(view.size(), REMAINDER);
 
-    root::buffer::offset_view second_view = view + SECOND_OFFSET;
+    root::buffer::view second_view = view + SECOND_OFFSET;
     
     EXPECT_TRUE(second_view);
 
