@@ -117,25 +117,86 @@ TEST_F(buffer_tests, buffer_offset) {
     constexpr size_t SECOND_REMAINDER = REMAINDER - SECOND_OFFSET;
     root::buffer buffer(ALLOCATION_SIZE, &allocator);
 
-    root::buffer::view view = buffer + OFFSET;
+    root::buffer::view offset = buffer + OFFSET;
 
-    EXPECT_TRUE(view);
+    EXPECT_TRUE(offset);
 
-    EXPECT_NE(buffer.raw(), view.raw());
-    EXPECT_EQ(view.size(), REMAINDER);
+    EXPECT_NE(buffer.raw(), offset.raw());
+    EXPECT_EQ(offset.size(), REMAINDER);
 
-    root::buffer::view second_view = view + SECOND_OFFSET;
+    root::buffer::view second_offset = offset + SECOND_OFFSET;
     
-    EXPECT_TRUE(second_view);
+    EXPECT_TRUE(second_offset);
 
-    EXPECT_NE(buffer.raw(), second_view.raw());
-    EXPECT_NE(view.raw(), second_view.raw());
-    EXPECT_EQ(second_view.size(), SECOND_REMAINDER);
+    EXPECT_NE(buffer.raw(), second_offset.raw());
+    EXPECT_NE(offset.raw(), second_offset.raw());
+    EXPECT_EQ(second_offset.size(), SECOND_REMAINDER);
 
     root::buffer moved_buffer(std::move(buffer));
     
-    EXPECT_FALSE(view);
-    EXPECT_FALSE(second_view);
+    EXPECT_FALSE(offset);
+    EXPECT_FALSE(second_offset);
+
+    EXPECT_CALL(allocator, free(memory, ALLOCATION_SIZE, 0)).Times(1);
+}
+
+
+TEST_F(buffer_tests, buffer_range) {
+    EXPECT_CALL(allocator, malloc(ALLOCATION_SIZE, 0)).Times(1).WillOnce(Return(memory));
+    
+    root::buffer buffer(ALLOCATION_SIZE, &allocator);
+
+    EXPECT_EQ(static_cast<root::buffer::view>(buffer).size(), buffer.size());
+    EXPECT_EQ(static_cast<root::buffer::view>(buffer).raw(), buffer.raw());
+
+    constexpr size_t OFFSET = ALLOCATION_SIZE / 4;
+    constexpr size_t END = OFFSET + (ALLOCATION_SIZE / 2);
+
+    root::buffer::view range = buffer.range(OFFSET, END);
+
+    EXPECT_EQ(range.size(), END - OFFSET);
+    EXPECT_EQ(range.raw(), buffer + OFFSET);
+    EXPECT_TRUE(range);
+
+    root::buffer::view second_range = range.at(OFFSET);
+
+    EXPECT_EQ(second_range.size(), END - (OFFSET*2));
+    EXPECT_EQ(second_range.raw(), buffer + (OFFSET * 2));
+    EXPECT_TRUE(second_range);
+
+    root::buffer moved_buffer(std::move(buffer));
+    
+    EXPECT_FALSE(range);
+    EXPECT_FALSE(second_range);
+
+    EXPECT_CALL(allocator, free(memory, ALLOCATION_SIZE, 0)).Times(1);
+}
+
+TEST_F(buffer_tests, buffer_limit) {
+    EXPECT_CALL(allocator, malloc(ALLOCATION_SIZE, 0)).Times(1).WillOnce(Return(memory));
+    
+    root::buffer buffer(ALLOCATION_SIZE, &allocator);
+
+    constexpr size_t LIMIT = ALLOCATION_SIZE / 2;
+
+    root::buffer::view limit = buffer.limit(LIMIT);
+
+    EXPECT_EQ(limit.size(), LIMIT);
+    EXPECT_EQ(limit.raw(), buffer);
+    EXPECT_TRUE(limit);
+
+    constexpr size_t OFFSET = LIMIT / 2;
+
+    root::buffer::view second_limit = limit.at(OFFSET);
+
+    EXPECT_EQ(second_limit.size(), LIMIT - OFFSET);
+    EXPECT_EQ(second_limit.raw(), buffer + OFFSET);
+    EXPECT_TRUE(second_limit);
+
+    root::buffer moved_buffer(std::move(buffer));
+    
+    EXPECT_FALSE(limit);
+    EXPECT_FALSE(second_limit);
 
     EXPECT_CALL(allocator, free(memory, ALLOCATION_SIZE, 0)).Times(1);
 }

@@ -17,7 +17,7 @@
  * along with The Root Engine.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <root/core/string.h>
+#include <root/io/format.h>
 #include <root/core/assert.h>
 
 #include <cmath>

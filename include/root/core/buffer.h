@@ -90,15 +90,19 @@ public:
     public:
         inline view(view&& other) 
         :   target(other.target),
-            offset(std::move(other.offset)) {}
+            offset(std::move(other.offset)),
+            limit(std::move(other.limit)) {}
 
-        view(const view&) = delete;
+        inline view(const view& other)
+        :   target(other.target),
+            offset(other.offset),
+            limit(other.limit) {}
 
         auto operator=(const view&) -> view& = delete;
         auto operator=(view&&) -> view& = delete;
 
         inline auto size() const -> u64 {
-            return target.size() - offset;
+            return limit - offset;
         }
 
         inline auto raw() const -> void* {
@@ -115,10 +119,16 @@ public:
         
         template<typename T>
         inline auto at(const T& extra_offset) const -> view {
-            root_assert(offset + extra_offset >= 0);
-            root_assert(offset + extra_offset < target.size());
-            return view(target, static_cast<u64>(offset + extra_offset));
+            root_assert(offset + extra_offset < size());
+            return view(target, static_cast<u64>(offset + extra_offset), limit);
         } 
+
+        template<typename T1, typename T2>
+        inline auto range(const T1& start, const T2& end) const -> view {
+            root_assert(start + offset < size());
+            root_assert(end + offset < size());
+            return view(target, static_cast<u64>(offset+start), static_cast<u64>(offset+end));
+        }
 
         template<typename T>
         inline auto operator+(const T& extra_offset) const -> view {
@@ -127,23 +137,41 @@ public:
 
         const buffer& target;
         const u64 offset;
+        const u64 limit;
     private:
-        inline view(const buffer& b, const u64& o) 
-        :  target(b), offset(o) {}
+        inline view(const buffer& b, const u64& o, const u64& l) 
+        :  target(b), offset(o), limit(l) {}
 
         friend class buffer;
     };
 
     template<typename T>
     inline auto at(const T& offset) const -> view {
-        root_assert(offset >= 0);
         root_assert(offset < m_byte_size);
-        return view(*this, static_cast<u64>(offset));
+        return view(*this, static_cast<u64>(offset), m_byte_size);
     } 
 
+    // TODO ensure that T is unsigned
     template<typename T>
     inline auto operator+(const T& offset) const -> view {
         return at(offset);
+    }
+
+    template<typename T1, typename T2>
+    inline auto range(const T1& start, const T2& end) const -> view {
+        root_assert(start < m_byte_size);
+        root_assert(end < m_byte_size);
+        return view(*this, static_cast<u64>(start), static_cast<u64>(end));
+    }
+
+    template<typename T>
+    inline auto limit(const T& size) const -> view {
+        root_assert(size < m_byte_size);
+        return view(*this, static_cast<u64>(0), static_cast<u64>(size));
+    }
+
+    inline operator view() const {
+        return view(*this, static_cast<u64>(0), m_byte_size);
     }
 
     static constexpr u64 ALIGNMENT = 0; // TODO should probably be a conservative aligment

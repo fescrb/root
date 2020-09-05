@@ -28,7 +28,11 @@ namespace root {
 
 class buffer_stream final : public stream {
 public:
-    explicit buffer_stream(buffer& b)
+    explicit buffer_stream(const buffer& b)
+    :   backing(b),
+        pointer(0) {}
+
+    explicit buffer_stream(const buffer::view& b)
     :   backing(b),
         pointer(0) {}
 
@@ -47,7 +51,7 @@ private:
         return error::NO_ERROR;
     }
 
-    buffer& backing;
+    buffer::view backing;
     i64 pointer;
 };
 
