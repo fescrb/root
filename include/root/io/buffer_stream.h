@@ -33,14 +33,14 @@ public:
         pointer(0) {}
 
     auto read(void* dst, const u64& len) -> error override;
-    auto write(void* src, const u64& len) -> error override;
+    auto write(const void* src, const u64& len) -> error override;
     auto seek(const i64& offset, const relative_to& relative_to = relative_to::start) -> error override;
     auto tell(const relative_to& relative_to = relative_to::start) const -> value_or_error<i64> override;
     
     ~buffer_stream() {}
 
 private:
-    inline auto memcpy_helper(void* dst, void* src, const u64& len) -> error {
+    inline auto memcpy_helper(void* dst, const void* src, const u64& len) -> error {
         if (pointer < 0 || pointer + len > backing.size()) return error::INVALID_OPERATION;
         memcpy(dst, src, len);
         pointer+=len;

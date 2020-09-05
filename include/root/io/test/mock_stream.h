@@ -27,7 +27,7 @@ namespace root {
 class mock_stream : public stream {
 public:
     MOCK_METHOD(error, read, (void*, const u64&));
-    MOCK_METHOD(error, write, (void*, const u64&));
+    MOCK_METHOD(error, write, (const void*, const u64&));
     MOCK_METHOD(error, seek, (const i64&, const relative_to&));
     MOCK_METHOD(value_or_error<i64>, tell, (const relative_to&), (const));
 };

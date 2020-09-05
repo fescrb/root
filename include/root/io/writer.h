@@ -29,7 +29,7 @@ class writer_interface {
 public:
     inline explicit writer_interface(stream* s) : m_stream(s) {}
 
-    inline auto write(void* src, const u64& len) -> error {
+    inline auto write(const void* src, const u64& len) -> error {
         return m_stream->write(src, len);
     }
 

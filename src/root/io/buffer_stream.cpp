@@ -28,7 +28,7 @@ auto buffer_stream::read(void* dst, const u64& len) -> error {
     return memcpy_helper(dst, backing.at(pointer), len);
 }
 
-auto buffer_stream::write(void* src, const u64& len) -> error {
+auto buffer_stream::write(const void* src, const u64& len) -> error {
     if (!backing) return error::DEAD_OBJECT;
     return memcpy_helper(backing.at(pointer), src, len);
 }
