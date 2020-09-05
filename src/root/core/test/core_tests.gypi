@@ -5,5 +5,6 @@
         'string_tests.cpp',
         'buffer_tests.cpp',
         'error_tests.cpp',
+        'tuple_tests.cpp',
     ]
 }
