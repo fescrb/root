@@ -45,15 +45,15 @@ public:
 
 TEST_F(buffer_stream_tests, tell) {
     EXPECT_EQ(stream.tell(), 0);
-    EXPECT_EQ(stream.tell(root::stream::relative_to::current_position), 0);
-    EXPECT_EQ(stream.tell(root::stream::relative_to::end), -BUFFER_SIZE);
+    EXPECT_EQ(stream.tell(root::relative_to::current_position), 0);
+    EXPECT_EQ(stream.tell(root::relative_to::end), -BUFFER_SIZE);
 }
 
 TEST_F(buffer_stream_tests, tell_errors) {
     buffer = root::buffer();
     EXPECT_EQ(stream.tell(), root::error::DEAD_OBJECT);
-    EXPECT_EQ(stream.tell(root::stream::relative_to::current_position), root::error::DEAD_OBJECT);
-    EXPECT_EQ(stream.tell(root::stream::relative_to::end), root::error::DEAD_OBJECT);
+    EXPECT_EQ(stream.tell(root::relative_to::current_position), root::error::DEAD_OBJECT);
+    EXPECT_EQ(stream.tell(root::relative_to::end), root::error::DEAD_OBJECT);
 }
 
 TEST_F(buffer_stream_tests, seek_from_start) {
@@ -62,8 +62,8 @@ TEST_F(buffer_stream_tests, seek_from_start) {
         int position = rand() % BUFFER_SIZE;
         EXPECT_EQ(stream.seek(position), root::error::NO_ERROR);
         EXPECT_EQ(stream.tell(), position);
-        EXPECT_EQ(stream.tell(root::stream::relative_to::current_position), 0);
-        EXPECT_EQ(stream.tell(root::stream::relative_to::end), position - BUFFER_SIZE);
+        EXPECT_EQ(stream.tell(root::relative_to::current_position), 0);
+        EXPECT_EQ(stream.tell(root::relative_to::end), position - BUFFER_SIZE);
     }
 }
 
@@ -71,10 +71,10 @@ TEST_F(buffer_stream_tests, seek_from_end) {
     constexpr int NUM_TESTS = 10;
     for(int _ = 0; _ < NUM_TESTS; _++) {
         int position = rand() % BUFFER_SIZE;
-        EXPECT_EQ(stream.seek(-position, root::stream::relative_to::end), root::error::NO_ERROR);
+        EXPECT_EQ(stream.seek(-position, root::relative_to::end), root::error::NO_ERROR);
         EXPECT_EQ(stream.tell(), BUFFER_SIZE - position);
-        EXPECT_EQ(stream.tell(root::stream::relative_to::current_position), 0);
-        EXPECT_EQ(stream.tell(root::stream::relative_to::end), -position);
+        EXPECT_EQ(stream.tell(root::relative_to::current_position), 0);
+        EXPECT_EQ(stream.tell(root::relative_to::end), -position);
     }
 }
 
@@ -87,10 +87,10 @@ TEST_F(buffer_stream_tests, seek_relative) {
     for(int _ = 0; _ < NUM_TESTS; _++) {
         int move = (rand() % MAX_MOVE) - (MAX_MOVE / 2);
         position += move;
-        EXPECT_EQ(stream.seek(move, root::stream::relative_to::current_position), root::error::NO_ERROR);
+        EXPECT_EQ(stream.seek(move, root::relative_to::current_position), root::error::NO_ERROR);
         EXPECT_EQ(stream.tell(), position);
-        EXPECT_EQ(stream.tell(root::stream::relative_to::current_position), 0);
-        EXPECT_EQ(stream.tell(root::stream::relative_to::end), position - BUFFER_SIZE);
+        EXPECT_EQ(stream.tell(root::relative_to::current_position), 0);
+        EXPECT_EQ(stream.tell(root::relative_to::end), position - BUFFER_SIZE);
     }
 }
 
@@ -111,15 +111,15 @@ TEST_F(buffer_stream_tests, write) {
 
     for(int i = 0; i < NUM_WRITES; i++) {
         EXPECT_EQ(stream.tell(), i * WRITE_SIZE);
-        EXPECT_EQ(stream.tell(root::stream::relative_to::current_position), 0);
-        EXPECT_EQ(stream.tell(root::stream::relative_to::end), (i * WRITE_SIZE) - BUFFER_SIZE);
+        EXPECT_EQ(stream.tell(root::relative_to::current_position), 0);
+        EXPECT_EQ(stream.tell(root::relative_to::end), (i * WRITE_SIZE) - BUFFER_SIZE);
 
         EXPECT_EQ(stream.write(&(raw_buffer[i*WRITE_SIZE]), WRITE_SIZE), root::error::NO_ERROR);
     }
 
     EXPECT_EQ(stream.tell(), BUFFER_SIZE);
-    EXPECT_EQ(stream.tell(root::stream::relative_to::current_position), 0);
-    EXPECT_EQ(stream.tell(root::stream::relative_to::end), 0);
+    EXPECT_EQ(stream.tell(root::relative_to::current_position), 0);
+    EXPECT_EQ(stream.tell(root::relative_to::end), 0);
 
     EXPECT_EQ(memcmp(buffer, reinterpret_cast<void*>(raw_buffer), BUFFER_SIZE), 0);
 }
@@ -139,8 +139,8 @@ TEST_F(buffer_stream_tests, write_errors) {
     constexpr int WRITE_SIZE = BUFFER_SIZE / NUM_WRITES;
     for(int i = 0; i < NUM_WRITES; i++) {
         EXPECT_EQ(stream.tell(), ERROR_POS);
-        EXPECT_EQ(stream.tell(root::stream::relative_to::current_position), 0);
-        EXPECT_EQ(stream.tell(root::stream::relative_to::end), ERROR_POS - BUFFER_SIZE);
+        EXPECT_EQ(stream.tell(root::relative_to::current_position), 0);
+        EXPECT_EQ(stream.tell(root::relative_to::end), ERROR_POS - BUFFER_SIZE);
 
         EXPECT_EQ(stream.write(&(raw_buffer[i*WRITE_SIZE]), WRITE_SIZE), root::error::INVALID_OPERATION);
     }
@@ -170,15 +170,15 @@ TEST_F(buffer_stream_tests, read) {
 
     for(int i = 0; i < NUM_WRITES; i++) {
         EXPECT_EQ(stream.tell(), i * READ_SIZE);
-        EXPECT_EQ(stream.tell(root::stream::relative_to::current_position), 0);
-        EXPECT_EQ(stream.tell(root::stream::relative_to::end), (i * READ_SIZE) - BUFFER_SIZE);
+        EXPECT_EQ(stream.tell(root::relative_to::current_position), 0);
+        EXPECT_EQ(stream.tell(root::relative_to::end), (i * READ_SIZE) - BUFFER_SIZE);
 
         EXPECT_EQ(stream.read(&(raw_buffer[i*READ_SIZE]), READ_SIZE), root::error::NO_ERROR);
     }
 
     EXPECT_EQ(stream.tell(), BUFFER_SIZE);
-    EXPECT_EQ(stream.tell(root::stream::relative_to::current_position), 0);
-    EXPECT_EQ(stream.tell(root::stream::relative_to::end), 0);
+    EXPECT_EQ(stream.tell(root::relative_to::current_position), 0);
+    EXPECT_EQ(stream.tell(root::relative_to::end), 0);
 
     EXPECT_EQ(memcmp(buffer, reinterpret_cast<void*>(raw_buffer), BUFFER_SIZE), 0);
 }
@@ -198,8 +198,8 @@ TEST_F(buffer_stream_tests, read_errors) {
     constexpr int READ_SIZE = BUFFER_SIZE / NUM_WRITES;
     for(int i = 0; i < NUM_WRITES; i++) {
         EXPECT_EQ(stream.tell(), ERROR_POS);
-        EXPECT_EQ(stream.tell(root::stream::relative_to::current_position), 0);
-        EXPECT_EQ(stream.tell(root::stream::relative_to::end), ERROR_POS - BUFFER_SIZE);
+        EXPECT_EQ(stream.tell(root::relative_to::current_position), 0);
+        EXPECT_EQ(stream.tell(root::relative_to::end), ERROR_POS - BUFFER_SIZE);
 
         EXPECT_EQ(stream.read(&(raw_buffer[i*READ_SIZE]), READ_SIZE), root::error::INVALID_OPERATION);
     }

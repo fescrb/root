@@ -17,31 +17,29 @@
  * along with The Root Engine.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#pragma once
-
-#include <root/core/primitives.h>
-#include <root/core/error.h>
-
-#include <limits>
+#include <root/io/stream.h>
 
 namespace root {
 
-enum class relative_to : u8 {
-    start = 0,
-    current_position = 1,
-    end = 2
-};
-
-class stream {
+template<typename stream_class = stream>
+class writer {
 public:
-    constexpr static u64 INVALID_SIZE = std::numeric_limits<u64>::max();
+    inline explicit writer(stream* s) : m_stream(s) {}
 
-    virtual auto read(void* dst, const u64& len) -> error = 0;
-    virtual auto write(void* src, const u64& len) -> error = 0;
-    virtual auto seek(const i64& offset, const relative_to& relative_to = relative_to::start) -> error = 0;
-    virtual auto tell(const relative_to& relative_to = relative_to::start) const -> value_or_error<i64> = 0;
+    inline auto write(void* src, const u64& len) -> error {
+        return stream->write(src, len);
+    }
 
-    virtual ~stream() {}
+    inline auto seek(const i64& offset, const relative_to& relative_to = relative_to::start) -> error {
+        return stream->seek(offset, relative_to);
+    }
+
+    inline auto tell(const relative_to& relative_to = relative_to::start) const -> value_or_error<i64> {
+        return stream->tell(relative_to);
+    }
+
+private:
+    stream* m_stream;
 };
 
 } // namespace root
