@@ -20,36 +20,15 @@
 #pragma once
 
 #include <root/io/stream.h>
-#include <root/io/buffer_stream.h>
+
+#include <gmock/gmock.h>
 
 namespace root {
-
-template<typename stream_class = stream>
-class writer_interface {
+class mock_stream : public stream {
 public:
-    inline explicit writer_interface(stream* s) : m_stream(s) {}
-
-    inline auto write(void* src, const u64& len) -> error {
-        return m_stream->write(src, len);
-    }
-
-    inline auto seek(const i64& offset, const relative_to& relative_to = relative_to::start) -> error {
-        return m_stream->seek(offset, relative_to);
-    }
-
-    inline auto tell(const relative_to& relative_to = relative_to::start) const -> value_or_error<i64> {
-        return m_stream->tell(relative_to);
-    }
-
-private:
-    stream* m_stream;
+    MOCK_METHOD(error, read, (void*, const u64&));
+    MOCK_METHOD(error, write, (void*, const u64&));
+    MOCK_METHOD(error, seek, (const i64&, const relative_to&));
+    MOCK_METHOD(value_or_error<i64>, tell, (const relative_to&), (const));
 };
-
-/*
- * Class definitions
- */
-
-using writer = writer_interface<>;
-using buffer_writer = writer_interface<buffer_stream>;
-
 } // namespace root
