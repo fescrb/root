@@ -19,26 +19,29 @@
 
 #include <root/io/format.h>
 #include <root/core/assert.h>
+#include <root/math/math.h>
 
 #include <cmath>
+#include <iostream> // TODO remove
 
 namespace root {
 
-template<> auto to_string<bool>(const bool& boolean) -> const char* {
-    return boolean? "true" : "false";
+auto to_string(const bool& boolean) -> const char* {
+    return boolean ? "true" : "false";
+}
+
+template<> auto strlen<bool>(const bool& object) -> u64 {
+    return strlen(to_string(object));
+}
+
+template<> auto to_string<bool>(buffer_writer& dst, const bool& object) -> void {
+    to_string(dst, to_string(object));
 }
 
 template<typename T> auto integer_strlen(T i) -> u64 {
-    int len = 0;
-    if (i < 0) {
-        len++;
-        i = -i;
-    }
-    while(i > 9) {
-        len++;
-        i /= 10;
-    }
-    return ++len;
+    u64 digits = static_cast<u64>(ceil(log10(fabs(static_cast<f64>(i)))));
+    // If i is an exact power of 10 we will need one more character
+    return (i < 0 ? 1 : 0) + digits + (i % static_cast<T>(pow(10, digits)) ? 0 : 1);
 } 
 
 // TODO: Look for a method to do with with concepts?
@@ -74,60 +77,86 @@ template<> auto strlen<u64>(const u64& object) -> u64 {
     return integer_strlen(object);
 }
 
-template<typename T> auto integer_to_string(char* str, T i, const u64& len) -> char* {
-    int index = len - 1;
-    if (i < 0) {
-        str[0] = '-';
-        i = -i;
+template<typename T> auto unsigned_int_to_string(buffer_writer& dst, const T& i, const u64& min_digits = 0) -> void {
+    T digits = floor(log10(static_cast<f64>(i)));
+    T scale = static_cast<T>(pow(10, digits));
+    while(min_digits > (digits+1)) {
+        to_string(dst, '0');
+        digits++;
     }
-    while(i > 9) {
-        str[index] = (i % 10) - '0';
-        i /= 10;
-        index--;
+    while(scale >= 10) {
+        to_string(dst, static_cast<i8>(((i / scale) % 10) + '0'));
+        scale/=10;
     }
-    str[index] = i;
-    return str + len;
+    to_string(dst, static_cast<i8>((i  % 10) + '0'));
 } 
 
-template<> auto to_string<i8>(char* str, const i8& i, const u64& len) -> char* {
-    str[0] = i;
-    return str + 1;
+template<typename T> auto integer_to_string(buffer_writer& dst, const T& i) -> void {
+    // This needs a cleanup
+    T abs_i = i;
+    if (i < 0) {
+        to_string(dst, '-');
+        abs_i = -i;
+    }
+    unsigned_int_to_string(dst, abs_i);
+} 
+
+template<> auto to_string<i8>(buffer_writer& dst, const i8& i) -> void {
+    dst.write(&i, 1);
 }
 
-template<> auto to_string<i16>(char* str, const i16& i, const u64& len) -> char* {
-    return integer_to_string(str, i, len);
+template<> auto to_string<i16>(buffer_writer& dst, const i16& i) -> void {
+    integer_to_string(dst, i);
 }
 
-template<> auto to_string<i32>(char* str, const i32& i, const u64& len) -> char* {
-    return integer_to_string(str, i, len);
+template<> auto to_string<i32>(buffer_writer& dst, const i32& i) -> void {
+    integer_to_string(dst, i);
 }
 
-template<> auto to_string<i64>(char* str, const i64& i, const u64& len) -> void {
-    integer_to_string(str, i, len);
+template<> auto to_string<i64>(buffer_writer& dst, const i64& i) -> void {
+    integer_to_string(dst, i);
 }
 
-template<> auto to_string<u8>(char* str, const u8& i, const u64& len) -> void {
-    integer_to_string(str, i, len);
+template<> auto to_string<u8>(buffer_writer& dst, const u8& i) -> void {
+    integer_to_string(dst, i);
 }
 
-template<> auto to_string<u16>(char* str, const u16& i, const u64& len) -> void {
-    integer_to_string(str, i, len);
+template<> auto to_string<u16>(buffer_writer& dst, const u16& i) -> void {
+    integer_to_string(dst, i);
 }
 
-template<> auto to_string<u32>(char* str, const u32& i, const u64& len) -> void {
-    integer_to_string(str, i, len);
+template<> auto to_string<u32>(buffer_writer& dst, const u32& i) -> void {
+    integer_to_string(dst, i);
 }
 
-template<> auto to_string<u64>(char* str, const u64& i, const u64& len) -> void {
-    integer_to_string(str, i, len);
+template<> auto to_string<u64>(buffer_writer& dst, const u64& i) -> void {
+    integer_to_string(dst, i);
 }
 
-template<typename T> auto float_str_len(const T& f) -> u64 {
-    T temp;
-    u64 fractpart = static_cast<u64>(modf(abs(f), &temp));
-    u64 intpart = static_cast<u64>(temp);
+/*template<typename T> auto float_str_len(const T& f, const u32& precision = 6) -> u64 {
     u64 sign_len = f < 0.0 ? 1 : 0;
-    return sign_len + strlen(intpart) + 1 /*sign_point*/ + strlen(fractpart); 
+    f64 absolute_f = fabs(f);
+    f64 digits = log10(absolute_f);
+    return sign_len + ceil(digits) + (precision > 0 ? 1 + precision : 0);
+}*/
+
+template<typename T> auto float_str_len(const T& f, const u32& precision = 6) -> u64 {
+    u64 sign_len = f < 0.0 ? 1 : 0;
+    f64 absolute_f = fabs(f);
+    f64 digits = log10(absolute_f);
+    if(digits > static_cast<f64>(precision)) {
+        // Will print in sNe+E form
+        return sign_len + precision + 3 /*decimal point + e+*/ + strlen(static_cast<u64>(floor(digits)));
+    }
+    tuple<f64,f64> split = modf(absolute_f);
+    u64 integer_part = static_cast<u64>(split.at<0>());
+    if(integer_part == 0) {
+        // Will print in sNe-E form
+        f64 complement_digits = ceil(log10(1.0/absolute_f));
+        if(complement_digits > static_cast<f64>(precision-1))
+            return sign_len + precision + 3 /*decimal point + e-*/ + strlen(static_cast<u64>(ceil(complement_digits)));
+    }
+    return sign_len + precision + (precision > digits ? 1 : 0);
 }
 
 template<> auto strlen<f32>(const f32& object) -> u64 {
@@ -138,24 +167,77 @@ template<> auto strlen<f64>(const f64& object) -> u64 {
     return float_str_len(object);
 }
 
-template<typename T> auto float_to_string(char* str, const u64& i, const u64& len) -> char* {
-    T temp;
-    u64 fractpart = static_cast<u64>(modf(abs(f), &temp));
-    u64 intpart = static_cast<u64>(temp);
-    if (f < 0.0) {
-        str[0] = '-'; str++;
+/*template<typename T> auto float_to_string(buffer_writer& dst, const T& f, const u32& precision = 6) -> void {
+    if(f < 0.0) {
+        to_string(dst, '-');
     }
-    str = to_string(str, intpart, strlen(intpart));
-    str[0] = '.'; str++;
-    return to_string(str, fractpart, strlen(intpart));
+    constexpr u64 MAX_DIGITS_IN_U64 = 18;
+    f64 absolute_f = fabs(f);
+    tuple<f64,f64> split = modf(absolute_f);
+    f64 to_write = split.at<0>();
+    u64 digits_to_write = ceil(log10(split.at<0>()));
+    while(digits_to_write > MAX_DIGITS_IN_U64) {
+        f64 scale = pow(10, digits_to_write - MAX_DIGITS_IN_U64);
+        f64 this_write = to_write / scale ;
+        std:: cout << " scale: " << scale 
+                   << " this_write: " << this_write
+                   << " to_write: " << to_write
+                   << " digits_to_write: " << digits_to_write << std::endl;
+        to_string(dst, static_cast<u64>(this_write));
+        to_write -= (floor(this_write)*scale);
+        digits_to_write -= MAX_DIGITS_IN_U64;
+    }
+    to_string(dst, static_cast<u64>(to_write));
+    if(precision > 0) {
+        to_string(dst, '.');
+        f64 scaled_fractpart = split.at<1>() * pow(10, precision);
+        to_string(dst, static_cast<u64>(to_write));
+        while(-dst.tell(relative_to::end) > 0) {
+            to_string(dst, '0');
+        }
+    }
+}*/
+
+template<typename T> auto float_to_string(buffer_writer& dst, const T& f, const u32& precision = 6) -> void {
+    if(f < 0.0) {
+        to_string(dst, '-');
+    }
+    f64 absolute_f = fabs(f);
+    f64 digits = log10(absolute_f);
+    if(digits > static_cast<f64>(precision)) { 
+        // Will print in sNe+E form
+        tuple<f64,f64> split = modf(digits);
+        float_to_string(dst, pow(10, split.at<1>()), precision);
+        to_string(dst, "e+");
+        to_string(dst, static_cast<u64>(split.at<0>()));
+        return;
+    }
+    tuple<f64,f64> split = modf(absolute_f);
+    u64 integer_part = static_cast<u64>(split.at<0>());
+    if(integer_part == 0) {
+        // Will print in sNe-E form
+        f64 complement_digits = ceil(log10(1.0/absolute_f));
+        if(complement_digits > static_cast<f64>(precision-1)) {
+            float_to_string(dst, absolute_f * pow(10, complement_digits), precision);
+            to_string(dst, "e-");
+            to_string(dst, static_cast<u64>(complement_digits));
+            return;
+        }
+    }
+    to_string(dst, static_cast<u64>(integer_part));
+    if (digits < precision) {
+        u64 left_over_digits = precision - (digits < 0 ? 1 : digits);
+        to_string(dst, ".");
+        unsigned_int_to_string(dst, static_cast<u64>(round(split.at<1>() * pow(10, floor(left_over_digits)))), left_over_digits);
+    }
 }
 
-template<> auto to_string<u32>(char* str, const u32& i, const u64& len) -> char* {
-    return float_to_string(str, i, len);
+template<> auto to_string<f32>(buffer_writer& dst, const f32& f) -> void {
+    return float_to_string(dst, f);
 }
 
-template<> auto to_string<u64>(char* str, const u64& i, const u64& len) -> char* {
-    return float_to_string(str, i, len);
+template<> auto to_string<f64>(buffer_writer& dst, const f64& f) -> void {
+    return float_to_string(dst, f);
 }
 
 } // namespace root

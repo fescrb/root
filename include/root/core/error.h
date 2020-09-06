@@ -78,7 +78,11 @@ struct value_or_error final {
         return error == error::NO_ERROR;
     }
 
-    inline operator bool() const {
+    inline operator T() const {
+        return value;
+    }
+
+    inline explicit operator bool() const {
         return valid();
     }
 

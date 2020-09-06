@@ -7,7 +7,8 @@
                 '../root_common.gypi'
             ],
             'sources' : [
-                'buffer_stream.cpp'
+                'buffer_stream.cpp',
+                'format.cpp',
             ]
         }
     ]
