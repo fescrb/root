@@ -26,27 +26,6 @@
 
 namespace root {
 
-template<typename T>
-auto to_string(const T& object) -> const char* {
-    return nullptr;
-}
-
-template<typename T> 
-auto strlen(const T& object) -> u64;
-
-auto strlen(const char* str) -> u64 {
-    return ::strlen(str);
-}
-
-// Returns the new position along the char str
-// TODO: maybe use a stream?
-template<typename T>
-auto to_string(char* str, const T& object, const u64& len) -> char*;
-
-auto to_string(char* str, const char* strlit, const u64& len) -> char* {
-    memcpy(str, strlit, strlen(strlit)); return str + len;
-}
-
 class string : public array<i8> {
 public:
     explicit inline string(const char* str, allocator* alloc = allocator::default_allocator()) 
@@ -62,6 +41,9 @@ public:
     string(const string&) = delete;
     inline string(string&& other) 
     : array(std::move(other)) {}
+
+    inline string(buffer&& b) 
+    :   array(std::move(b)) {}
 };
 
 } // namespace root

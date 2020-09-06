@@ -37,6 +37,7 @@ public:
     }
 
     constexpr static size_t ALLOCATION_SIZE = 512;
+    constexpr static size_t ALIGNMENT = 1;
 
     root::mock_allocator allocator;
     void* memory;
@@ -53,21 +54,21 @@ TEST_F(buffer_tests, empty_init) {
 }
 
 TEST_F(buffer_tests, blank_init) {
-    EXPECT_CALL(allocator, malloc(ALLOCATION_SIZE, 0)).Times(1).WillOnce(Return(memory));
+    EXPECT_CALL(allocator, malloc(ALLOCATION_SIZE, ALIGNMENT)).Times(1).WillOnce(Return(memory));
     
-    root::buffer buffer(ALLOCATION_SIZE, &allocator);
+    root::buffer buffer(ALLOCATION_SIZE, ALIGNMENT, &allocator);
 
     EXPECT_EQ(buffer.size(), ALLOCATION_SIZE);
     EXPECT_TRUE(buffer);
     EXPECT_EQ(buffer.raw(), memory);
 
-    EXPECT_CALL(allocator, free(memory, ALLOCATION_SIZE, 0)).Times(1);
+    EXPECT_CALL(allocator, free(memory, ALLOCATION_SIZE, ALIGNMENT)).Times(1);
 }
 
 TEST_F(buffer_tests, move_init) {
-    EXPECT_CALL(allocator, malloc(ALLOCATION_SIZE, 0)).Times(1).WillOnce(Return(memory));
+    EXPECT_CALL(allocator, malloc(ALLOCATION_SIZE, ALIGNMENT)).Times(1).WillOnce(Return(memory));
     
-    root::buffer buffer(ALLOCATION_SIZE, &allocator);
+    root::buffer buffer(ALLOCATION_SIZE, ALIGNMENT, &allocator);
 
     EXPECT_EQ(buffer.size(), ALLOCATION_SIZE);
     EXPECT_TRUE(buffer);
@@ -81,13 +82,13 @@ TEST_F(buffer_tests, move_init) {
     EXPECT_EQ(buffer.size(), 0);
     EXPECT_FALSE(buffer);
 
-    EXPECT_CALL(allocator, free(memory, ALLOCATION_SIZE, 0)).Times(1);
+    EXPECT_CALL(allocator, free(memory, ALLOCATION_SIZE, ALIGNMENT)).Times(1);
 }
 
 TEST_F(buffer_tests, move_assign) {
-    EXPECT_CALL(allocator, malloc(ALLOCATION_SIZE, 0)).Times(1).WillOnce(Return(memory));
+    EXPECT_CALL(allocator, malloc(ALLOCATION_SIZE, ALIGNMENT)).Times(1).WillOnce(Return(memory));
     
-    root::buffer buffer(ALLOCATION_SIZE, &allocator);
+    root::buffer buffer(ALLOCATION_SIZE, ALIGNMENT, &allocator);
     root::buffer move_buffer;
 
     EXPECT_EQ(buffer.size(), ALLOCATION_SIZE);
@@ -106,16 +107,16 @@ TEST_F(buffer_tests, move_assign) {
     EXPECT_FALSE(buffer);
     EXPECT_NE(buffer.raw(), memory);
 
-    EXPECT_CALL(allocator, free(memory, ALLOCATION_SIZE, 0)).Times(1);
+    EXPECT_CALL(allocator, free(memory, ALLOCATION_SIZE, ALIGNMENT)).Times(1);
 }
 
 TEST_F(buffer_tests, buffer_offset) {
-    EXPECT_CALL(allocator, malloc(ALLOCATION_SIZE, 0)).Times(1).WillOnce(Return(memory));
+    EXPECT_CALL(allocator, malloc(ALLOCATION_SIZE, ALIGNMENT)).Times(1).WillOnce(Return(memory));
     constexpr size_t OFFSET = ALLOCATION_SIZE/2;
     constexpr size_t REMAINDER = ALLOCATION_SIZE - OFFSET;
     constexpr size_t SECOND_OFFSET = REMAINDER/2;
     constexpr size_t SECOND_REMAINDER = REMAINDER - SECOND_OFFSET;
-    root::buffer buffer(ALLOCATION_SIZE, &allocator);
+    root::buffer buffer(ALLOCATION_SIZE, ALIGNMENT, &allocator);
 
     root::buffer::view offset = buffer + OFFSET;
 
@@ -137,14 +138,14 @@ TEST_F(buffer_tests, buffer_offset) {
     EXPECT_FALSE(offset);
     EXPECT_FALSE(second_offset);
 
-    EXPECT_CALL(allocator, free(memory, ALLOCATION_SIZE, 0)).Times(1);
+    EXPECT_CALL(allocator, free(memory, ALLOCATION_SIZE, ALIGNMENT)).Times(1);
 }
 
 
 TEST_F(buffer_tests, buffer_range) {
-    EXPECT_CALL(allocator, malloc(ALLOCATION_SIZE, 0)).Times(1).WillOnce(Return(memory));
+    EXPECT_CALL(allocator, malloc(ALLOCATION_SIZE, ALIGNMENT)).Times(1).WillOnce(Return(memory));
     
-    root::buffer buffer(ALLOCATION_SIZE, &allocator);
+    root::buffer buffer(ALLOCATION_SIZE, ALIGNMENT, &allocator);
 
     EXPECT_EQ(static_cast<root::buffer::view>(buffer).size(), buffer.size());
     EXPECT_EQ(static_cast<root::buffer::view>(buffer).raw(), buffer.raw());
@@ -169,13 +170,13 @@ TEST_F(buffer_tests, buffer_range) {
     EXPECT_FALSE(range);
     EXPECT_FALSE(second_range);
 
-    EXPECT_CALL(allocator, free(memory, ALLOCATION_SIZE, 0)).Times(1);
+    EXPECT_CALL(allocator, free(memory, ALLOCATION_SIZE, ALIGNMENT)).Times(1);
 }
 
 TEST_F(buffer_tests, buffer_limit) {
-    EXPECT_CALL(allocator, malloc(ALLOCATION_SIZE, 0)).Times(1).WillOnce(Return(memory));
+    EXPECT_CALL(allocator, malloc(ALLOCATION_SIZE, ALIGNMENT)).Times(1).WillOnce(Return(memory));
     
-    root::buffer buffer(ALLOCATION_SIZE, &allocator);
+    root::buffer buffer(ALLOCATION_SIZE, ALIGNMENT, &allocator);
 
     constexpr size_t LIMIT = ALLOCATION_SIZE / 2;
 
@@ -198,15 +199,15 @@ TEST_F(buffer_tests, buffer_limit) {
     EXPECT_FALSE(limit);
     EXPECT_FALSE(second_limit);
 
-    EXPECT_CALL(allocator, free(memory, ALLOCATION_SIZE, 0)).Times(1);
+    EXPECT_CALL(allocator, free(memory, ALLOCATION_SIZE, ALIGNMENT)).Times(1);
 }
 
 TEST_F(buffer_tests, memcpy_buffer) {
     char const* MESSAGE = "Hello failing test";
     const size_t MESSAGE_LENGTH = strlen(MESSAGE);
-    EXPECT_CALL(allocator, malloc(MESSAGE_LENGTH, 0)).Times(1).WillOnce(Return(memory));
+    EXPECT_CALL(allocator, malloc(MESSAGE_LENGTH, alignof(char))).Times(1).WillOnce(Return(memory));
     
-    root::buffer buffer(MESSAGE_LENGTH, &allocator);
+    root::buffer buffer(MESSAGE_LENGTH, alignof(char), &allocator);
 
     EXPECT_EQ(buffer.size(), MESSAGE_LENGTH);
     EXPECT_TRUE(buffer);
@@ -225,5 +226,5 @@ TEST_F(buffer_tests, memcpy_buffer) {
 
     EXPECT_EQ(memcmp(MODIFIED_MESSAGE, buffer.raw(), MESSAGE_LENGTH), 0);
 
-    EXPECT_CALL(allocator, free(memory, MESSAGE_LENGTH, 0)).Times(1);
+    EXPECT_CALL(allocator, free(memory, MESSAGE_LENGTH, alignof(char))).Times(1);
 }

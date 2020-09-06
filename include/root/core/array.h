@@ -23,6 +23,7 @@
 #include <initializer_list>
 
 #include <root/core/assert.h>
+#include <root/core/buffer.h>
 #include <root/memory/allocator.h>
 
 namespace root {
@@ -43,6 +44,14 @@ public:
         for(auto item = init_l.begin(); item != init_l.end(); item++, data_iter++) {
             *data_iter = *item;
         }
+    }
+
+    inline array(buffer&& b) 
+    :   m_length(b.m_byte_size/sizeof(T)),
+        m_allocator(std::move(b.m_allocator)),
+        m_data(reinterpret_cast<T*>(b.m_data)) {
+        root_assert(b.m_alignment == alignof(T));
+        b.clear();
     }
 
     array(const array&) = delete;
@@ -88,6 +97,14 @@ public:
 
     inline operator bool() const {
         return m_data && m_allocator && m_length;
+    }
+
+    inline operator T*() const {
+        return raw();
+    }
+
+    inline operator void*() const {
+        return reinterpret_cast<void*>(raw());
     }
 
     ~array() {
