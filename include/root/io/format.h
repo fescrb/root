@@ -35,9 +35,9 @@ inline auto strlen(const char* str) -> u64 {
 }
 
 template<typename T>
-auto to_string(buffer_writer& dst, const T& object) -> void;
+auto format_to(buffer_writer& dst, const T& object) -> void;
 
-inline auto to_string(buffer_writer& dst, const char* object) -> void {
+inline auto format_to(buffer_writer& dst, const char* object) -> void {
     dst.write(object, strlen(object));
 }
 
@@ -47,13 +47,13 @@ public:
     :   m_allocator(alloc) {}
 
     template<typename T>
-    auto build_string(const T& object) -> string {
+    auto to_string(const T& object) -> string {
         u64 len = strlen(object);
         buffer buf(len+1, alignof(i8), m_allocator);
         buffer_stream stream(buf);
         buffer_writer writer(&stream);
-        to_string(writer, object);
-        to_string(writer, '\0');
+        format_to(writer, object);
+        format_to(writer, '\0');
         auto str = string(std::move(buf));
         return str;
     }
