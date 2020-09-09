@@ -48,20 +48,20 @@ struct buffer_view {
         return cutoff - offset;
     }
 
-    inline auto raw() const -> void* {
+    inline auto data() const -> void* {
         return reinterpret_cast<void*>(reinterpret_cast<u8*>(buffer) + offset);
     }
 
     inline operator const void*() const {
-        return raw();
+        return data();
     }
 
     inline operator void*() {
-        return raw();
+        return data();
     }
 
     inline operator bool() const {
-        return raw();
+        return data();
     }
     
     template<typename T>

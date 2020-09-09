@@ -91,7 +91,7 @@ public:
         return m_length;
     }
 
-    inline auto raw() const -> T* {
+    inline auto data() const -> T* {
         return m_data;
     }
 
@@ -100,11 +100,11 @@ public:
     }
 
     inline operator T*() const {
-        return raw();
+        return data();
     }
 
     inline operator void*() const {
-        return reinterpret_cast<void*>(raw());
+        return reinterpret_cast<void*>(data());
     }
 
     ~array() {

@@ -63,7 +63,7 @@ public:
         return *this;
     }
 
-    inline auto raw() const -> void* {
+    inline auto data() const -> void* {
         return reinterpret_cast<void*>(m_data);
     }
 
@@ -77,7 +77,7 @@ public:
     }
 
     inline operator void*() const {
-        return raw();
+        return data();
     }
 
     ~buffer() {

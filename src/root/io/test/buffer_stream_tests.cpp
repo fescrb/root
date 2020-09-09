@@ -145,7 +145,7 @@ TEST_F(buffer_stream_tests, write_errors) {
 
 TEST_F(buffer_stream_tests, read) {
     char raw_buffer[BUFFER_SIZE];
-    int* buffer_as_ints = reinterpret_cast<int*>(buffer.raw());
+    int* buffer_as_ints = reinterpret_cast<int*>(buffer.data());
     for(int i = 0; i < (BUFFER_SIZE/sizeof(int)); i++) {
         buffer_as_ints[i] = rand();
     }
@@ -170,7 +170,7 @@ TEST_F(buffer_stream_tests, read) {
 
 TEST_F(buffer_stream_tests, read_errors) {
     char raw_buffer[BUFFER_SIZE];
-    int* buffer_as_ints = reinterpret_cast<int*>(buffer.raw());
+    int* buffer_as_ints = reinterpret_cast<int*>(buffer.data());
     for(int i = 0; i < (BUFFER_SIZE/sizeof(int)); i++) {
         buffer_as_ints[i] = rand();
     }

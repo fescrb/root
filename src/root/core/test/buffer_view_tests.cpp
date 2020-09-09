@@ -44,7 +44,7 @@ TEST_F(buffer_view_tests, blank_init) {
 
     EXPECT_EQ(buffer_view.size(), ALLOCATION_SIZE);
     EXPECT_TRUE(buffer_view);
-    EXPECT_EQ(buffer_view.raw(), memory);
+    EXPECT_EQ(buffer_view.data(), memory);
 }
 
 TEST_F(buffer_view_tests, move_init) {
@@ -52,13 +52,13 @@ TEST_F(buffer_view_tests, move_init) {
 
     EXPECT_EQ(buffer_view.size(), ALLOCATION_SIZE);
     EXPECT_TRUE(buffer_view);
-    EXPECT_EQ(buffer_view.raw(), memory);
+    EXPECT_EQ(buffer_view.data(), memory);
    
     root::buffer_view move_buffer(std::move(buffer_view));
 
     EXPECT_EQ(move_buffer.size(), ALLOCATION_SIZE);
     EXPECT_TRUE(move_buffer);
-    EXPECT_EQ(move_buffer.raw(), memory);
+    EXPECT_EQ(move_buffer.data(), memory);
 }
 
 TEST_F(buffer_view_tests, buffer_offset) {
@@ -72,15 +72,15 @@ TEST_F(buffer_view_tests, buffer_offset) {
 
     EXPECT_TRUE(offset);
 
-    EXPECT_NE(buffer_view.raw(), offset.raw());
+    EXPECT_NE(buffer_view.data(), offset.data());
     EXPECT_EQ(offset.size(), REMAINDER);
 
     root::buffer_view second_offset = offset + SECOND_OFFSET;
     
     EXPECT_TRUE(second_offset);
 
-    EXPECT_NE(buffer_view.raw(), second_offset.raw());
-    EXPECT_NE(offset.raw(), second_offset.raw());
+    EXPECT_NE(buffer_view.data(), second_offset.data());
+    EXPECT_NE(offset.data(), second_offset.data());
     EXPECT_EQ(second_offset.size(), SECOND_REMAINDER);
 }
 
@@ -94,13 +94,13 @@ TEST_F(buffer_view_tests, buffer_range) {
     root::buffer_view range = buffer_view.range(OFFSET, END);
 
     EXPECT_EQ(range.size(), END - OFFSET);
-    EXPECT_EQ(range.raw(), buffer_view + OFFSET);
+    EXPECT_EQ(range.data(), buffer_view + OFFSET);
     EXPECT_TRUE(range);
 
     root::buffer_view second_range = range.at(OFFSET);
 
     EXPECT_EQ(second_range.size(), END - (OFFSET*2));
-    EXPECT_EQ(second_range.raw(), buffer_view + (OFFSET * 2));
+    EXPECT_EQ(second_range.data(), buffer_view + (OFFSET * 2));
     EXPECT_TRUE(second_range);
 }
 
@@ -112,7 +112,7 @@ TEST_F(buffer_view_tests, buffer_limit) {
     root::buffer_view limit = buffer_view.limit(LIMIT);
 
     EXPECT_EQ(limit.size(), LIMIT);
-    EXPECT_EQ(limit.raw(), buffer_view);
+    EXPECT_EQ(limit.data(), buffer_view);
     EXPECT_TRUE(limit);
 
     constexpr size_t OFFSET = LIMIT / 2;
@@ -120,7 +120,7 @@ TEST_F(buffer_view_tests, buffer_limit) {
     root::buffer_view second_limit = limit.at(OFFSET);
 
     EXPECT_EQ(second_limit.size(), LIMIT - OFFSET);
-    EXPECT_EQ(second_limit.raw(), buffer_view + OFFSET);
+    EXPECT_EQ(second_limit.data(), buffer_view + OFFSET);
     EXPECT_TRUE(second_limit);
 }
 
@@ -132,11 +132,11 @@ TEST_F(buffer_view_tests, memcpy_buffer) {
 
     EXPECT_EQ(buffer_view.size(), MESSAGE_LENGTH);
     EXPECT_TRUE(buffer_view);
-    EXPECT_EQ(buffer_view.raw(), memory);
+    EXPECT_EQ(buffer_view.data(), memory);
 
     memcpy(buffer_view, MESSAGE, MESSAGE_LENGTH);
 
-    EXPECT_EQ(memcmp(MESSAGE, buffer_view.raw(), MESSAGE_LENGTH), 0);
+    EXPECT_EQ(memcmp(MESSAGE, buffer_view.data(), MESSAGE_LENGTH), 0);
 
     char const* MODIFICATION = "passing";
     const size_t MODIFICATION_LENGTH = strlen(MODIFICATION);
@@ -145,5 +145,5 @@ TEST_F(buffer_view_tests, memcpy_buffer) {
 
     memcpy(buffer_view + MODIFICATION_START, MODIFICATION, MODIFICATION_LENGTH);
 
-    EXPECT_EQ(memcmp(MODIFIED_MESSAGE, buffer_view.raw(), MESSAGE_LENGTH), 0);
+    EXPECT_EQ(memcmp(MODIFIED_MESSAGE, buffer_view.data(), MESSAGE_LENGTH), 0);
 }

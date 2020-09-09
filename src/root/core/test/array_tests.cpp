@@ -152,10 +152,10 @@ TEST_F(array_tests, raw) {
     root::array<int> array({1, 2, 3, 4, 5, 6}, &allocator);
     int basic_array[ARRAY_SIZE] = {1, 2, 3, 4, 5, 6};
 
-    EXPECT_EQ(array.raw(), memory);
+    EXPECT_EQ(array.data(), memory);
 
     for(int i = 0; i < ARRAY_SIZE; i++) {
-        EXPECT_EQ(array.raw()[i], basic_array[i]);
+        EXPECT_EQ(array.data()[i], basic_array[i]);
     }
 
     EXPECT_CALL(allocator, free(memory, sizeof(int) * ARRAY_SIZE, alignof(int))).Times(1);

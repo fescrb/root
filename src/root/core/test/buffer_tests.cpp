@@ -50,7 +50,7 @@ TEST_F(buffer_tests, empty_init) {
 
     EXPECT_EQ(buffer.size(), 0);
     EXPECT_FALSE(buffer);
-    EXPECT_EQ(buffer.raw(), nullptr);
+    EXPECT_EQ(buffer.data(), nullptr);
 }
 
 TEST_F(buffer_tests, blank_init) {
@@ -60,7 +60,7 @@ TEST_F(buffer_tests, blank_init) {
 
     EXPECT_EQ(buffer.size(), ALLOCATION_SIZE);
     EXPECT_TRUE(buffer);
-    EXPECT_EQ(buffer.raw(), memory);
+    EXPECT_EQ(buffer.data(), memory);
 
     EXPECT_CALL(allocator, free(memory, ALLOCATION_SIZE, ALIGNMENT)).Times(1);
 }
@@ -72,13 +72,13 @@ TEST_F(buffer_tests, move_init) {
 
     EXPECT_EQ(buffer.size(), ALLOCATION_SIZE);
     EXPECT_TRUE(buffer);
-    EXPECT_EQ(buffer.raw(), memory);
+    EXPECT_EQ(buffer.data(), memory);
    
     root::buffer move_buffer(std::move(buffer));
 
     EXPECT_EQ(move_buffer.size(), ALLOCATION_SIZE);
     EXPECT_TRUE(move_buffer);
-    EXPECT_EQ(move_buffer.raw(), memory);
+    EXPECT_EQ(move_buffer.data(), memory);
     EXPECT_EQ(buffer.size(), 0);
     EXPECT_FALSE(buffer);
 
@@ -93,19 +93,19 @@ TEST_F(buffer_tests, move_assign) {
 
     EXPECT_EQ(buffer.size(), ALLOCATION_SIZE);
     EXPECT_TRUE(buffer);
-    EXPECT_EQ(buffer.raw(), memory);
+    EXPECT_EQ(buffer.data(), memory);
     EXPECT_EQ(move_buffer.size(), 0);
     EXPECT_FALSE(move_buffer);
-    EXPECT_NE(move_buffer.raw(), memory);
+    EXPECT_NE(move_buffer.data(), memory);
    
     move_buffer = std::move(buffer);
 
     EXPECT_EQ(move_buffer.size(), ALLOCATION_SIZE);
     EXPECT_TRUE(move_buffer);
-    EXPECT_EQ(move_buffer.raw(), memory);
+    EXPECT_EQ(move_buffer.data(), memory);
     EXPECT_EQ(buffer.size(), 0);
     EXPECT_FALSE(buffer);
-    EXPECT_NE(buffer.raw(), memory);
+    EXPECT_NE(buffer.data(), memory);
 
     EXPECT_CALL(allocator, free(memory, ALLOCATION_SIZE, ALIGNMENT)).Times(1);
 }
@@ -122,15 +122,15 @@ TEST_F(buffer_tests, buffer_offset) {
 
     EXPECT_TRUE(offset);
 
-    EXPECT_NE(buffer.raw(), offset.raw());
+    EXPECT_NE(buffer.data(), offset.data());
     EXPECT_EQ(offset.size(), REMAINDER);
 
     root::buffer_view second_offset = offset + SECOND_OFFSET;
     
     EXPECT_TRUE(second_offset);
 
-    EXPECT_NE(buffer.raw(), second_offset.raw());
-    EXPECT_NE(offset.raw(), second_offset.raw());
+    EXPECT_NE(buffer.data(), second_offset.data());
+    EXPECT_NE(offset.data(), second_offset.data());
     EXPECT_EQ(second_offset.size(), SECOND_REMAINDER);
 
     EXPECT_CALL(allocator, free(memory, ALLOCATION_SIZE, ALIGNMENT)).Times(1);
@@ -143,7 +143,7 @@ TEST_F(buffer_tests, buffer_range) {
     root::buffer buffer(ALLOCATION_SIZE, ALIGNMENT, &allocator);
 
     EXPECT_EQ(static_cast<root::buffer_view>(buffer).size(), buffer.size());
-    EXPECT_EQ(static_cast<root::buffer_view>(buffer).raw(), buffer.raw());
+    EXPECT_EQ(static_cast<root::buffer_view>(buffer).data(), buffer.data());
 
     constexpr size_t OFFSET = ALLOCATION_SIZE / 4;
     constexpr size_t END = OFFSET + (ALLOCATION_SIZE / 2);
@@ -151,13 +151,13 @@ TEST_F(buffer_tests, buffer_range) {
     root::buffer_view range = buffer.range(OFFSET, END);
 
     EXPECT_EQ(range.size(), END - OFFSET);
-    EXPECT_EQ(range.raw(), buffer + OFFSET);
+    EXPECT_EQ(range.data(), buffer + OFFSET);
     EXPECT_TRUE(range);
 
     root::buffer_view second_range = range.at(OFFSET);
 
     EXPECT_EQ(second_range.size(), END - (OFFSET*2));
-    EXPECT_EQ(second_range.raw(), buffer + (OFFSET * 2));
+    EXPECT_EQ(second_range.data(), buffer + (OFFSET * 2));
     EXPECT_TRUE(second_range);
 
     EXPECT_CALL(allocator, free(memory, ALLOCATION_SIZE, ALIGNMENT)).Times(1);
@@ -173,7 +173,7 @@ TEST_F(buffer_tests, buffer_limit) {
     root::buffer_view limit = buffer.limit(LIMIT);
 
     EXPECT_EQ(limit.size(), LIMIT);
-    EXPECT_EQ(limit.raw(), buffer);
+    EXPECT_EQ(limit.data(), buffer);
     EXPECT_TRUE(limit);
 
     constexpr size_t OFFSET = LIMIT / 2;
@@ -181,7 +181,7 @@ TEST_F(buffer_tests, buffer_limit) {
     root::buffer_view second_limit = limit.at(OFFSET);
 
     EXPECT_EQ(second_limit.size(), LIMIT - OFFSET);
-    EXPECT_EQ(second_limit.raw(), buffer + OFFSET);
+    EXPECT_EQ(second_limit.data(), buffer + OFFSET);
     EXPECT_TRUE(second_limit);
 
     EXPECT_CALL(allocator, free(memory, ALLOCATION_SIZE, ALIGNMENT)).Times(1);
@@ -196,11 +196,11 @@ TEST_F(buffer_tests, memcpy_buffer) {
 
     EXPECT_EQ(buffer.size(), MESSAGE_LENGTH);
     EXPECT_TRUE(buffer);
-    EXPECT_EQ(buffer.raw(), memory);
+    EXPECT_EQ(buffer.data(), memory);
 
     memcpy(buffer, MESSAGE, MESSAGE_LENGTH);
 
-    EXPECT_EQ(memcmp(MESSAGE, buffer.raw(), MESSAGE_LENGTH), 0);
+    EXPECT_EQ(memcmp(MESSAGE, buffer.data(), MESSAGE_LENGTH), 0);
 
     char const* MODIFICATION = "passing";
     const size_t MODIFICATION_LENGTH = strlen(MODIFICATION);
@@ -209,7 +209,7 @@ TEST_F(buffer_tests, memcpy_buffer) {
 
     memcpy(buffer + MODIFICATION_START, MODIFICATION, MODIFICATION_LENGTH);
 
-    EXPECT_EQ(memcmp(MODIFIED_MESSAGE, buffer.raw(), MESSAGE_LENGTH), 0);
+    EXPECT_EQ(memcmp(MODIFIED_MESSAGE, buffer.data(), MESSAGE_LENGTH), 0);
 
     EXPECT_CALL(allocator, free(memory, MESSAGE_LENGTH, alignof(char))).Times(1);
 }
