@@ -32,7 +32,7 @@ public:
     :   backing(b),
         pointer(0) {}
 
-    explicit buffer_stream(const buffer::view& b)
+    explicit buffer_stream(const buffer_view& b)
     :   backing(b),
         pointer(0) {}
 
@@ -51,7 +51,7 @@ private:
         return error::NO_ERROR;
     }
 
-    buffer::view backing;
+    buffer_view backing;
     i64 pointer;
 };
 

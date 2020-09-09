@@ -24,17 +24,14 @@
 namespace root {
 
 auto buffer_stream::read(void* dst, const u64& len) -> error {
-    if (!backing) return error::DEAD_OBJECT;
     return memcpy_helper(dst, backing.at(pointer), len);
 }
 
 auto buffer_stream::write(const void* src, const u64& len) -> error {
-    if (!backing) return error::DEAD_OBJECT;
     return memcpy_helper(backing.at(pointer), src, len);
 }
 
 auto buffer_stream::seek(const i64& offset, const relative_to& relative_to) -> error {
-    if (!backing) return error::DEAD_OBJECT;
     switch(relative_to) {
         case relative_to::start:
             pointer = offset;
@@ -49,7 +46,6 @@ auto buffer_stream::seek(const i64& offset, const relative_to& relative_to) -> e
 }
 
 auto buffer_stream::tell(const relative_to& relative_to) const -> value_or_error<i64> {
-    if (!backing) return error::DEAD_OBJECT; // TODO better error
     switch(relative_to) {
         case relative_to::start:
             return pointer;

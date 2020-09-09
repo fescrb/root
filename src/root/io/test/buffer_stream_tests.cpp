@@ -49,13 +49,6 @@ TEST_F(buffer_stream_tests, tell) {
     EXPECT_EQ(stream.tell(root::relative_to::end), -BUFFER_SIZE);
 }
 
-TEST_F(buffer_stream_tests, tell_errors) {
-    buffer = root::buffer();
-    EXPECT_EQ(stream.tell(), root::error::DEAD_OBJECT);
-    EXPECT_EQ(stream.tell(root::relative_to::current_position), root::error::DEAD_OBJECT);
-    EXPECT_EQ(stream.tell(root::relative_to::end), root::error::DEAD_OBJECT);
-}
-
 TEST_F(buffer_stream_tests, seek_from_start) {
     constexpr int NUM_TESTS = 10;
     for(int _ = 0; _ < NUM_TESTS; _++) {
@@ -92,11 +85,6 @@ TEST_F(buffer_stream_tests, seek_relative) {
         EXPECT_EQ(stream.tell(root::relative_to::current_position), 0);
         EXPECT_EQ(stream.tell(root::relative_to::end), position - BUFFER_SIZE);
     }
-}
-
-TEST_F(buffer_stream_tests, seek_errors) {
-    buffer = root::buffer();
-    EXPECT_EQ(stream.seek(-1), root::error::DEAD_OBJECT);
 }
 
 TEST_F(buffer_stream_tests, write) {
@@ -153,9 +141,6 @@ TEST_F(buffer_stream_tests, write_errors) {
 
     EXPECT_EQ(stream.write(&raw_buffer, WRITE_SIZE), root::error::INVALID_OPERATION);
     EXPECT_NE(memcmp(buffer, raw_buffer, BUFFER_SIZE), 0);
-
-    buffer = root::buffer();
-    EXPECT_EQ(stream.write(&raw_buffer, WRITE_SIZE), root::error::DEAD_OBJECT);
 }
 
 TEST_F(buffer_stream_tests, read) {
@@ -212,7 +197,4 @@ TEST_F(buffer_stream_tests, read_errors) {
 
     EXPECT_EQ(stream.read(&raw_buffer, READ_SIZE), root::error::INVALID_OPERATION);
     EXPECT_NE(memcmp(buffer, raw_buffer, BUFFER_SIZE), 0);
-
-    buffer = root::buffer();
-    EXPECT_EQ(stream.read(&raw_buffer, READ_SIZE), root::error::DEAD_OBJECT);
 }
