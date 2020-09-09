@@ -82,11 +82,6 @@ TEST_F(buffer_view_tests, buffer_offset) {
     EXPECT_NE(buffer_view.raw(), second_offset.raw());
     EXPECT_NE(offset.raw(), second_offset.raw());
     EXPECT_EQ(second_offset.size(), SECOND_REMAINDER);
-
-    root::buffer_view moved_buffer(std::move(buffer_view));
-    
-    EXPECT_FALSE(offset);
-    EXPECT_FALSE(second_offset);
 }
 
 
@@ -107,11 +102,6 @@ TEST_F(buffer_view_tests, buffer_range) {
     EXPECT_EQ(second_range.size(), END - (OFFSET*2));
     EXPECT_EQ(second_range.raw(), buffer_view + (OFFSET * 2));
     EXPECT_TRUE(second_range);
-
-    root::buffer_view moved_buffer(std::move(buffer_view));
-    
-    EXPECT_FALSE(range);
-    EXPECT_FALSE(second_range);
 }
 
 TEST_F(buffer_view_tests, buffer_limit) {
@@ -132,18 +122,13 @@ TEST_F(buffer_view_tests, buffer_limit) {
     EXPECT_EQ(second_limit.size(), LIMIT - OFFSET);
     EXPECT_EQ(second_limit.raw(), buffer_view + OFFSET);
     EXPECT_TRUE(second_limit);
-
-    root::buffer_view moved_buffer(std::move(buffer_view));
-    
-    EXPECT_FALSE(limit);
-    EXPECT_FALSE(second_limit);
 }
 
 TEST_F(buffer_view_tests, memcpy_buffer) {
     char const* MESSAGE = "Hello failing test";
     const size_t MESSAGE_LENGTH = strlen(MESSAGE);
     
-    root::buffer_view buffer_view(memory, 0, ALLOCATION_SIZE);
+    root::buffer_view buffer_view(memory, 0, MESSAGE_LENGTH);
 
     EXPECT_EQ(buffer_view.size(), MESSAGE_LENGTH);
     EXPECT_TRUE(buffer_view);
