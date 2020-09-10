@@ -100,24 +100,12 @@ public:
         return m_data;
     }
 
-    inline operator bool() const {
-        return m_data && m_allocator && m_length;
-    }
-
     inline operator const T*() const {
         return data();
     }
 
     inline operator T*() {
         return data();
-    }
-
-    inline operator const void*() const {
-        return reinterpret_cast<const void*>(data());
-    }
-
-    inline operator void*() {
-        return reinterpret_cast<void*>(data());
     }
 
     ~array() {

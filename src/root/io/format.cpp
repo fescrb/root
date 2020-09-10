@@ -39,6 +39,7 @@ template<> auto format_to<bool>(buffer_writer& dst, const bool& object) -> void 
 }
 
 template<typename T> auto integer_strlen(T i) -> u64 {
+    if(i == 0) return 1;
     u64 digits = static_cast<u64>(ceil(log10(fabs(static_cast<f64>(i)))));
     // If i is an exact power of 10 we will need one more character
     return (i < 0 ? 1 : 0) + digits + (i % static_cast<T>(pow(10, digits)) ? 0 : 1);
@@ -78,7 +79,7 @@ template<> auto strlen<u64>(const u64& object) -> u64 {
 }
 
 template<typename T> auto unsigned_int_format_to(buffer_writer& dst, const T& i, const u64& min_digits = 0) -> void {
-    T digits = floor(log10(static_cast<f64>(i)));
+    T digits = i == 0 ? 0 : floor(log10(static_cast<f64>(i)));
     T scale = static_cast<T>(pow(10, digits));
     while(min_digits > (digits+1)) {
         format_to(dst, '0');
