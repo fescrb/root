@@ -50,7 +50,7 @@ TEST_F(string_tests, string_literal_initializer) {
     
     root::string str(TEST_STRING, &allocator);
 
-    EXPECT_EQ(str.length(), STRING_LENGTH);
+    EXPECT_EQ(str.size(), STRING_LENGTH);
 
     for(int i = 0; i < STRING_LENGTH; i++) {
         EXPECT_EQ(str[i], TEST_STRING[i]);
@@ -67,7 +67,7 @@ TEST_F(string_tests, move_init) {
     root::string str(TEST_STRING, &allocator);
     root::string moved_str(std::move(str));
 
-    EXPECT_EQ(moved_str.length(), STRING_LENGTH);
+    EXPECT_EQ(moved_str.size(), STRING_LENGTH);
 
     for(int i = 0; i < STRING_LENGTH; i++) {
         EXPECT_EQ(moved_str[i], TEST_STRING[i]);

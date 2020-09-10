@@ -78,20 +78,25 @@ public:
     }
 
     inline auto operator[](const u64& index) -> T& {
-        root_assert(i < m_length);
+        root_assert(index < m_length);
         return m_data[index];
     }
 
     inline auto operator[](const u64& index) const -> T {
-        root_assert(i < m_length);
+        root_assert(index < m_length);
         return m_data[index];
     }
 
-    inline auto length() const -> u64 {
+    inline auto size() const -> u64 {
         return m_length;
     }
 
-    inline auto data() const -> T* {
+    
+    inline auto data() const -> const T* {
+        return m_data;
+    }
+
+    inline auto data() -> T* {
         return m_data;
     }
 
@@ -99,11 +104,19 @@ public:
         return m_data && m_allocator && m_length;
     }
 
-    inline operator T*() const {
+    inline operator const T*() const {
         return data();
     }
 
-    inline operator void*() const {
+    inline operator T*() {
+        return data();
+    }
+
+    inline operator const void*() const {
+        return reinterpret_cast<const void*>(data());
+    }
+
+    inline operator void*() {
         return reinterpret_cast<void*>(data());
     }
 

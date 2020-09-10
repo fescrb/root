@@ -92,7 +92,7 @@ public:
     }
 
     template<typename T>
-    inline auto at(const T& offset) const -> buffer_view {
+    inline auto offset(const T& offset) const -> buffer_view {
         root_assert(offset < m_byte_size);
         return buffer_view(reinterpret_cast<void*>(m_data), static_cast<u64>(offset), m_byte_size);
     } 
@@ -100,7 +100,7 @@ public:
     // TODO ensure that T is unsigned
     template<typename T>
     inline auto operator+(const T& offset) const -> buffer_view {
-        return at(offset);
+        return buffer::offset(offset);
     }
 
     template<typename T1, typename T2>

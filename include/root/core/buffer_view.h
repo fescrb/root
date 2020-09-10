@@ -27,29 +27,48 @@
 
 namespace root {
 
-struct buffer_view {
+class buffer_view {
+public:
+    inline buffer_view() { clear(); } // \TODO unit test
+
     inline buffer_view(void* b, const u64& o, const u64& l) 
-    :  buffer(b), offset(o), cutoff(l) {}
+    :  m_buffer(b), m_offset(o), m_limit(l) {}
 
     inline buffer_view(buffer_view&& other) 
-    :   buffer(std::move(other.buffer)),
-        offset(std::move(other.offset)),
-        cutoff(std::move(other.cutoff)) {}
+    :   m_buffer(std::move(other.m_buffer)),
+        m_offset(std::move(other.m_offset)),
+        m_limit(std::move(other.m_limit)) {}
 
     inline buffer_view(const buffer_view& other)
-    :   buffer(other.buffer),
-        offset(other.offset),
-        cutoff(other.cutoff) {}
-
-    auto operator=(const buffer_view&) -> buffer_view& = delete;
-    auto operator=(buffer_view&&) -> buffer_view& = delete;
-
-    inline auto size() const -> u64 {
-        return cutoff - offset;
+    :   m_buffer(other.m_buffer),
+        m_offset(other.m_offset),
+        m_limit(other.m_limit) {
     }
 
-    inline auto data() const -> void* {
-        return reinterpret_cast<void*>(reinterpret_cast<u8*>(buffer) + offset);
+    auto operator=(const buffer_view& other) -> buffer_view& {
+        m_buffer = other.m_buffer;
+        m_offset = other.m_offset;
+        m_limit = other.m_limit;
+        return *this;
+    }
+
+    auto operator=(buffer_view&& other) -> buffer_view& {
+        m_buffer = std::move(other.m_buffer);
+        m_offset = std::move(other.m_offset);
+        m_limit = std::move(other.m_limit);
+        return *this;
+    }
+
+    inline auto size() const -> u64 {
+        return m_limit - m_offset;
+    }
+
+    inline auto data() const -> const void* {
+        return reinterpret_cast<void*>(reinterpret_cast<u8*>(m_buffer) + m_offset);
+    }
+
+    inline auto data() -> void* {
+        return reinterpret_cast<void*>(reinterpret_cast<u8*>(m_buffer) + m_offset);
     }
 
     inline operator const void*() const {
@@ -61,35 +80,43 @@ struct buffer_view {
     }
 
     inline operator bool() const {
-        return data();
+        return m_buffer;
     }
     
     template<typename T>
-    inline auto at(const T& extra_offset) const -> buffer_view {
-        root_assert(offset + extra_offset < size());
-        return buffer_view(buffer, static_cast<u64>(offset + extra_offset), cutoff);
+    inline auto offset(const T& extra_offset) const -> buffer_view {
+        root_assert(m_offset + extra_offset < size());
+        return buffer_view(m_buffer, static_cast<u64>(m_offset + extra_offset), m_limit);
     } 
 
     template<typename T1, typename T2>
     inline auto range(const T1& start, const T2& end) const -> buffer_view {
-        root_assert(start + offset < size());
-        root_assert(end + offset < size());
-        return buffer_view(buffer, static_cast<u64>(offset+start), static_cast<u64>(offset+end));
+        root_assert(start + m_offset < size());
+        root_assert(end + m_offset < size());
+        return buffer_view(m_buffer, static_cast<u64>(m_offset+start), static_cast<u64>(m_offset+end));
     }   
 
     template<typename T>
     inline auto limit(const T& new_limit) const -> buffer_view {
         root_assert(new_limit < size());
-        return buffer_view(buffer, offset, new_limit);
+        return buffer_view(m_buffer, m_offset, new_limit);
     }
 
     template<typename T>
     inline auto operator+(const T& extra_offset) const -> buffer_view {
-        return at(extra_offset);
+        return offset(extra_offset);
     }
 
-    void * const buffer;
-    const u64 offset;
-    const u64 cutoff;
+    // TODO unit test
+    inline auto clear() -> void {
+        m_buffer = nullptr; 
+        m_offset = 0;
+        m_limit = 0;
+    }
+
+private:
+    void * m_buffer;
+    u64 m_offset;
+    u64 m_limit;
 };
 } // namespace root

@@ -97,7 +97,7 @@ TEST_F(buffer_view_tests, buffer_range) {
     EXPECT_EQ(range.data(), buffer_view + OFFSET);
     EXPECT_TRUE(range);
 
-    root::buffer_view second_range = range.at(OFFSET);
+    root::buffer_view second_range = range.offset(OFFSET);
 
     EXPECT_EQ(second_range.size(), END - (OFFSET*2));
     EXPECT_EQ(second_range.data(), buffer_view + (OFFSET * 2));
@@ -117,7 +117,7 @@ TEST_F(buffer_view_tests, buffer_limit) {
 
     constexpr size_t OFFSET = LIMIT / 2;
 
-    root::buffer_view second_limit = limit.at(OFFSET);
+    root::buffer_view second_limit = limit.offset(OFFSET);
 
     EXPECT_EQ(second_limit.size(), LIMIT - OFFSET);
     EXPECT_EQ(second_limit.data(), buffer_view + OFFSET);

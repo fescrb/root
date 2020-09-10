@@ -24,11 +24,11 @@
 namespace root {
 
 auto buffer_stream::read(void* dst, const u64& len) -> error {
-    return memcpy_helper(dst, backing.at(pointer), len);
+    return memcpy_helper(dst, backing.offset(pointer), len);
 }
 
 auto buffer_stream::write(const void* src, const u64& len) -> error {
-    return memcpy_helper(backing.at(pointer), src, len);
+    return memcpy_helper(backing.offset(pointer), src, len);
 }
 
 auto buffer_stream::seek(const i64& offset, const relative_to& relative_to) -> error {
