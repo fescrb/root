@@ -42,7 +42,7 @@ auto physical_device::queue_family_properties(allocator* alloc) -> array<VkQueue
         vkGetPhysicalDeviceQueueFamilyProperties(handle, &num, nullptr);
 
         array<VkQueueFamilyProperties> props(num, alloc);
-        vkGetPhysicalDeviceQueueFamilyProperties(handle, &num, props.raw());
+        vkGetPhysicalDeviceQueueFamilyProperties(handle, &num, props.data());
 
         m_family_properties = std::move(props);
     }
