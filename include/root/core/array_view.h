@@ -106,22 +106,22 @@ public:
     template<typename I1, typename I2>
     inline auto range(const I1& start, const I2& end) const -> array_view {
         root_assert(start + m_first < size());
-        root_assert(end + m_first < size());
+        root_assert(end + m_first <= size());
         return array_view(m_data, static_cast<u64>(m_first+start), static_cast<u64>(m_first+end));
     }   
 
     template<typename I>
     inline auto limit(const I& new_limit) const -> array_view {
-        root_assert(new_limit < size());
+        root_assert(new_limit <= size());
         return array_view(m_data, m_first, new_limit);
     }
 
     template<typename I>
-    inline auto operator+(const T& extra_offset) const -> array_view {
+    inline auto operator+(const I& extra_offset) const -> array_view {
         return offset(extra_offset);
     }
 
-private:
+protected:
     T* m_data;
     u64 m_first;
     u64 m_last;

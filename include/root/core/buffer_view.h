@@ -114,7 +114,7 @@ public:
         m_limit = 0;
     }
 
-private:
+protected:
     void * m_buffer;
     u64 m_offset;
     u64 m_limit;

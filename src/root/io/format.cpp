@@ -30,11 +30,11 @@ auto format_to(const bool& boolean) -> const char* {
     return boolean ? "true" : "false";
 }
 
-template<> auto strlen<bool>(const bool& object) -> u64 {
+template<> auto strlen<bool>(const bool& object, const string_view& format_args) -> u64 {
     return strlen(format_to(object));
 }
 
-template<> auto format_to<bool>(buffer_writer& dst, const bool& object) -> void {
+template<> auto format_to<bool>(buffer_writer& dst, const bool& object, const string_view& format_args) -> void {
     format_to(dst, format_to(object));
 }
 
@@ -46,35 +46,35 @@ template<typename T> auto integer_strlen(T i) -> u64 {
 } 
 
 // TODO: Look for a method to do with with concepts?
-template<> auto strlen<i8>(const i8& object) -> u64 {
+template<> auto strlen<i8>(const i8& object, const string_view& format_args) -> u64 {
     return 1;
 }
 
-template<> auto strlen<i16>(const i16& object) -> u64 {
+template<> auto strlen<i16>(const i16& object, const string_view& format_args) -> u64 {
     return integer_strlen(object);
 }
 
-template<> auto strlen<i32>(const i32& object) -> u64 {
+template<> auto strlen<i32>(const i32& object, const string_view& format_args) -> u64 {
     return integer_strlen(object);
 }
 
-template<> auto strlen<i64>(const i64& object) -> u64 {
+template<> auto strlen<i64>(const i64& object, const string_view& format_args) -> u64 {
     return integer_strlen(object);
 }
 
-template<> auto strlen<u8>(const u8& object) -> u64 {
+template<> auto strlen<u8>(const u8& object, const string_view& format_args) -> u64 {
     return integer_strlen(object);
 }
 
-template<> auto strlen<u16>(const u16& object) -> u64 {
+template<> auto strlen<u16>(const u16& object, const string_view& format_args) -> u64 {
     return integer_strlen(object);
 }
 
-template<> auto strlen<u32>(const u32& object) -> u64 {
+template<> auto strlen<u32>(const u32& object, const string_view& format_args) -> u64 {
     return integer_strlen(object);
 }
 
-template<> auto strlen<u64>(const u64& object) -> u64 {
+template<> auto strlen<u64>(const u64& object, const string_view& format_args) -> u64 {
     return integer_strlen(object);
 }
 
@@ -102,35 +102,35 @@ template<typename T> auto integer_format_to(buffer_writer& dst, const T& i) -> v
     unsigned_int_format_to(dst, abs_i);
 } 
 
-template<> auto format_to<i8>(buffer_writer& dst, const i8& i) -> void {
+template<> auto format_to<i8>(buffer_writer& dst, const i8& i, const string_view& format_args) -> void {
     dst.write(&i, 1);
 }
 
-template<> auto format_to<i16>(buffer_writer& dst, const i16& i) -> void {
+template<> auto format_to<i16>(buffer_writer& dst, const i16& i, const string_view& format_args) -> void {
     integer_format_to(dst, i);
 }
 
-template<> auto format_to<i32>(buffer_writer& dst, const i32& i) -> void {
+template<> auto format_to<i32>(buffer_writer& dst, const i32& i, const string_view& format_args) -> void {
     integer_format_to(dst, i);
 }
 
-template<> auto format_to<i64>(buffer_writer& dst, const i64& i) -> void {
+template<> auto format_to<i64>(buffer_writer& dst, const i64& i, const string_view& format_args) -> void {
     integer_format_to(dst, i);
 }
 
-template<> auto format_to<u8>(buffer_writer& dst, const u8& i) -> void {
+template<> auto format_to<u8>(buffer_writer& dst, const u8& i, const string_view& format_args) -> void {
     integer_format_to(dst, i);
 }
 
-template<> auto format_to<u16>(buffer_writer& dst, const u16& i) -> void {
+template<> auto format_to<u16>(buffer_writer& dst, const u16& i, const string_view& format_args) -> void {
     integer_format_to(dst, i);
 }
 
-template<> auto format_to<u32>(buffer_writer& dst, const u32& i) -> void {
+template<> auto format_to<u32>(buffer_writer& dst, const u32& i, const string_view& format_args) -> void {
     integer_format_to(dst, i);
 }
 
-template<> auto format_to<u64>(buffer_writer& dst, const u64& i) -> void {
+template<> auto format_to<u64>(buffer_writer& dst, const u64& i, const string_view& format_args) -> void {
     integer_format_to(dst, i);
 }
 
@@ -160,11 +160,11 @@ template<typename T> auto float_str_len(const T& f, const u32& precision = 6) ->
     return sign_len + precision + (precision > digits ? 1 : 0);
 }
 
-template<> auto strlen<f32>(const f32& object) -> u64 {
+template<> auto strlen<f32>(const f32& object, const string_view& format_args) -> u64 {
     return float_str_len(object);
 }
 
-template<> auto strlen<f64>(const f64& object) -> u64 {
+template<> auto strlen<f64>(const f64& object, const string_view& format_args) -> u64 {
     return float_str_len(object);
 }
 
@@ -233,11 +233,11 @@ template<typename T> auto float_format_to(buffer_writer& dst, const T& f, const 
     }
 }
 
-template<> auto format_to<f32>(buffer_writer& dst, const f32& f) -> void {
+template<> auto format_to<f32>(buffer_writer& dst, const f32& f, const string_view& format_args) -> void {
     return float_format_to(dst, f);
 }
 
-template<> auto format_to<f64>(buffer_writer& dst, const f64& f) -> void {
+template<> auto format_to<f64>(buffer_writer& dst, const f64& f, const string_view& format_args) -> void {
     return float_format_to(dst, f);
 }
 

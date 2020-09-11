@@ -28,16 +28,16 @@
 namespace root {
 
 template<typename T> 
-auto strlen(const T& object) -> u64;
+auto strlen(const T& object, const string_view& format_args = string_view()) -> u64;
 
-inline auto strlen(const char* str) -> u64 {
+inline auto strlen(const char* str, const string_view& format_args = string_view()) -> u64 {
     return ::strlen(str);
 }
 
 template<typename T>
-auto format_to(buffer_writer& dst, const T& object) -> void;
+auto format_to(buffer_writer& dst, const T& object, const string_view& format_args = string_view()) -> void;
 
-inline auto format_to(buffer_writer& dst, const char* object) -> void {
+inline auto format_to(buffer_writer& dst, const char* object, const string_view& = string_view()) -> void {
     dst.write(object, strlen(object));
 }
 

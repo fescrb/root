@@ -49,6 +49,31 @@ public:
     auto operator=(array_view&& other) -> array_view& {
         return array_view<char>::operator=(std::move(other));
     }
+
+    template<typename I>
+    inline auto offset(const I& extra_offset) const -> string_view {
+        root_assert(m_first + extra_offset < size());
+        return string_view(m_data, static_cast<u64>(m_first + extra_offset), m_last);
+    } 
+
+    template<typename I1, typename I2>
+    inline auto range(const I1& start, const I2& end) const -> string_view {
+        root_assert(start + m_first < size());
+        root_assert(end + m_first <= size());
+        return string_view(m_data, static_cast<u64>(m_first+start), static_cast<u64>(m_first+end));
+    }   
+
+    template<typename I>
+    inline auto limit(const I& new_limit) const -> string_view {
+        root_assert(new_limit <= size());
+        return string_view(m_data, m_first, new_limit);
+    }
+
+    template<typename I>
+    inline auto operator+(const I& extra_offset) const -> string_view {
+        return offset(extra_offset);
+    }
+
 };
 
 } // namespace root
