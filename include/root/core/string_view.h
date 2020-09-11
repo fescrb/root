@@ -19,31 +19,36 @@
 
 #pragma once
 
-#include <root/core/array.h>
-#include <root/core/primitives.h>
-
-#include <cstring>
+#include <root/core/array_view.h>
 
 namespace root {
 
-class string : public array<i8> {
+class string_view : public array_view<i8> {
 public:
-    explicit inline string(const char* str, allocator* alloc = allocator::default_allocator()) 
-    :   array(strlen(str)+1, alloc) {
-        for(u64 i = 0; i < m_length; i++) {
-            m_data[i] = str[i];
-        }
+    inline string_view() { clear(); } 
+
+    inline string_view(char* data, const u64& first, const u64& last)
+    :   array_view(data, first, last) {}
+
+    inline string_view(string_view&& other) 
+    :   array_view(std::move(other)) {}
+
+    inline string_view(const string_view& other)
+    :   array_view(other) {}
+
+    inline string_view(array_view<i8>&& other) 
+    :   array_view(std::move(other)) {}
+
+    inline string_view(const array_view<i8>& other)
+    :   array_view(other) {}
+    
+    auto operator=(const string_view& other) -> array_view& {
+        return array_view<char>::operator=(other);
     }
 
-    explicit inline string(const u64& length, allocator* alloc = allocator::default_allocator()) 
-    : array(length, alloc) {}
-
-    string(const string&) = delete;
-    inline string(string&& other) 
-    : array(std::move(other)) {}
-
-    inline string(buffer&& b) 
-    :   array(std::move(b)) {}
+    auto operator=(array_view&& other) -> array_view& {
+        return array_view<char>::operator=(std::move(other));
+    }
 };
 
 } // namespace root

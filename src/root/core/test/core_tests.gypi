@@ -4,8 +4,9 @@
         'array_tests.cpp',
         'array_view_tests.cpp',
         'string_tests.cpp',
-        'buffer_view_tests.cpp',
+        'string_view_tests.cpp',
         'buffer_tests.cpp',
+        'buffer_view_tests.cpp',
         'error_tests.cpp',
         'tuple_tests.cpp',
     ]
