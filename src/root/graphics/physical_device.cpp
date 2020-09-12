@@ -23,8 +23,10 @@
 namespace root {
 
 auto physical_device::properties() -> VkPhysicalDeviceProperties* {
-    if(m_properties == nullptr)
+    if(m_properties == nullptr) {
+        m_properties = reinterpret_cast<VkPhysicalDeviceProperties*>(allocator::default_allocator()->malloc(sizeof(VkPhysicalDeviceProperties), alignof(VkPhysicalDeviceProperties)));
         vkGetPhysicalDeviceProperties(handle, m_properties);
+    }
     return m_properties;
 }
 

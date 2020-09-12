@@ -59,13 +59,13 @@ template<>
 auto format_to<VkPhysicalDeviceProperties>(buffer_writer& dst, const VkPhysicalDeviceProperties & object, const string_view&) -> void {
     format_to(dst, "{ apiVersion: ");
     format_to(dst, object.apiVersion);
-    format_to(dst, "{ driverVersion: ");
+    format_to(dst, " driverVersion: ");
     format_to(dst, object.driverVersion);
-    format_to(dst, "{ vendorID: ");
+    format_to(dst, " vendorID: ");
     format_to(dst, object.vendorID);
-    format_to(dst, "{ deviceType: ");
+    format_to(dst, " deviceType: ");
     format_to(dst, object.deviceType);
-    format_to(dst, "{ deviceName: ");
+    format_to(dst, " deviceName: ");
     format_to(dst, object.deviceName);
     format_to(dst, " }");
 }
