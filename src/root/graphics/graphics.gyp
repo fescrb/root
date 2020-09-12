@@ -8,7 +8,8 @@
             ],
             'sources' : [
                 'instance.cpp',
-                'physical_device.cpp'
+                'physical_device.cpp',
+                'vk_format.cpp'
             ],
             'link_settings': {
                 'libraries': [

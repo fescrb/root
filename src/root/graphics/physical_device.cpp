@@ -22,8 +22,6 @@
 
 namespace root {
 
-namespace graphics {
-
 auto physical_device::properties() -> VkPhysicalDeviceProperties* {
     if(m_properties == nullptr)
         vkGetPhysicalDeviceProperties(handle, m_properties);
@@ -48,7 +46,5 @@ auto physical_device::queue_family_properties(allocator* alloc) -> array<VkQueue
     }
     return m_family_properties;
 }
-
-} // namespace graphics
 
 } // namespace root

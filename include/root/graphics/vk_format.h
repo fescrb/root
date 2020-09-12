@@ -21,29 +21,23 @@
 
 #include <vulkan/vulkan.h>
 
-#include <root/core/array.h>
-#include <root/graphics/physical_device.h>
-
 namespace root {
 
-class instance final {
-public:
-
-    static auto init() -> void;
-
-    static inline auto get() -> instance* {
-        return m_instance;
+inline auto to_string(const VkPhysicalDeviceType& type) -> const char*{
+    switch(type) {
+        case VK_PHYSICAL_DEVICE_TYPE_OTHER:
+            return "VK_PHYSICAL_DEVICE_TYPE_OTHER";
+        case VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU:
+            return "VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU";
+        case VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU:
+            return "VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU";
+        case VK_PHYSICAL_DEVICE_TYPE_VIRTUAL_GPU:
+            return "VK_PHYSICAL_DEVICE_TYPE_VIRTUAL_GPU";
+        case VK_PHYSICAL_DEVICE_TYPE_CPU:
+            return "VK_PHYSICAL_DEVICE_TYPE_CPU";
+        default:
+            return nullptr;
     }
-
-    auto physical_devices(allocator* alloc = allocator::default_allocator()) const -> array<physical_device>;
-
-    VkInstance handle;
-
-private:
-    inline instance(const VkInstance& h)
-    :   handle(h) {}
-
-    static instance* m_instance;
-};
+}
 
 } // namespace root

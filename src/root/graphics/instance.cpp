@@ -21,7 +21,6 @@
 
 namespace root {
 
-namespace graphics {
 
 instance* instance::m_instance = nullptr;
 
@@ -40,7 +39,7 @@ auto instance::init() -> void {
     if (vkCreateInstance(&create_info, nullptr, &handle) != VK_SUCCESS) {
         // TODO: handle error
     }
-    m_instance = new instance(handle); // TODO: maybe provide allocator?
+    m_instance = new instance(handle); // TODO: perhaps provide allocator?
 }
 
 auto instance::physical_devices(allocator* alloc) const -> array<physical_device> {
@@ -63,7 +62,5 @@ auto instance::physical_devices(allocator* alloc) const -> array<physical_device
 
     return devices;
 }
-
-} // namespace graphics
 
 } // namespace root

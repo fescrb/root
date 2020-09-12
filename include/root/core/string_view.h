@@ -25,7 +25,7 @@ namespace root {
 
 class string_view : public array_view<i8> {
 public:
-    inline string_view() { clear(); } 
+    constexpr inline string_view() : array_view<i8>() { } 
 
     inline string_view(char* data, const u64& first, const u64& last)
     :   array_view(data, first, last) {}

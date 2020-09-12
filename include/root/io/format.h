@@ -30,8 +30,8 @@ namespace root {
 template<typename T> 
 auto strlen(const T& object, const string_view& format_args = string_view()) -> u64;
 
-inline auto strlen(const char* str, const string_view& format_args = string_view()) -> u64 {
-    return ::strlen(str);
+inline constexpr auto strlen(const char* str, const string_view& = string_view()) noexcept -> u64 {
+    return str[0] != '\0' ? 1 + strlen(str+1) : 0;
 }
 
 template<typename T>

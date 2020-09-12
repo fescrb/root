@@ -32,7 +32,7 @@ namespace root {
 template<typename T>
 class array {
 public:
-    inline array()
+    constexpr inline array()
     :   m_length(0),
         m_allocator(0),
         m_data(0) {}

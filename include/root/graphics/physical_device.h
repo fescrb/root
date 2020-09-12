@@ -25,8 +25,6 @@
 
 namespace root {
 
-namespace graphics {
-
 class physical_device final {
 public:
     explicit physical_device(const VkPhysicalDevice& h)
@@ -45,7 +43,5 @@ private:
     VkPhysicalDeviceMemoryProperties *m_memory_properties;
     array<VkQueueFamilyProperties> m_family_properties;
 };
-
-} // namespace graphics
 
 } // namespace root
