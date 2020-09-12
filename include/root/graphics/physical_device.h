@@ -27,18 +27,34 @@ namespace root {
 
 class physical_device final {
 public:
-    explicit physical_device(const VkPhysicalDevice& h)
+    explicit physical_device(const VkPhysicalDevice& h, allocator* alloc = allocator::default_allocator())
     :   handle(h),
+        m_alloc(alloc),
         m_properties(nullptr),
         m_memory_properties(nullptr) {}
 
     VkPhysicalDevice handle;
 
+    inline auto operator=(physical_device&& other) -> physical_device& {
+        handle = std::move(other.handle);
+        m_alloc = std::move(other.m_alloc);
+        m_properties = std::move(other.m_properties);
+        m_memory_properties = std::move(other.m_memory_properties);
+        m_family_properties = std::move(other.m_family_properties);
+        return *this;
+    }
+
     auto properties() -> VkPhysicalDeviceProperties*;
     auto memory_properties() -> VkPhysicalDeviceMemoryProperties*;
-    auto queue_family_properties(allocator* alloc = allocator::default_allocator()) -> array<VkQueueFamilyProperties>&;
+    auto queue_family_properties() -> array<VkQueueFamilyProperties>&;
+
+    ~physical_device() {
+        if (m_properties) m_alloc->free(m_properties, sizeof(VkPhysicalDeviceProperties), alignof(VkPhysicalDeviceProperties));
+        if (m_memory_properties) m_alloc->free(m_properties, sizeof(VkPhysicalDeviceMemoryProperties), alignof(VkPhysicalDeviceMemoryProperties));
+    }
 
 private:
+    allocator *m_alloc;
     VkPhysicalDeviceProperties *m_properties;
     VkPhysicalDeviceMemoryProperties *m_memory_properties;
     array<VkQueueFamilyProperties> m_family_properties;

@@ -57,7 +57,7 @@ auto instance::physical_devices(allocator* alloc) const -> array<physical_device
     array<physical_device> devices(num, alloc);
 
     for(int i = 0; i < num; i++) {
-        devices[i] = physical_device(phys_devices[i]);
+        devices[i] = std::move(physical_device(phys_devices[i]));
     }
 
     return devices;

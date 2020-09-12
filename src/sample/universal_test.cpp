@@ -32,5 +32,10 @@ int main() {
 
     for(int i = 0; i < devices.size(); i++) {
         std::cout << root::format().to_string(*(devices[i].properties())) << std::endl;
+
+        auto& familyProperties = devices[i].queue_family_properties();
+        for(int j = 0; j < familyProperties.size(); j++) {
+            std::cout << root::format().to_string(familyProperties[j]) << std::endl;
+        }
     }
 }

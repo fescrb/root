@@ -23,7 +23,7 @@
 
 namespace root {
 
-inline auto to_string(const VkPhysicalDeviceType& type) -> const char*{
+inline constexpr auto to_string(const VkPhysicalDeviceType& type) -> const char*{
     switch(type) {
         case VK_PHYSICAL_DEVICE_TYPE_OTHER:
             return "VK_PHYSICAL_DEVICE_TYPE_OTHER";
@@ -35,6 +35,23 @@ inline auto to_string(const VkPhysicalDeviceType& type) -> const char*{
             return "VK_PHYSICAL_DEVICE_TYPE_VIRTUAL_GPU";
         case VK_PHYSICAL_DEVICE_TYPE_CPU:
             return "VK_PHYSICAL_DEVICE_TYPE_CPU";
+        default:
+            return nullptr;
+    }
+}
+
+inline constexpr auto to_string(const VkQueueFlagBits& bit) -> const char*{
+    switch(bit) {
+        case VK_QUEUE_GRAPHICS_BIT:
+            return "VK_QUEUE_GRAPHICS_BIT";
+        case VK_QUEUE_COMPUTE_BIT:
+            return "VK_QUEUE_COMPUTE_BIT";
+        case VK_QUEUE_TRANSFER_BIT:
+            return "VK_QUEUE_TRANSFER_BIT";
+        case VK_QUEUE_SPARSE_BINDING_BIT:
+            return "VK_QUEUE_SPARSE_BINDING_BIT";
+        case VK_QUEUE_PROTECTED_BIT:
+            return "VK_QUEUE_PROTECTED_BIT ";
         default:
             return nullptr;
     }

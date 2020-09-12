@@ -24,24 +24,26 @@ namespace root {
 
 auto physical_device::properties() -> VkPhysicalDeviceProperties* {
     if(m_properties == nullptr) {
-        m_properties = reinterpret_cast<VkPhysicalDeviceProperties*>(allocator::default_allocator()->malloc(sizeof(VkPhysicalDeviceProperties), alignof(VkPhysicalDeviceProperties)));
+        m_properties = reinterpret_cast<VkPhysicalDeviceProperties*>(m_alloc->malloc(sizeof(VkPhysicalDeviceProperties), alignof(VkPhysicalDeviceProperties)));
         vkGetPhysicalDeviceProperties(handle, m_properties);
     }
     return m_properties;
 }
 
 auto physical_device::memory_properties() -> VkPhysicalDeviceMemoryProperties* {
-    if(m_memory_properties == nullptr) 
+    if(m_memory_properties == nullptr) {
+        m_memory_properties = reinterpret_cast<VkPhysicalDeviceMemoryProperties*>(m_alloc->malloc(sizeof(VkPhysicalDeviceMemoryProperties), alignof(VkPhysicalDeviceMemoryProperties)));
         vkGetPhysicalDeviceMemoryProperties(handle, m_memory_properties);
+    }
     return m_memory_properties;
 }
 
-auto physical_device::queue_family_properties(allocator* alloc) -> array<VkQueueFamilyProperties>& {
+auto physical_device::queue_family_properties() -> array<VkQueueFamilyProperties>& {
     if(!m_family_properties) {
         u32 num;
         vkGetPhysicalDeviceQueueFamilyProperties(handle, &num, nullptr);
 
-        array<VkQueueFamilyProperties> props(num, alloc);
+        array<VkQueueFamilyProperties> props(num, m_alloc);
         vkGetPhysicalDeviceQueueFamilyProperties(handle, &num, props.data());
 
         m_family_properties = std::move(props);
