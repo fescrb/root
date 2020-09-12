@@ -4,6 +4,32 @@
             "name": "linux_debug",
             "includePath": [
                 "${workspaceFolder}/include",
+                "${workspaceFolder}/src",
+                "/usr/include"
+            ],
+            "defines": ["ROOT_ASSERT","ROOT_LINUX"],
+            "compilerPath": "/usr/bin/clang++-8",
+            "cStandard": "gnu11",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "clang-x64"
+        },
+        {
+            "name": "linux_release",
+            "includePath": [
+                "${workspaceFolder}/include",
+                "${workspaceFolder}/src"
+            ],
+            "defines": ["ROOT_LINUX"],
+            "compilerPath": "/usr/bin/clang++-8",
+            "cStandard": "gnu11",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "clang-x64"
+        },
+        {
+            "name": "android_debug",
+            "includePath": [
+                "/mnt/c/Users/Fernando/AppData/Local/Android/Sdk/ndk/21.0.6113669/sysroot/usr/include/",
+                "${workspaceFolder}/include",
                 "${workspaceFolder}/src"
             ],
             "defines": ["ROOT_ASSERT","ROOT_LINUX"],
