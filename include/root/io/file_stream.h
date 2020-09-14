@@ -31,8 +31,8 @@ public:
 
     constexpr static i64 INVALID_POSITION = -1L;
 
-    auto read(void* dst, const u64& len) -> error override;
-    auto write(const void* src, const u64& len) -> error override;
+    auto read(void* dst, const u64& len) ->  value_or_error<u64> override;
+    auto write(const void* src, const u64& len) ->  value_or_error<u64> override;
     auto seek(const i64& offset, const relative_to& relative_to = relative_to::start) -> error override;
     auto tell(const relative_to& relative_to = relative_to::start) const -> value_or_error<i64> override;
 

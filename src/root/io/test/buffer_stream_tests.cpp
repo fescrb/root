@@ -102,7 +102,7 @@ TEST_F(buffer_stream_tests, write) {
         EXPECT_EQ(stream.tell(root::relative_to::current_position), 0);
         EXPECT_EQ(stream.tell(root::relative_to::end), (i * WRITE_SIZE) - BUFFER_SIZE);
 
-        EXPECT_EQ(stream.write(&(raw_buffer[i*WRITE_SIZE]), WRITE_SIZE), root::error::NO_ERROR);
+        EXPECT_EQ(stream.write(&(raw_buffer[i*WRITE_SIZE]), WRITE_SIZE), WRITE_SIZE);
     }
 
     EXPECT_EQ(stream.tell(), BUFFER_SIZE);
@@ -134,14 +134,27 @@ TEST_F(buffer_stream_tests, write_errors) {
     }
 
     EXPECT_NE(memcmp(buffer, raw_buffer, BUFFER_SIZE), 0);
+}
 
-    constexpr int OVERFLOW_POS = BUFFER_SIZE - 1;
+TEST_F(buffer_stream_tests, write_too_far) {
+    char raw_buffer[BUFFER_SIZE];
+    int* buffer_as_ints = reinterpret_cast<int*>(raw_buffer);
+    for(int i = 0; i < (BUFFER_SIZE/sizeof(int)); i++) {
+        buffer_as_ints[i] = rand();
+    }
+
+    constexpr int WRITE_SIZE = 10;
+    constexpr int OVERFLOW_POS = BUFFER_SIZE - WRITE_SIZE;
 
     EXPECT_EQ(stream.seek(OVERFLOW_POS), root::error::NO_ERROR);
-
-    EXPECT_EQ(stream.write(&raw_buffer, WRITE_SIZE), root::error::INVALID_OPERATION);
-    EXPECT_NE(memcmp(buffer, raw_buffer, BUFFER_SIZE), 0);
-}
+    
+    EXPECT_EQ(stream.write(raw_buffer+OVERFLOW_POS, BUFFER_SIZE), WRITE_SIZE);
+    EXPECT_EQ(memcmp(buffer+OVERFLOW_POS, raw_buffer+OVERFLOW_POS, WRITE_SIZE), 0);
+    
+    EXPECT_EQ(stream.tell(), BUFFER_SIZE);
+    EXPECT_EQ(stream.tell(root::relative_to::current_position), 0);
+    EXPECT_EQ(stream.tell(root::relative_to::end), 0);
+} 
 
 TEST_F(buffer_stream_tests, read) {
     char raw_buffer[BUFFER_SIZE];
@@ -158,7 +171,7 @@ TEST_F(buffer_stream_tests, read) {
         EXPECT_EQ(stream.tell(root::relative_to::current_position), 0);
         EXPECT_EQ(stream.tell(root::relative_to::end), (i * READ_SIZE) - BUFFER_SIZE);
 
-        EXPECT_EQ(stream.read(&(raw_buffer[i*READ_SIZE]), READ_SIZE), root::error::NO_ERROR);
+        EXPECT_EQ(stream.read(&(raw_buffer[i*READ_SIZE]), READ_SIZE), READ_SIZE);
     }
 
     EXPECT_EQ(stream.tell(), BUFFER_SIZE);
@@ -190,11 +203,24 @@ TEST_F(buffer_stream_tests, read_errors) {
     }
 
     EXPECT_NE(memcmp(buffer, raw_buffer, BUFFER_SIZE), 0);
+}
 
-    constexpr int OVERFLOW_POS = BUFFER_SIZE - 1;
+TEST_F(buffer_stream_tests, read_too_far) {
+    char raw_buffer[BUFFER_SIZE];
+    int* buffer_as_ints = reinterpret_cast<int*>(buffer.data());
+    for(int i = 0; i < (BUFFER_SIZE/sizeof(int)); i++) {
+        buffer_as_ints[i] = rand();
+    }
+
+    constexpr int READ_SIZE = 10;
+    constexpr int OVERFLOW_POS = BUFFER_SIZE - READ_SIZE;
 
     EXPECT_EQ(stream.seek(OVERFLOW_POS), root::error::NO_ERROR);
 
-    EXPECT_EQ(stream.read(&raw_buffer, READ_SIZE), root::error::INVALID_OPERATION);
-    EXPECT_NE(memcmp(buffer, raw_buffer, BUFFER_SIZE), 0);
+    EXPECT_EQ(stream.read(raw_buffer + OVERFLOW_POS, BUFFER_SIZE), READ_SIZE);
+    EXPECT_EQ(memcmp(buffer + OVERFLOW_POS, raw_buffer + OVERFLOW_POS, READ_SIZE), 0);
+
+    EXPECT_EQ(stream.tell(), BUFFER_SIZE);
+    EXPECT_EQ(stream.tell(root::relative_to::current_position), 0);
+    EXPECT_EQ(stream.tell(root::relative_to::end), 0);
 }

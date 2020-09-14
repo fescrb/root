@@ -36,19 +36,22 @@ public:
     :   backing(b),
         pointer(0) {}
 
-    auto read(void* dst, const u64& len) -> error override;
-    auto write(const void* src, const u64& len) -> error override;
+    auto read(void* dst, const u64& len) -> value_or_error<u64> override;
+    auto write(const void* src, const u64& len) -> value_or_error<u64> override;
     auto seek(const i64& offset, const relative_to& relative_to = relative_to::start) -> error override;
     auto tell(const relative_to& relative_to = relative_to::start) const -> value_or_error<i64> override;
     
     ~buffer_stream() {}
 
 private:
-    inline auto memcpy_helper(void* dst, const void* src, const u64& len) -> error {
-        if (pointer < 0 || pointer + len > backing.size()) return error::INVALID_OPERATION;
-        memcpy(dst, src, len);
-        pointer+=len;
-        return error::NO_ERROR;
+    // TODO: read & write should return number of bytes written
+    inline auto memcpy_helper(void* dst, const void* src, const u64& len) -> value_or_error<u64> {
+        if (pointer < 0 || pointer > backing.size()) return error::INVALID_OPERATION;
+        u64 remainder = backing.size() - pointer;
+        u64 write_len = remainder < len ? remainder : len; 
+        memcpy(dst, src, write_len);
+        pointer+=write_len;
+        return write_len;
     }
 
     buffer_view backing;

@@ -34,10 +34,9 @@ enum class relative_to : u8 {
 
 class stream {
 public:
-    constexpr static u64 INVALID_SIZE = std::numeric_limits<u64>::max();
 
-    virtual auto read(void* dst, const u64& len) -> error = 0;
-    virtual auto write(const void* src, const u64& len) -> error = 0;
+    virtual auto read(void* dst, const u64& len) -> value_or_error<u64> = 0;
+    virtual auto write(const void* src, const u64& len) -> value_or_error<u64> = 0;
     virtual auto seek(const i64& offset, const relative_to& relative_to = relative_to::start) -> error = 0;
     virtual auto tell(const relative_to& relative_to = relative_to::start) const -> value_or_error<i64> = 0;
 

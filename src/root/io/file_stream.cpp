@@ -21,11 +21,11 @@
 
 namespace root {
 
-auto file_stream::read(void* dst, const u64& len) -> error {
+auto file_stream::read(void* dst, const u64& len) -> value_or_error<u64> {
 
 }
 
-auto file_stream::write(const void* src, const u64& len) -> error {
+auto file_stream::write(const void* src, const u64& len) -> value_or_error<u64> {
 
 }
 
@@ -48,7 +48,23 @@ auto file_stream::seek(const i64& offset, const relative_to& relative_to) -> err
 }
 
 auto file_stream::tell(const relative_to& relative_to) const -> value_or_error<i64> {
-
+    i64 pos = ftell(m_file);
+    if(pos == INVALID_POSITION) return error::UNKNOWN_ERROR;
+    switch(relative_to) {
+        case relative_to::start:
+            return pos;
+        case relative_to::current_position:
+            return 0;
+        case relative_to::end:
+            // A bit more involved
+            fpos_t pos_mem;
+            if(fgetpos(m_file, &pos_mem) != 0) return error::UNKNOWN_ERROR;
+            if(fseek(m_file, 0, SEEK_END) != 0) return error::UNKNOWN_ERROR;
+            i64 size = ftell(m_file);
+            if(size == INVALID_POSITION) return error::UNKNOWN_ERROR;
+            if(fsetpos(m_file, &pos_mem) != 0) return error::UNKNOWN_ERROR;
+            return size - pos;
+    }
 }
 
 } // namespace root
