@@ -17,27 +17,22 @@
  * along with The Root Engine.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <root/io/file_stream.h>
+#include <root/io/platform/android/aasset_stream.h>
+
+
+#include <cstdio>
 
 namespace root {
 
-auto file_stream::read(void* dst, const u64& len) -> value_or_error<u64> {
-    u64 res = fread(dst, 1, len, m_file);
-    if(res != len && feof(m_file) == 0) {
-        return error::UNKNOWN_ERROR;
-    }
-    return res;
+auto aasset_stream::read(void* dst, const u64& len) ->  value_or_error<u64> {
+    AAsset_read(m_asset, dst, len);
 }
 
-auto file_stream::write(const void* src, const u64& len) -> value_or_error<u64> {
-    u64 res = fwrite(src, 1, len, m_file);
-    if(res != len && feof(m_file) == 0) {
-        return error::UNKNOWN_ERROR;
-    }
-    return res;
+auto aasset_stream::write(const void* src, const u64& len) ->  value_or_error<u64> {
+    return error::INVALID_OPERATION;
 }
 
-auto file_stream::seek(const i64& offset, const relative_to& relative_to) -> error {
+auto aasset_stream::seek(const i64& offset, const relative_to& relative_to = relative_to::start) -> error {
     int origin = 0;
     switch(relative_to) {
         case relative_to::start:
@@ -50,28 +45,19 @@ auto file_stream::seek(const i64& offset, const relative_to& relative_to) -> err
             origin = SEEK_END;
             break;
     }
-    if(fseek(m_file, offset, origin) != 0)
+    if(AAsset_seek64(m_asset, offset, origin) == INVALID_POSITION)
         return error::UNKNOWN_ERROR;
     return error::NO_ERROR;
 }
 
-auto file_stream::tell(const relative_to& relative_to) const -> value_or_error<i64> {
-    i64 pos = ftell(m_file);
-    if(pos == INVALID_POSITION) return error::UNKNOWN_ERROR;
+auto aasset_stream::tell(const relative_to& relative_to = relative_to::start) const -> value_or_error<i64> {
     switch(relative_to) {
         case relative_to::start:
-            return pos;
+            return AAsset_getLength64(m_asset) - AAsset_getRemainingLength64(m_asset);
         case relative_to::current_position:
             return 0;
         case relative_to::end:
-            // A bit more involved
-            fpos_t pos_mem;
-            if(fgetpos(m_file, &pos_mem) != 0) return error::UNKNOWN_ERROR;
-            if(fseek(m_file, 0, SEEK_END) != 0) return error::UNKNOWN_ERROR;
-            i64 size = ftell(m_file);
-            if(size == INVALID_POSITION) return error::UNKNOWN_ERROR;
-            if(fsetpos(m_file, &pos_mem) != 0) return error::UNKNOWN_ERROR;
-            return size - pos;
+            return - AAsset_getRemainingLength64(m_asset);
     }
 }
 

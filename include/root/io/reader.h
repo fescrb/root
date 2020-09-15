@@ -20,27 +20,36 @@
 #pragma once
 
 #include <root/io/stream.h>
-
-#include <android/asset_manager.h>
-#include <android/asset_manager_jni.h>
+#include <root/io/buffer_stream.h>
 
 namespace root {
 
-class aasset_stream final : public stream {
+template<typename stream_class = stream>
+class reader_interface {
 public:
-    explicit aasset_stream(AAsset *asset) : m_asset(asset) {}
-    
-    constexpr static i64 INVALID_POSITION = -1L;
+    inline explicit reader_interface(stream* s) : m_stream(s) {}
 
-    auto read(void* dst, const u64& len) ->  value_or_error<u64> override;
-    auto write(const void* src, const u64& len) ->  value_or_error<u64> override;
-    auto seek(const i64& offset, const relative_to& relative_to = relative_to::start) -> error override;
-    auto tell(const relative_to& relative_to = relative_to::start) const -> value_or_error<i64> override;
+    inline auto read(void* dst, const u64& len) -> value_or_error<u64> {
+        return m_stream->read(dst, len);
+    }
 
-    virtual ~aasset_stream() {}
+    inline auto seek(const i64& offset, const relative_to& relative_to = relative_to::start) -> error {
+        return m_stream->seek(offset, relative_to);
+    }
+
+    inline auto tell(const relative_to& relative_to = relative_to::start) const -> value_or_error<i64> {
+        return m_stream->tell(relative_to);
+    }
 
 private:
-    AAsset* m_asset;
+    stream* m_stream;
 };
+
+/*
+ * Class definitions
+ */
+
+using reader = reader_interface<>;
+using buffer_reader = reader_interface<buffer_stream>;
 
 } // namespace root
