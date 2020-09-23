@@ -19,20 +19,21 @@
 
 #pragma once
 
-#include <root/graphics/physical_device.h>
+#if defined(ROOT_LINUX)
+#include <GLFW/glfw3.h>
+#endif
+
+#include <root/core/string_view.h>
 
 namespace root {
 
-class device final {
+class window {
 public:
-    explicit device(physical_device& d);
+    window(u32 width, u32 height, string_view& title);
 
-    VkDevice handle;
-
-    auto get_graphics_queue() const -> VkQueue;
-
-private:
-    uint32_t m_graphics_family_index;
+#if defined(ROOT_LINUX)
+    GLFWwindow* handle;
+#endif
 };
 
 } // namespace root

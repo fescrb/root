@@ -32,7 +32,7 @@ device::device(physical_device& d) {
     uint32_t m_graphics_family_index = FAMILY_INVALID;
 
     for(uint32_t i = 0; i < fam_props.size(); i++) {
-        if(fam_props.queueFlags & VK_QUEUE_GRAPHICS_BIT) {
+        if(fam_props[i].queueFlags & VK_QUEUE_GRAPHICS_BIT) {
             m_graphics_family_index = i; 
             break;
         }

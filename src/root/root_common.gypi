@@ -4,6 +4,7 @@
     ],
     'cflags': [
         '-std=c++17',
-        '-fPIC'
+        '-fPIC',
+        '-DROOT_LINUX',
     ]
 }

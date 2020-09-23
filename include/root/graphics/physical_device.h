@@ -22,6 +22,7 @@
 #include <vulkan/vulkan.h>
 
 #include <root/memory/allocator.h>
+#include <root/core/array.h>
 
 namespace root {
 

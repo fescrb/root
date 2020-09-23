@@ -17,22 +17,13 @@
  * along with The Root Engine.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#pragma once
-
-#include <root/graphics/physical_device.h>
+#include <root/graphics/window.h>
 
 namespace root {
 
-class device final {
-public:
-    explicit device(physical_device& d);
-
-    VkDevice handle;
-
-    auto get_graphics_queue() const -> VkQueue;
-
-private:
-    uint32_t m_graphics_family_index;
-};
+window::window(u32 width, u32 height, string_view& title) {
+    glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+    handle = glfwCreateWindow(width, height, title, nullptr, nullptr);
+}
 
 } // namespace root

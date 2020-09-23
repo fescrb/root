@@ -19,8 +19,11 @@
 
 #include <root/graphics/instance.h>
 
-namespace root {
+#if defined(ROOT_LINUX)
+#include <GLFW/glfw3.h>
+#endif
 
+namespace root {
 
 instance* instance::m_instance = nullptr;
 
@@ -32,8 +35,23 @@ auto instance::init() -> void {
     create_info.pApplicationInfo = nullptr; // TODO
     create_info.enabledLayerCount = 0;
     create_info.ppEnabledLayerNames = nullptr;
+
+#if defined(ROOT_LINUX)
+    // TODO where do I put this?
+    if(!glfwInit()) {
+        // TODO: handle error
+    }
+
+    // TODO only on desktop builds
+    uint32_t glfw_ext_count;
+    auto glfw_extensions = glfwGetRequiredInstanceExtensions(&glfw_ext_count);
+
+    create_info.enabledExtensionCount = glfw_ext_count;
+    create_info.ppEnabledExtensionNames = glfw_extensions;
+#else
     create_info.enabledExtensionCount = 0;
     create_info.ppEnabledExtensionNames = nullptr;
+#endif
 
     VkInstance handle;
     if (vkCreateInstance(&create_info, nullptr, &handle) != VK_SUCCESS) {
