@@ -10,6 +10,7 @@ demos/*
 /.cproject
 include/gtest/*
 include/gmock/*
+include/GLFW/*
 lib/*
 Makefile
 *.mk
