@@ -8,6 +8,8 @@ jobs:
       - checkout
       - run: git submodule init thirdparty/googletest
       - run: git submodule update thirdparty/googletest
+      - run: git submodule init thirdparty/glfw
+      - run: git submodule update thirdparty/glfw
       - run: ci/build_and_run_unit_tests.sh
 
 workflows:
