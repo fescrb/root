@@ -10,6 +10,7 @@
                 'instance.cpp',
                 'physical_device.cpp',
                 'window.cpp',
+                'surface.cpp',
                 'device.cpp',
                 'vk_format.cpp'
             ],

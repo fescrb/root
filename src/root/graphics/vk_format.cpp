@@ -80,12 +80,42 @@ auto format_to<VkQueueFlagBits>(buffer_writer& dst, const VkQueueFlagBits& objec
     return format_to(dst, to_string(object));
 }
 
-struct VkQueueFlagWrapper {
+/*struct VkQueueFlagWrapper {
     VkQueueFlagWrapper(const VkQueueFlags& v) : value(v){}
     VkQueueFlags value = 0;
+};*/
+
+template<typename E, E first, E last> // TODO: can I ensure that E is enum?
+struct VkFlagsWrapper {
+    VkFlagsWrapper(const VkFlags& v) : value(v) {}
+    VkFlags value;
 };
 
-template<>
+template<typename E, E first, E last>
+inline auto strlen(const VkFlagsWrapper<E,first,last>& object, const string_view& = string_view()) -> u64 {
+    u64 len = 0, num  = 0;
+    for(VkFlags bit = first; bit < (last << 1); bit = bit << 1) {
+        if(object.value & bit) {
+            num++;
+            len += strlen(to_string(static_cast<E>(bit)));
+        }
+    }
+    return len + ((num - 1)* strlen(" | "));
+}
+
+template<typename E, E first, E last>
+inline auto format_to(buffer_writer& dst, const VkFlagsWrapper<E,first,last>& object, const string_view& = string_view()) -> void {
+    bool has_printed = false;
+    for(u64 bit = first; bit < (last << 1); bit = bit << 1) {
+        if(object.value & bit) {
+            if (has_printed) format_to(dst, " | ");
+            has_printed = true;
+            format_to(dst, static_cast<E>(bit));
+        }
+    }
+}
+
+/*template<>
 auto strlen<VkQueueFlagWrapper>(const VkQueueFlagWrapper& object, const string_view&) -> u64 {
     u64 len = 0, num  = 0;
     if(object.value & VK_QUEUE_GRAPHICS_BIT) {
@@ -121,15 +151,9 @@ auto format_to<VkQueueFlagWrapper>(buffer_writer& dst, const VkQueueFlagWrapper&
             format_to(dst, static_cast<VkQueueFlagBits>(bit));
         }
     }
-}
+}*/
 
-template<>
-auto strlen<VkExtent3D>(const VkExtent3D& object, const string_view&) -> u64 {
-    constexpr u64 OPENING_STR_LEN = strlen("{ ");
-    constexpr u64 COMMA_STR_LEN = strlen(", ");
-    constexpr u64 CLOSING_STR_LEN = strlen("{ ");
-    return OPENING_STR_LEN + strlen(object.width) + COMMA_STR_LEN + strlen(object.height) + COMMA_STR_LEN + strlen(object.depth) + CLOSING_STR_LEN;
-}
+using VkQueueFlagWrapper = VkFlagsWrapper<VkQueueFlagBits, VK_QUEUE_GRAPHICS_BIT, VK_QUEUE_PROTECTED_BIT>;
 
 template<>
 auto format_to<VkExtent3D>(buffer_writer& dst, const VkExtent3D& object, const string_view&) -> void {
@@ -143,14 +167,40 @@ auto format_to<VkExtent3D>(buffer_writer& dst, const VkExtent3D& object, const s
 }
 
 template<>
+auto strlen<VkExtent3D>(const VkExtent3D& object, const string_view&) -> u64 {
+    constexpr u64 OPENING_STR_LEN = strlen("{ ");
+    constexpr u64 COMMA_STR_LEN = strlen(", ");
+    constexpr u64 CLOSING_STR_LEN = strlen("{ ");
+    return OPENING_STR_LEN + strlen(object.width) + COMMA_STR_LEN + strlen(object.height) + COMMA_STR_LEN + strlen(object.depth) + CLOSING_STR_LEN;
+}
+
+
+template<>
+auto strlen<VkExtent2D>(const VkExtent2D& object, const string_view&) -> u64 {
+    constexpr u64 OPENING_STR_LEN = strlen("{ ");
+    constexpr u64 COMMA_STR_LEN = strlen(", ");
+    constexpr u64 CLOSING_STR_LEN = strlen("{ ");
+    return OPENING_STR_LEN + strlen(object.width) + COMMA_STR_LEN + strlen(object.height) + CLOSING_STR_LEN;
+}
+
+template<>
+auto format_to<VkExtent2D>(buffer_writer& dst, const VkExtent2D& object, const string_view&) -> void {
+    format_to(dst, "{ ");
+    format_to(dst, object.width);
+    format_to(dst, ", ");
+    format_to(dst, object.height);
+    format_to(dst, " }");
+}
+
+template<>
 auto strlen<VkQueueFamilyProperties>(const VkQueueFamilyProperties& object, const string_view&) -> u64 {
     constexpr u64 QUEUE_FLAGS_STR_LEN = strlen("{ queueFlags: ");
     u64 queue_flags_len = strlen(VkQueueFlagWrapper(object.queueFlags));
-    constexpr u64 QUEUE_COUNT_STR_LEN = strlen("{ queueCount: ");
+    constexpr u64 QUEUE_COUNT_STR_LEN = strlen(" queueCount: ");
     u64 queue_count_len = strlen(object.queueCount);
-    constexpr u64 TIMESTAMP_VALID_BITS_STR_LEN = strlen("{ timestampValidBits: ");
+    constexpr u64 TIMESTAMP_VALID_BITS_STR_LEN = strlen(" timestampValidBits: ");
     u64 timestamp_valid_bits_len = strlen(object.timestampValidBits);
-    constexpr u64 MIN_IMAGE_TRANSFER_GRANULARITY_STR_LEN = strlen("{ minImageTransferGranularity: ");
+    constexpr u64 MIN_IMAGE_TRANSFER_GRANULARITY_STR_LEN = strlen(" minImageTransferGranularity: ");
     u64 min_image_transfer_granularity_len = strlen(object.minImageTransferGranularity);
     constexpr u64 CLOSING_STR_LEN = strlen(" }");
     return QUEUE_FLAGS_STR_LEN + queue_flags_len + 
@@ -171,6 +221,31 @@ auto format_to<VkQueueFamilyProperties>(buffer_writer& dst, const VkQueueFamilyP
     format_to(dst, " minImageTransferGranularity: ");
     format_to(dst, object.minImageTransferGranularity);
     format_to(dst, " }");
+}
+
+template<>
+auto strlen<VkSurfaceCapabilitiesKHR>(const VkSurfaceCapabilitiesKHR& object, const string_view&) -> u64 {
+    constexpr u64 MIN_IMAGE_COUNT_STR_LEN = strlen("{ minImageCount: ");
+    u64 min_image_count_len = strlen(object.maxImageCount);
+    constexpr u64 MAX_IMAGE_COUNT_STR_LEN = strlen(" maxImageCount: ");
+    u64 max_image_count_len = strlen(object.maxImageCount);
+    constexpr u64 CURRENT_EXTENT_STR_LEN = strlen(" currentExtent: ");
+    u64 current_extent_len = strlen(object.currentExtent);
+    constexpr u64 MIN_IMAGE_EXTENT_STR_LEN = strlen(" minImageExtent: ");
+    u64 min_image_extent_len = strlen(object.minImageExtent);
+    constexpr u64 MAX_IMAGE_EXTENT_STR_LEN = strlen(" maxImageExtent: ");
+    u64 max_image_extent_len = strlen(object.maxImageExtent);
+    constexpr u64 MAX_IMAGE_ARRAY_LAYERS_STR_LEN = strlen(" maxImageArrayLayers: ");
+    u64 max_image_array_layers_len = strlen(object.maxImageArrayLayers);
+    // TODO: the rest
+    constexpr u64 CLOSING_STR_LEN = strlen(" }");
+    return MIN_IMAGE_COUNT_STR_LEN + min_image_count_len + 
+           MAX_IMAGE_COUNT_STR_LEN + max_image_count_len +
+           CURRENT_EXTENT_STR_LEN + current_extent_len + 
+           MIN_IMAGE_EXTENT_STR_LEN + min_image_extent_len + 
+           MAX_IMAGE_EXTENT_STR_LEN + max_image_extent_len + 
+           MAX_IMAGE_ARRAY_LAYERS_STR_LEN + max_image_array_layers_len +
+           CLOSING_STR_LEN;
 }
 
 // TODO: VkPhysicalDeviceLimits

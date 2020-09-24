@@ -24,10 +24,18 @@
 #include <root/graphics/instance.h>
 #include <root/io/format.h>
 
+#include <root/graphics/window.h>
+#include <root/graphics/surface.h>
+
 #include <iostream>
 
 int main() {
     root::instance::init();
+
+    root::window window(640u, 480u, "Test");
+
+    root::surface surface(window, *root::instance::get());
+
     auto devices = root::instance::get()->physical_devices();
 
     for(int i = 0; i < devices.size(); i++) {
@@ -38,4 +46,6 @@ int main() {
             std::cout << root::format().to_string(familyProperties[j]) << std::endl;
         }
     }
+
+    while(true){}
 }

@@ -25,13 +25,15 @@
 
 namespace root {
 
-device::device(physical_device& d) {
+device::device(physical_device& d, const surface& s) {
     auto& fam_props = d.queue_family_properties();
 
     constexpr uint32_t FAMILY_INVALID = std::numeric_limits<uint32_t>::max();
     uint32_t m_graphics_family_index = FAMILY_INVALID;
 
     for(uint32_t i = 0; i < fam_props.size(); i++) {
+        VkBool32 present_support = false;
+        vkGetPhysicalDeviceSurfaceSupportKHR(d.handle, i, s.handle, &present_support);
         if(fam_props[i].queueFlags & VK_QUEUE_GRAPHICS_BIT) {
             m_graphics_family_index = i; 
             break;
@@ -49,6 +51,10 @@ device::device(physical_device& d) {
     float priority = 1.0f;
     queue_create.pQueuePriorities = &priority;
 
+    const char* device_extensions[] = {
+        "VK_KHR_swapchain"
+    };
+
     VkDeviceCreateInfo device_create;
     device_create.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
     device_create.pNext = nullptr;
@@ -57,8 +63,8 @@ device::device(physical_device& d) {
     device_create.pQueueCreateInfos = &queue_create;
     device_create.enabledLayerCount = 0;
     device_create.ppEnabledLayerNames = nullptr;
-    device_create.enabledExtensionCount = 0; // Must change to swapchain extensions
-    device_create.ppEnabledExtensionNames = nullptr;
+    device_create.enabledExtensionCount = 1; 
+    device_create.ppEnabledExtensionNames = device_extensions;
     device_create.pEnabledFeatures = nullptr; // TODO?
 
     if(vkCreateDevice(d.handle, &device_create, nullptr, &handle) != VK_SUCCESS) {

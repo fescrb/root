@@ -19,21 +19,18 @@
 
 #pragma once
 
-#if defined(ROOT_LINUX)
-#include <GLFW/glfw3.h>
-#endif
+#include <vulkan/vulkan.h>
 
-#include <root/core/string_view.h>
+#include <root/graphics/window.h>
+#include <root/graphics/instance.h>
 
 namespace root {
 
-class window {
+class surface {
 public:
-    window(u32 width, u32 height, const char* title);
+    surface(window& w, instance& i);
 
-#if defined(ROOT_LINUX)
-    GLFWwindow* handle;
-#endif
+    VkSurfaceKHR handle;
 };
 
 } // namespace root

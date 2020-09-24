@@ -21,7 +21,7 @@
 
 namespace root {
 
-window::window(u32 width, u32 height, string_view& title) {
+window::window(u32 width, u32 height, const char* title) {
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
     handle = glfwCreateWindow(width, height, title, nullptr, nullptr);
 }

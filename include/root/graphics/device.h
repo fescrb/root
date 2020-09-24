@@ -20,12 +20,13 @@
 #pragma once
 
 #include <root/graphics/physical_device.h>
+#include <root/graphics/surface.h>
 
 namespace root {
 
 class device final {
 public:
-    explicit device(physical_device& d);
+    explicit device(physical_device& d, const surface& s);
 
     VkDevice handle;
 

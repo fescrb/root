@@ -17,23 +17,14 @@
  * along with The Root Engine.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#pragma once
-
-#if defined(ROOT_LINUX)
-#include <GLFW/glfw3.h>
-#endif
-
-#include <root/core/string_view.h>
+#include <root/graphics/surface.h>
 
 namespace root {
 
-class window {
-public:
-    window(u32 width, u32 height, const char* title);
+surface::surface(window& w, instance& i) {
+    if(glfwCreateWindowSurface(i.handle, w.handle, NULL, &handle) != VK_SUCCESS) {
+        // TODO: error handling
+    }
+}
 
-#if defined(ROOT_LINUX)
-    GLFWwindow* handle;
-#endif
-};
-
-} // namespace root
+}

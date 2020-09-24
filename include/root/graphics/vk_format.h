@@ -57,4 +57,29 @@ inline constexpr auto to_string(const VkQueueFlagBits& bit) -> const char*{
     }
 }
 
+inline constexpr auto to_string(const VkSurfaceTransformFlagBitsKHR& bit) -> const char*{
+    switch(bit) {
+        case VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR:
+            return "VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR";
+        case VK_SURFACE_TRANSFORM_ROTATE_90_BIT_KHR:
+            return "VK_SURFACE_TRANSFORM_ROTATE_90_BIT_KHR";
+        case VK_SURFACE_TRANSFORM_ROTATE_180_BIT_KHR:
+            return "VK_SURFACE_TRANSFORM_ROTATE_180_BIT_KHR";
+        case VK_SURFACE_TRANSFORM_ROTATE_270_BIT_KHR:
+            return "VK_SURFACE_TRANSFORM_ROTATE_270_BIT_KHR";
+        case VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_BIT_KHR:
+            return "VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_BIT_KHR";
+        case VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_ROTATE_90_BIT_KHR:
+            return "VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_ROTATE_90_BIT_KHR";
+        case VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_ROTATE_180_BIT_KHR:
+            return "VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_ROTATE_180_BIT_KHR";
+        case VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_ROTATE_270_BIT_KHR:
+            return "VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_ROTATE_270_BIT_KHR";
+        case VK_SURFACE_TRANSFORM_INHERIT_BIT_KHR:
+            return "VK_SURFACE_TRANSFORM_INHERIT_BIT_KHR";
+        default:
+            return nullptr;
+    }
+}
+
 } // namespace root
