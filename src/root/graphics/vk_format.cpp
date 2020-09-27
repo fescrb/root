@@ -80,11 +80,6 @@ auto format_to<VkQueueFlagBits>(buffer_writer& dst, const VkQueueFlagBits& objec
     return format_to(dst, to_string(object));
 }
 
-/*struct VkQueueFlagWrapper {
-    VkQueueFlagWrapper(const VkQueueFlags& v) : value(v){}
-    VkQueueFlags value = 0;
-};*/
-
 template<typename E, E first, E last> // TODO: can I ensure that E is enum?
 struct VkFlagsWrapper {
     VkFlagsWrapper(const VkFlags& v) : value(v) {}
@@ -115,45 +110,13 @@ inline auto format_to(buffer_writer& dst, const VkFlagsWrapper<E,first,last>& ob
     }
 }
 
-/*template<>
-auto strlen<VkQueueFlagWrapper>(const VkQueueFlagWrapper& object, const string_view&) -> u64 {
-    u64 len = 0, num  = 0;
-    if(object.value & VK_QUEUE_GRAPHICS_BIT) {
-        num++; 
-        len += strlen(to_string(VK_QUEUE_GRAPHICS_BIT));
-    }
-    if(object.value & VK_QUEUE_COMPUTE_BIT) {
-        num++; 
-        len += strlen(to_string(VK_QUEUE_COMPUTE_BIT));
-    }
-    if(object.value & VK_QUEUE_TRANSFER_BIT) {
-        num++; 
-        len += strlen(to_string(VK_QUEUE_TRANSFER_BIT));
-    }
-    if(object.value & VK_QUEUE_SPARSE_BINDING_BIT) {
-        num++; 
-        len += strlen(to_string(VK_QUEUE_SPARSE_BINDING_BIT));
-    }
-    if(object.value & VK_QUEUE_SPARSE_BINDING_BIT) {
-        num++; 
-        len += strlen(to_string(VK_QUEUE_SPARSE_BINDING_BIT));
-    }
-    return len + (num * strlen(" | "));
-}
-
-template<>
-auto format_to<VkQueueFlagWrapper>(buffer_writer& dst, const VkQueueFlagWrapper& object, const string_view&) -> void {
-    bool has_printed = false;
-    for(u64 bit = 1; bit < (VK_QUEUE_SPARSE_BINDING_BIT << 1); bit = bit << 1) {
-        if(object.value & bit) {
-            if (has_printed) format_to(dst, " | ");
-            has_printed = true;
-            format_to(dst, static_cast<VkQueueFlagBits>(bit));
-        }
-    }
-}*/
-
 using VkQueueFlagWrapper = VkFlagsWrapper<VkQueueFlagBits, VK_QUEUE_GRAPHICS_BIT, VK_QUEUE_PROTECTED_BIT>;
+
+using VkSurfaceTransformFlagWrapper = VkFlagsWrapper<VkSurfaceTransformFlagsKHR, VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR, VK_SURFACE_TRANSFORM_INHERIT_BIT_KHR>;
+
+using VkCompositeAlphaFlagWrapper = VkFlagsWrapper<VkCompositeAlphaFlagsKHR, VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR, VK_COMPOSITE_ALPHA_INHERIT_BIT_KHR>;
+
+using VkImageUsageFlagWrapper = VkFlagsWrapper<VkImageUsageFlags, VK_IMAGE_USAGE_TRANSFER_SRC_BIT, VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT>;
 
 template<>
 auto format_to<VkExtent3D>(buffer_writer& dst, const VkExtent3D& object, const string_view&) -> void {
@@ -237,6 +200,14 @@ auto strlen<VkSurfaceCapabilitiesKHR>(const VkSurfaceCapabilitiesKHR& object, co
     u64 max_image_extent_len = strlen(object.maxImageExtent);
     constexpr u64 MAX_IMAGE_ARRAY_LAYERS_STR_LEN = strlen(" maxImageArrayLayers: ");
     u64 max_image_array_layers_len = strlen(object.maxImageArrayLayers);
+    constexpr u64 SUPPORTED_TRANSFORMS_STR_LEN = strlen(" supportedTransforms: ");
+    u64 supported_transforms_len = strlen(VkSurfaceTransformFlagWrapper(object.supportedTransforms));
+    constexpr u64 CURRENT_TRANSFORM_STR_LEN = strlen(" currentTransform: ");
+    u64 current_transform_len = strlen(to_string(object.currentTransform));
+    constexpr u64 SUPPORTED_COMPOSITE_ALPHA_STR_LEN = strlen(" supportedCompositeAlpha: ");
+    u64 supported_composite_alpha_len = strlen(VkCompositeAlphaFlagWrapper(object.supportedCompositeAlpha));
+    constexpr u64 SUPPORTED_USAGE_FLAGS_STR_LEN = strlen(" supportedUsageFlags: ");
+    u64 supported_usage_flags_len = strlen(VkImageUsageFlagWrapper(object.supportedUsageFlags));
     // TODO: the rest
     constexpr u64 CLOSING_STR_LEN = strlen(" }");
     return MIN_IMAGE_COUNT_STR_LEN + min_image_count_len + 
@@ -245,6 +216,10 @@ auto strlen<VkSurfaceCapabilitiesKHR>(const VkSurfaceCapabilitiesKHR& object, co
            MIN_IMAGE_EXTENT_STR_LEN + min_image_extent_len + 
            MAX_IMAGE_EXTENT_STR_LEN + max_image_extent_len + 
            MAX_IMAGE_ARRAY_LAYERS_STR_LEN + max_image_array_layers_len +
+           SUPPORTED_TRANSFORMS_STR_LEN + supported_transforms_len +
+           CURRENT_TRANSFORM_STR_LEN + current_transform_len +
+           SUPPORTED_COMPOSITE_ALPHA_STR_LEN + supported_composite_alpha_len +
+           SUPPORTED_USAGE_FLAGS_STR_LEN + supported_usage_flags_len +
            CLOSING_STR_LEN;
 }
 

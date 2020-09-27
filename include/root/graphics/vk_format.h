@@ -82,4 +82,42 @@ inline constexpr auto to_string(const VkSurfaceTransformFlagBitsKHR& bit) -> con
     }
 }
 
+inline constexpr auto to_string(const VkCompositeAlphaFlagBitsKHR& bit) -> const char*{
+    switch(bit) {
+        case VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR:
+            return "VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR";
+        case VK_COMPOSITE_ALPHA_PRE_MULTIPLIED_BIT_KHR:
+            return "VK_COMPOSITE_ALPHA_PRE_MULTIPLIED_BIT_KHR";
+        case VK_COMPOSITE_ALPHA_POST_MULTIPLIED_BIT_KHR:
+            return "VK_COMPOSITE_ALPHA_POST_MULTIPLIED_BIT_KHR";
+        case VK_COMPOSITE_ALPHA_INHERIT_BIT_KHR:
+            return "VK_COMPOSITE_ALPHA_INHERIT_BIT_KHR";
+        default:
+            return nullptr;
+    }
+}
+
+inline constexpr auto to_string(const VkImageUsageFlagBits& bit) -> const char*{
+    switch(bit) {
+        case VK_IMAGE_USAGE_TRANSFER_SRC_BIT:
+            return "VK_IMAGE_USAGE_TRANSFER_SRC_BIT";
+        case VK_IMAGE_USAGE_TRANSFER_DST_BIT:
+            return "VK_IMAGE_USAGE_TRANSFER_DST_BIT";
+        case VK_IMAGE_USAGE_SAMPLED_BIT:
+            return "VK_IMAGE_USAGE_SAMPLED_BIT";
+        case VK_IMAGE_USAGE_STORAGE_BIT:
+            return "VK_IMAGE_USAGE_STORAGE_BIT";
+        case VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT:
+            return "VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT";
+        case VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT:
+            return "VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT";
+        case VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT:
+            return "VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT";
+        case VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT:
+            return "VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT";
+        default:
+            return nullptr;
+    }
+}
+
 } // namespace root
