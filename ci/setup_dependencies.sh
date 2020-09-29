@@ -4,61 +4,69 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 source $DIR/setup_environment.env 
 
+function build_submodule {
+    # $1 - path
+    # $2 - C_FLAGS
+    # $3 - CXX_FLAGS 
+    # $4 - C_LINK_FLAGS
+    # $5 - CXX_LINK_FLAGS
+    # $6 - CMake options
+    # CXX_FLAGS will include CFLAGS
+
+
+    cd $1
+
+    if [[ ! -d ./build ]]; then
+        mkdir ./build
+    fi
+
+    cd ./build
+
+    cmake $6 -DCMAKE_CXX_COMPILER=$CXX -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=$CC -DCMAKE_C_FLAGS="$2" -DCMAKE_CXX_FLAGS="$2 $3" -DCMAKE_CXX_LINK_FLAGS="$4 $5" -DCMAKE_C_LINK_FLAGS="$4" -DCMAKE_INSTALL_PREFIX=$DIR/.. ..
+
+    if [ ! $? -eq 0 ]; then
+        echo 'CMake failed.'
+        return 1
+    fi
+
+    make
+
+    if [ ! $? -eq 0 ]; then
+        echo 'Make failed.'
+        return 1
+    fi
+
+    make install
+
+    return 0
+}
+
 echo "Building googletest"
 
-cd $DIR/../thirdparty/googletest/
-
-if [[ ! -d ./build ]]; then
-    mkdir ./build
-fi
-
-cd ./build
-
-C_FLAGS="-fPIC"
-CXX_FLAGS="-std=c++17 $C_FLAGS"
-
-cmake -DCMAKE_CXX_COMPILER=$CXX -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=$CC -DCMAKE_C_FLAGS="$C_FLAGS" -DCMAKE_CXX_FLAGS="$CXX_FLAGS" -DCMAKE_INSTALL_PREFIX=$DIR/.. ..
+build_submodule $DIR/../thirdparty/googletest/ "-fPIC" "-std=c++17" "" ""
 
 if [ ! $? -eq 0 ]; then
-    echo 'CMake failed. Quitting.'
+    echo 'Failed to build googletest.'
     exit 1
 fi
-
-make
-
-if [ ! $? -eq 0 ]; then
-    echo 'Make failed. Quitting.'
-    exit 1
-fi
-
-make install
 
 echo "Building glfw"
 
-cd $DIR/../thirdparty/glfw/
-
-if [[ ! -d ./build ]]; then
-    mkdir ./build
-fi
-
-cd ./build
-
-C_FLAGS="-fPIC"
-CXX_FLAGS="-std=c++17 $C_FLAGS"
-LINK_FLAGS="-lvulkan"
-
-cmake -DGLFW_VULKAN_STATIC=ON -DCMAKE_C_LINK_FLAGS=$LINK_FLAGS -DCMAKE_CXX_COMPILER=$CXX -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=$CC -DCMAKE_C_FLAGS="$C_FLAGS" -DCMAKE_CXX_FLAGS="$CXX_FLAGS" -DCMAKE_INSTALL_PREFIX=$DIR/.. ..
+build_submodule $DIR/../thirdparty/glfw/ "-fPIC" "-std=c++17" "-lvulkan" "" "-DGLFW_VULKAN_STATIC=ON"
 
 if [ ! $? -eq 0 ]; then
-    echo 'CMake failed. Quitting.'
+    echo 'Failed to build glfw.'
     exit 1
 fi
 
-make
+
+echo "Building shaderc"
+
+$DIR/../thirdparty/shaderc/utils/git-sync-deps
+
+build_submodule $DIR/../thirdparty/shaderc/ "-fPIC" "-std=c++17" "" "" "-DSHADERC_SKIP_TESTS=ON"
 
 if [ ! $? -eq 0 ]; then
-    echo 'Make failed. Quitting.'
+    echo 'Failed to build shaderc.'
     exit 1
 fi
-
-make install

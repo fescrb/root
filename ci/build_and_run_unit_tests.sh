@@ -6,6 +6,11 @@ PWD="$( pwd )"
 
 $DIR/setup_dependencies.sh
 
+if [ ! $? -eq 0 ]; then
+    echo 'Failed to set up dependencies. Quitting.'
+    exit 1
+fi
+
 source $DIR/setup_environment.env 
 
 cd $DIR/../src
