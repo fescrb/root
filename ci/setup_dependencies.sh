@@ -64,7 +64,7 @@ echo "Building shaderc"
 
 $DIR/../thirdparty/shaderc/utils/git-sync-deps
 
-build_submodule $DIR/../thirdparty/shaderc/ "-fPIC" "-std=c++17" "" "" "-DSHADERC_SKIP_TESTS=ON"
+build_submodule $DIR/../thirdparty/shaderc/ "-fPIC" "-std=c++17" "" "" ""
 
 if [ ! $? -eq 0 ]; then
     echo 'Failed to build shaderc.'

@@ -10,6 +10,8 @@ jobs:
       - run: git submodule update thirdparty/googletest
       - run: git submodule init thirdparty/glfw
       - run: git submodule update thirdparty/glfw
+      - run: git submodule init thirdparty/shaderc
+      - run: git submodule update thirdparty/shaderc
       - run: ci/build_and_run_unit_tests.sh
 
 workflows:
