@@ -112,11 +112,11 @@ inline auto format_to(buffer_writer& dst, const VkFlagsWrapper<E,first,last>& ob
 
 using VkQueueFlagWrapper = VkFlagsWrapper<VkQueueFlagBits, VK_QUEUE_GRAPHICS_BIT, VK_QUEUE_PROTECTED_BIT>;
 
-using VkSurfaceTransformFlagWrapper = VkFlagsWrapper<VkSurfaceTransformFlagsKHR, VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR, VK_SURFACE_TRANSFORM_INHERIT_BIT_KHR>;
+using VkSurfaceTransformFlagWrapper = VkFlagsWrapper<VkSurfaceTransformFlagBitsKHR, VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR, VK_SURFACE_TRANSFORM_INHERIT_BIT_KHR>;
 
-using VkCompositeAlphaFlagWrapper = VkFlagsWrapper<VkCompositeAlphaFlagsKHR, VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR, VK_COMPOSITE_ALPHA_INHERIT_BIT_KHR>;
+using VkCompositeAlphaFlagWrapper = VkFlagsWrapper<VkCompositeAlphaFlagBitsKHR, VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR, VK_COMPOSITE_ALPHA_INHERIT_BIT_KHR>;
 
-using VkImageUsageFlagWrapper = VkFlagsWrapper<VkImageUsageFlags, VK_IMAGE_USAGE_TRANSFER_SRC_BIT, VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT>;
+using VkImageUsageFlagWrapper = VkFlagsWrapper<VkImageUsageFlagBits, VK_IMAGE_USAGE_TRANSFER_SRC_BIT, VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT>;
 
 template<>
 auto format_to<VkExtent3D>(buffer_writer& dst, const VkExtent3D& object, const string_view&) -> void {
