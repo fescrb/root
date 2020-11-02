@@ -20,34 +20,37 @@
 #pragma once
 
 #include <root/core/array_view.h>
+#include <root/core/string_literal.h>
 
 namespace root {
 
 class string_view : public array_view<i8> {
 public:
-    constexpr inline string_view() : array_view<i8>() { } 
+    constexpr inline string_view() : array_view<i8>() { }
 
-    inline string_view(char* data, const u64& first, const u64& last)
-    :   array_view(data, first, last) {}
+    inline string_view(i8* data, const u64& first, const u64& last)
+    :   array_view<i8>(data, first, last) {}
 
     inline string_view(string_view&& other) 
-    :   array_view(std::move(other)) {}
+    :   array_view<i8>(std::move(other)) {}
 
     inline string_view(const string_view& other)
-    :   array_view(other) {}
+    :   array_view<i8>(other) {}
 
     inline string_view(array_view<i8>&& other) 
-    :   array_view(std::move(other)) {}
+    :   array_view<i8>(std::move(other)) {}
 
     inline string_view(const array_view<i8>& other)
-    :   array_view(other) {}
-    
-    auto operator=(const string_view& other) -> array_view& {
-        return array_view<char>::operator=(other);
+    :   array_view<i8>(other) {}
+
+    auto operator=(const string_view& other) -> string_view& {
+        array_view<i8>::operator=(other);
+        return *this;
     }
 
-    auto operator=(array_view&& other) -> array_view& {
-        return array_view<char>::operator=(std::move(other));
+    auto operator=(string_view&& other) -> string_view& {
+        array_view<i8>::operator=(std::move(other));
+        return *this;
     }
 
     template<typename I>
@@ -74,6 +77,9 @@ public:
         return offset(extra_offset);
     }
 
+    inline operator string_literal() const {
+        return string_literal(static_cast<const element_type*>(m_data), m_first, m_last);
+    }
 };
 
 } // namespace root

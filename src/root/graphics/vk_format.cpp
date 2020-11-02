@@ -25,17 +25,17 @@
 namespace root {
 
 template<>
-auto strlen<VkPhysicalDeviceType>(const VkPhysicalDeviceType& object, const string_view&) -> u64 {
+auto strlen<VkPhysicalDeviceType>(const VkPhysicalDeviceType& object, const string_literal&) -> u64 {
     return strlen(to_string(object));
 }
 
 template<>
-auto format_to<VkPhysicalDeviceType>(buffer_writer& dst, const VkPhysicalDeviceType& object, const string_view&) -> void {
+auto format_to<VkPhysicalDeviceType>(buffer_writer& dst, const VkPhysicalDeviceType& object, const string_literal&) -> void {
     return format_to(dst, to_string(object));
 }
 
 template<>
-auto strlen<VkPhysicalDeviceProperties>(const VkPhysicalDeviceProperties & object, const string_view&) -> u64 {
+auto strlen<VkPhysicalDeviceProperties>(const VkPhysicalDeviceProperties & object, const string_literal&) -> u64 {
     constexpr u64 API_VERSION_STR_LEN = strlen("{ apiVersion: ");
     u64 api_ver_len = strlen(object.apiVersion);
     constexpr u64 DRIVER_VERSION_STR_LEN = strlen(" driverVersion: ");
@@ -56,7 +56,7 @@ auto strlen<VkPhysicalDeviceProperties>(const VkPhysicalDeviceProperties & objec
 }
 
 template<>
-auto format_to<VkPhysicalDeviceProperties>(buffer_writer& dst, const VkPhysicalDeviceProperties & object, const string_view&) -> void {
+auto format_to<VkPhysicalDeviceProperties>(buffer_writer& dst, const VkPhysicalDeviceProperties & object, const string_literal&) -> void {
     format_to(dst, "{ apiVersion: ");
     format_to(dst, object.apiVersion);
     format_to(dst, " driverVersion: ");
@@ -71,12 +71,12 @@ auto format_to<VkPhysicalDeviceProperties>(buffer_writer& dst, const VkPhysicalD
 }
 
 template<>
-auto strlen<VkQueueFlagBits>(const VkQueueFlagBits& object, const string_view&) -> u64 {
+auto strlen<VkQueueFlagBits>(const VkQueueFlagBits& object, const string_literal&) -> u64 {
     return strlen(to_string(object));
 }
 
 template<>
-auto format_to<VkQueueFlagBits>(buffer_writer& dst, const VkQueueFlagBits& object, const string_view&) -> void {
+auto format_to<VkQueueFlagBits>(buffer_writer& dst, const VkQueueFlagBits& object, const string_literal&) -> void {
     return format_to(dst, to_string(object));
 }
 
@@ -87,7 +87,7 @@ struct VkFlagsWrapper {
 };
 
 template<typename E, E first, E last>
-inline auto strlen(const VkFlagsWrapper<E,first,last>& object, const string_view& = string_view()) -> u64 {
+inline auto strlen(const VkFlagsWrapper<E,first,last>& object, const string_literal& = string_literal()) -> u64 {
     u64 len = 0, num  = 0;
     for(VkFlags bit = first; bit < (last << 1); bit = bit << 1) {
         if(object.value & bit) {
@@ -99,7 +99,7 @@ inline auto strlen(const VkFlagsWrapper<E,first,last>& object, const string_view
 }
 
 template<typename E, E first, E last>
-inline auto format_to(buffer_writer& dst, const VkFlagsWrapper<E,first,last>& object, const string_view& = string_view()) -> void {
+inline auto format_to(buffer_writer& dst, const VkFlagsWrapper<E,first,last>& object, const string_literal& = string_literal()) -> void {
     bool has_printed = false;
     for(u64 bit = first; bit < (last << 1); bit = bit << 1) {
         if(object.value & bit) {
@@ -119,7 +119,7 @@ using VkCompositeAlphaFlagWrapper = VkFlagsWrapper<VkCompositeAlphaFlagBitsKHR, 
 using VkImageUsageFlagWrapper = VkFlagsWrapper<VkImageUsageFlagBits, VK_IMAGE_USAGE_TRANSFER_SRC_BIT, VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT>;
 
 template<>
-auto format_to<VkExtent3D>(buffer_writer& dst, const VkExtent3D& object, const string_view&) -> void {
+auto format_to<VkExtent3D>(buffer_writer& dst, const VkExtent3D& object, const string_literal&) -> void {
     format_to(dst, "{ ");
     format_to(dst, object.width);
     format_to(dst, ", ");
@@ -130,7 +130,7 @@ auto format_to<VkExtent3D>(buffer_writer& dst, const VkExtent3D& object, const s
 }
 
 template<>
-auto strlen<VkExtent3D>(const VkExtent3D& object, const string_view&) -> u64 {
+auto strlen<VkExtent3D>(const VkExtent3D& object, const string_literal&) -> u64 {
     constexpr u64 OPENING_STR_LEN = strlen("{ ");
     constexpr u64 COMMA_STR_LEN = strlen(", ");
     constexpr u64 CLOSING_STR_LEN = strlen("{ ");
@@ -139,7 +139,7 @@ auto strlen<VkExtent3D>(const VkExtent3D& object, const string_view&) -> u64 {
 
 
 template<>
-auto strlen<VkExtent2D>(const VkExtent2D& object, const string_view&) -> u64 {
+auto strlen<VkExtent2D>(const VkExtent2D& object, const string_literal&) -> u64 {
     constexpr u64 OPENING_STR_LEN = strlen("{ ");
     constexpr u64 COMMA_STR_LEN = strlen(", ");
     constexpr u64 CLOSING_STR_LEN = strlen("{ ");
@@ -147,7 +147,7 @@ auto strlen<VkExtent2D>(const VkExtent2D& object, const string_view&) -> u64 {
 }
 
 template<>
-auto format_to<VkExtent2D>(buffer_writer& dst, const VkExtent2D& object, const string_view&) -> void {
+auto format_to<VkExtent2D>(buffer_writer& dst, const VkExtent2D& object, const string_literal&) -> void {
     format_to(dst, "{ ");
     format_to(dst, object.width);
     format_to(dst, ", ");
@@ -156,7 +156,7 @@ auto format_to<VkExtent2D>(buffer_writer& dst, const VkExtent2D& object, const s
 }
 
 template<>
-auto strlen<VkQueueFamilyProperties>(const VkQueueFamilyProperties& object, const string_view&) -> u64 {
+auto strlen<VkQueueFamilyProperties>(const VkQueueFamilyProperties& object, const string_literal&) -> u64 {
     constexpr u64 QUEUE_FLAGS_STR_LEN = strlen("{ queueFlags: ");
     u64 queue_flags_len = strlen(VkQueueFlagWrapper(object.queueFlags));
     constexpr u64 QUEUE_COUNT_STR_LEN = strlen(" queueCount: ");
@@ -174,7 +174,7 @@ auto strlen<VkQueueFamilyProperties>(const VkQueueFamilyProperties& object, cons
 }
 
 template<>
-auto format_to<VkQueueFamilyProperties>(buffer_writer& dst, const VkQueueFamilyProperties& object, const string_view&) -> void {
+auto format_to<VkQueueFamilyProperties>(buffer_writer& dst, const VkQueueFamilyProperties& object, const string_literal&) -> void {
     format_to(dst, "{ queueFlags: ");
     format_to(dst, VkQueueFlagWrapper(object.queueFlags));
     format_to(dst, " queueCount: ");
@@ -187,7 +187,7 @@ auto format_to<VkQueueFamilyProperties>(buffer_writer& dst, const VkQueueFamilyP
 }
 
 template<>
-auto strlen<VkSurfaceCapabilitiesKHR>(const VkSurfaceCapabilitiesKHR& object, const string_view&) -> u64 {
+auto strlen<VkSurfaceCapabilitiesKHR>(const VkSurfaceCapabilitiesKHR& object, const string_literal&) -> u64 {
     constexpr u64 MIN_IMAGE_COUNT_STR_LEN = strlen("{ minImageCount: ");
     u64 min_image_count_len = strlen(object.maxImageCount);
     constexpr u64 MAX_IMAGE_COUNT_STR_LEN = strlen(" maxImageCount: ");

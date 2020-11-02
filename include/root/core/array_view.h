@@ -29,10 +29,12 @@ namespace root {
 template <typename T>
 class array_view {
 public:
+    using element_type = T; 
+
     constexpr inline array_view() 
     :   m_data(nullptr) , m_first(0), m_last(0) { } 
 
-    inline array_view(T* data, const u64& first, const u64& last)
+    constexpr inline array_view(T* data, const u64& first, const u64& last)
     :   m_data(data), m_first(first), m_last(last) {}
 
     inline array_view(array_view&& other) 

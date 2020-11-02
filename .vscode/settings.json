@@ -53,7 +53,14 @@
         "thread": "cpp",
         "typeinfo": "cpp",
         "numeric": "cpp",
-        "random": "cpp"
+        "random": "cpp",
+        "any": "cpp",
+        "bit": "cpp",
+        "bitset": "cpp",
+        "cinttypes": "cpp",
+        "condition_variable": "cpp",
+        "mutex": "cpp",
+        "variant": "cpp"
     },
     "files.watcherExclude": {
         "**/.git/objects/**": true,
