@@ -1,13 +1,30 @@
-Summary:
+# Summary:
     The Root Engine will be a small rendering engine with the main aim
     to be completely cross-platform, easy to use and to learn. Or at least for
     me to learn.
 
-Building from source (only Linux is supported as of now):
+# Building from source (only Linux is supported as of now):
  
- TODO
+## Requirements
+
+* `cmake`
+* `gyp`
+* `libvulkan-dev`
+
+### GLFW requirements 
+
+* `libx11-dev`
+* `libxrandr-dev`
+* `libxinerama-dev`
+* `libxcursor-dev`
+* `libxi-dev`
+* `libgl-dev`
+
+As a single command:
+
+`apt install libx11-dev libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev libgl-dev -y`
  
-Lincense:
+# Lincense:
 
     Copyright (C) 2011 Fernando Escribano Macias
 

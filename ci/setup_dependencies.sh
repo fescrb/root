@@ -29,7 +29,7 @@ function build_submodule {
         return 1
     fi
 
-    make
+    make -j 8
 
     if [ ! $? -eq 0 ]; then
         echo 'Make failed.'
@@ -64,7 +64,7 @@ echo "Building shaderc"
 
 $DIR/../thirdparty/shaderc/utils/git-sync-deps
 
-build_submodule $DIR/../thirdparty/shaderc/ "-fPIC" "-std=c++17" "" "" ""
+build_submodule $DIR/../thirdparty/shaderc/ "-fPIC" "-std=c++17" "" "" "-DSHADERC_SKIP_TESTS=ON"
 
 if [ ! $? -eq 0 ]; then
     echo 'Failed to build shaderc.'

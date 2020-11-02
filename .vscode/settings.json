@@ -54,5 +54,10 @@
         "typeinfo": "cpp",
         "numeric": "cpp",
         "random": "cpp"
+    },
+    "files.watcherExclude": {
+        "**/.git/objects/**": true,
+        "**/.git/subtree-cache/**": true,
+        "thirdparty/*/build/**": true
     }
 }
