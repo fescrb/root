@@ -21,7 +21,7 @@
 
 #include <root/core/array.h>
 #include <root/core/primitives.h>
-#include <root/core/string_view.h>
+#include <root/core/string_slice.h>
 
 #include <cstring>
 
@@ -45,26 +45,26 @@ public:
     :   array(std::move(b)) {}
 
     template<typename I>
-    inline auto offset(const I& off) const -> string_view {
+    inline auto offset(const I& off) const -> string_slice {
         root_assert(off < size());
-        return string_view(m_data, static_cast<u64>(off), size());
+        return string_slice(m_data, static_cast<u64>(off), size());
     } 
 
     template<typename I1, typename I2>
-    inline auto range(const I1& start, const I2& end) const -> string_view {
+    inline auto range(const I1& start, const I2& end) const -> string_slice {
         root_assert(start < size());
         root_assert(end <= size());
-        return string_view(m_data, static_cast<u64>(start), static_cast<u64>(end));
+        return string_slice(m_data, static_cast<u64>(start), static_cast<u64>(end));
     }   
 
     template<typename I>
-    inline auto limit(const I& new_limit) const -> string_view {
+    inline auto limit(const I& new_limit) const -> string_slice {
         root_assert(new_limit < size());
-        return string_view(m_data, 0, new_limit);
+        return string_slice(m_data, 0, new_limit);
     }
 
     template<typename I>
-    inline auto operator+(const I& extra_offset) const -> string_view {
+    inline auto operator+(const I& extra_offset) const -> string_slice {
         return offset(extra_offset);
     }
 };

@@ -2,7 +2,7 @@
     "files.associations": {
         "*.tcc": "cpp",
         "string": "cpp",
-        "string_view": "cpp",
+        "string_slice": "cpp",
         "array": "cpp",
         "atomic": "cpp",
         "cctype": "cpp",

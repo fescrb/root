@@ -17,14 +17,14 @@
  * along with The Root Engine.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <root/core/string_view.h>
+#include <root/core/string_slice.h>
 
 #include <gtest/gtest.h>
 
 #include <cstring>
 #include <limits>
 
-class string_view_tests : public ::testing::Test {
+class string_slice_tests : public ::testing::Test {
 public:
     void SetUp() override {
         for(int i = 0; i < STRING_SIZE; i++)
@@ -39,24 +39,24 @@ public:
     char memory[STRING_SIZE];
 };
 
-TEST_F(string_view_tests, empty_init) {
-    root::string_view string;
+TEST_F(string_slice_tests, empty_init) {
+    root::string_slice string;
 
     EXPECT_FALSE(string);
     EXPECT_EQ(string.size(), 0);
 }
 
-TEST_F(string_view_tests, init) {
-    root::string_view string(memory, 0, STRING_SIZE);
+TEST_F(string_slice_tests, init) {
+    root::string_slice string(memory, 0, STRING_SIZE);
 
     EXPECT_TRUE(string);
     EXPECT_EQ(string.size(), STRING_SIZE);
     EXPECT_EQ(memcmp(string, memory, STRING_SIZE*sizeof(int)), 0);
 }
 
-TEST_F(string_view_tests, init_copy) {
-    root::string_view string(memory, 0, STRING_SIZE);
-    root::string_view copy_string(string);
+TEST_F(string_slice_tests, init_copy) {
+    root::string_slice string(memory, 0, STRING_SIZE);
+    root::string_slice copy_string(string);
 
     EXPECT_TRUE(copy_string);
     EXPECT_EQ(copy_string.size(), STRING_SIZE);
@@ -64,18 +64,18 @@ TEST_F(string_view_tests, init_copy) {
     EXPECT_EQ(memcmp(copy_string, memory, STRING_SIZE*sizeof(int)), 0);
 }
 
-TEST_F(string_view_tests, init_move) {
-    root::string_view string(memory, 0, STRING_SIZE);
-    root::string_view move_array(std::move(string));
+TEST_F(string_slice_tests, init_move) {
+    root::string_slice string(memory, 0, STRING_SIZE);
+    root::string_slice move_array(std::move(string));
 
     EXPECT_TRUE(move_array);
     EXPECT_EQ(move_array.size(), STRING_SIZE);
     EXPECT_EQ(memcmp(move_array, memory, STRING_SIZE*sizeof(int)), 0);
 }
 
-TEST_F(string_view_tests, copy_assign) {
-    root::string_view string(memory, 0, STRING_SIZE);
-    root::string_view copy_string;
+TEST_F(string_slice_tests, copy_assign) {
+    root::string_slice string(memory, 0, STRING_SIZE);
+    root::string_slice copy_string;
     
     copy_string = string;
 
@@ -85,9 +85,9 @@ TEST_F(string_view_tests, copy_assign) {
     EXPECT_EQ(memcmp(copy_string, memory, STRING_SIZE*sizeof(int)), 0);
 }
 
-TEST_F(string_view_tests, move_assign) {
-    root::string_view string(memory, 0, STRING_SIZE);
-    root::string_view move_array;
+TEST_F(string_slice_tests, move_assign) {
+    root::string_slice string(memory, 0, STRING_SIZE);
+    root::string_slice move_array;
     
     move_array = std::move(string);
 
@@ -96,19 +96,19 @@ TEST_F(string_view_tests, move_assign) {
     EXPECT_EQ(memcmp(move_array, memory, STRING_SIZE*sizeof(int)), 0);
 }
 
-TEST_F(string_view_tests, index_op_const) {
-    const root::string_view string(memory, 0, STRING_SIZE);
+TEST_F(string_slice_tests, index_op_const) {
+    const root::string_slice string(memory, 0, STRING_SIZE);
     
     for(int i = 0; i < STRING_SIZE; i++)
         EXPECT_EQ(string[i], memory[i]);
 }
 
-TEST_F(string_view_tests, index_op) {
+TEST_F(string_slice_tests, index_op) {
     int second_array[STRING_SIZE];
     for(int i = 0; i < STRING_SIZE; i++)
         second_array[i] = rand() % std::numeric_limits<char>::max();
     
-    root::string_view string(memory, 0, STRING_SIZE);
+    root::string_slice string(memory, 0, STRING_SIZE);
 
     for(int i = 0; i < STRING_SIZE; i++)
         string[i] = second_array[i];
@@ -116,34 +116,34 @@ TEST_F(string_view_tests, index_op) {
     EXPECT_EQ(memcmp(string, memory, STRING_SIZE*sizeof(int)), 0);
 }
 
-TEST_F(string_view_tests, offset) {
+TEST_F(string_slice_tests, offset) {
     constexpr int OFFSET = STRING_SIZE/2;
-    root::string_view string(memory, 0, STRING_SIZE);
+    root::string_slice string(memory, 0, STRING_SIZE);
 
-    root::string_view offset_string = string.offset(OFFSET);
+    root::string_slice offset_string = string.offset(OFFSET);
 
     EXPECT_TRUE(offset_string);
     EXPECT_EQ(offset_string.size(), STRING_SIZE - OFFSET);
     EXPECT_EQ(memcmp(offset_string, memory + OFFSET, offset_string.size()*sizeof(int)), 0);
 }
 
-TEST_F(string_view_tests, limit) {
+TEST_F(string_slice_tests, limit) {
     constexpr int LIMIT = STRING_SIZE/4;
-    root::string_view string(memory, 0, STRING_SIZE);
+    root::string_slice string(memory, 0, STRING_SIZE);
 
-    root::string_view limit_array = string.limit(LIMIT);
+    root::string_slice limit_array = string.limit(LIMIT);
 
     EXPECT_TRUE(limit_array);
     EXPECT_EQ(limit_array.size(), LIMIT);
     EXPECT_EQ(memcmp(limit_array, memory, limit_array.size()*sizeof(int)), 0);
 }
 
-TEST_F(string_view_tests, range) {
+TEST_F(string_slice_tests, range) {
     constexpr int OFFSET = STRING_SIZE/4;
     constexpr int LIMIT = STRING_SIZE/2;
-    root::string_view string(memory, 0, STRING_SIZE);
+    root::string_slice string(memory, 0, STRING_SIZE);
 
-    root::string_view range_array = string.range(OFFSET, LIMIT);
+    root::string_slice range_array = string.range(OFFSET, LIMIT);
 
     EXPECT_TRUE(range_array);
     EXPECT_EQ(range_array.size(), LIMIT - OFFSET);

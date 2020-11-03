@@ -24,56 +24,56 @@
 
 namespace root {
 
-class string_view : public array_slice<i8> {
+class string_slice : public array_slice<i8> {
 public:
-    constexpr inline string_view() : array_slice<i8>() { }
+    constexpr inline string_slice() : array_slice<i8>() { }
 
-    inline string_view(i8* data, const u64& first, const u64& last)
+    inline string_slice(i8* data, const u64& first, const u64& last)
     :   array_slice<i8>(data, first, last) {}
 
-    inline string_view(string_view&& other) 
+    inline string_slice(string_slice&& other) 
     :   array_slice<i8>(std::move(other)) {}
 
-    inline string_view(const string_view& other)
+    inline string_slice(const string_slice& other)
     :   array_slice<i8>(other) {}
 
-    inline string_view(array_slice<i8>&& other) 
+    inline string_slice(array_slice<i8>&& other) 
     :   array_slice<i8>(std::move(other)) {}
 
-    inline string_view(const array_slice<i8>& other)
+    inline string_slice(const array_slice<i8>& other)
     :   array_slice<i8>(other) {}
 
-    auto operator=(const string_view& other) -> string_view& {
+    auto operator=(const string_slice& other) -> string_slice& {
         array_slice<i8>::operator=(other);
         return *this;
     }
 
-    auto operator=(string_view&& other) -> string_view& {
+    auto operator=(string_slice&& other) -> string_slice& {
         array_slice<i8>::operator=(std::move(other));
         return *this;
     }
 
     template<typename I>
-    inline auto offset(const I& extra_offset) const -> string_view {
+    inline auto offset(const I& extra_offset) const -> string_slice {
         root_assert(m_first + extra_offset < size());
-        return string_view(m_data, static_cast<u64>(m_first + extra_offset), m_last);
+        return string_slice(m_data, static_cast<u64>(m_first + extra_offset), m_last);
     } 
 
     template<typename I1, typename I2>
-    inline auto range(const I1& start, const I2& end) const -> string_view {
+    inline auto range(const I1& start, const I2& end) const -> string_slice {
         root_assert(start + m_first < size());
         root_assert(end + m_first <= size());
-        return string_view(m_data, static_cast<u64>(m_first+start), static_cast<u64>(m_first+end));
+        return string_slice(m_data, static_cast<u64>(m_first+start), static_cast<u64>(m_first+end));
     }   
 
     template<typename I>
-    inline auto limit(const I& new_limit) const -> string_view {
+    inline auto limit(const I& new_limit) const -> string_slice {
         root_assert(new_limit <= size());
-        return string_view(m_data, m_first, new_limit);
+        return string_slice(m_data, m_first, new_limit);
     }
 
     template<typename I>
-    inline auto operator+(const I& extra_offset) const -> string_view {
+    inline auto operator+(const I& extra_offset) const -> string_slice {
         return offset(extra_offset);
     }
 

@@ -28,12 +28,12 @@
         {
             "name": "android_debug",
             "includePath": [
-                "/mnt/c/Users/Fernando/AppData/Local/Android/Sdk/ndk/21.0.6113669/sysroot/usr/include/",
+                "${env:ANDROID_HOME}/ndk/*/sysroot/usr/include/",
                 "${workspaceFolder}/include",
                 "${workspaceFolder}/src"
             ],
             "defines": ["ROOT_ASSERT","ROOT_LINUX"],
-            "compilerPath": "/usr/bin/clang++-9",
+            "compilerPath": "/usr/bin/clang++-10",
             "cStandard": "gnu11",
             "cppStandard": "c++17",
             "intelliSenseMode": "clang-x64"
@@ -45,7 +45,7 @@
                 "${workspaceFolder}/src"
             ],
             "defines": ["ROOT_LINUX"],
-            "compilerPath": "/usr/bin/clang++-9",
+            "compilerPath": "/usr/bin/clang++-10",
             "cStandard": "gnu11",
             "cppStandard": "c++17",
             "intelliSenseMode": "clang-x64"
@@ -53,12 +53,12 @@
         {
             "name": "android_debug",
             "includePath": [
-                "/mnt/c/Users/Fernando/AppData/Local/Android/Sdk/ndk/21.0.6113669/sysroot/usr/include/",
+                "${env:ANDROID_HOME}/ndk/*/sysroot/usr/include/",
                 "${workspaceFolder}/include",
                 "${workspaceFolder}/src"
             ],
             "defines": ["ROOT_ASSERT","ROOT_ANDROID"],
-            "compilerPath": "/usr/bin/clang++-9",
+            "compilerPath": "/usr/bin/clang++-10",
             "cStandard": "gnu11",
             "cppStandard": "c++17",
             "intelliSenseMode": "clang-x64"

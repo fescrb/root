@@ -23,7 +23,7 @@
 #include <GLFW/glfw3.h>
 #endif
 
-#include <root/core/string_view.h>
+#include <root/core/string_slice.h>
 
 namespace root {
 
