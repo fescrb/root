@@ -29,18 +29,18 @@ inline constexpr auto strlen(const char* str) noexcept -> u64 {
 
 class string_literal : public array_view<const i8> {
 public:
-    constexpr inline string_literal() : array_view<const i8>() { }
+    constexpr inline string_literal() noexcept : array_view<const i8>() { }
 
-    inline string_literal(const i8* data, const u64& first, const u64& last)
+    constexpr inline string_literal(const i8* data, const u64& first, const u64& last)
     :   array_view<const i8>(data, first, last) {}
 
     constexpr inline string_literal(const i8* data) 
     :   array_view<const i8>(data, 0, strlen(data)) {}
 
-    inline string_literal(string_literal&& other) 
+    constexpr inline string_literal(string_literal&& other) 
     :   array_view<const i8>(std::move(other)) {}
 
-    inline string_literal(const string_literal& other)
+    constexpr inline string_literal(const string_literal& other)
     :   array_view<const i8>(other) {}
 
     auto operator=(const string_literal& other) -> string_literal& {
@@ -77,5 +77,10 @@ public:
         return offset(extra_offset);
     }
 };
+
+inline constexpr auto strlen(const string_literal& str) noexcept -> u64 {
+    return str.size();
+}
+
 
 } // namespace root

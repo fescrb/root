@@ -31,31 +31,31 @@ class array_view {
 public:
     using element_type = T; 
 
-    constexpr inline array_view() 
+    constexpr inline array_view() noexcept
     :   m_data(nullptr) , m_first(0), m_last(0) { } 
 
-    constexpr inline array_view(T* data, const u64& first, const u64& last)
+    constexpr inline array_view(T* data, const u64& first, const u64& last) noexcept
     :   m_data(data), m_first(first), m_last(last) {}
 
-    inline array_view(array_view&& other) 
+    constexpr inline array_view(array_view&& other) noexcept
     :   m_data(std::move(other.m_data)),
         m_first(std::move(other.m_first)),
         m_last(std::move(other.m_last)) {}
 
-    inline array_view(const array_view& other)
+    constexpr inline array_view(const array_view& other) noexcept
     :   m_data(other.m_data),
         m_first(other.m_first),
         m_last(other.m_last) {
     }
 
-    auto operator=(const array_view& other) -> array_view& {
+    constexpr inline auto operator=(const array_view& other) noexcept -> array_view& {
         m_data = other.m_data;
         m_first = other.m_first;
         m_last = other.m_last;
         return *this;
     }
 
-    auto operator=(array_view&& other) -> array_view& {
+    constexpr auto operator=(array_view&& other) noexcept -> array_view& {
         m_data = std::move(other.m_data);
         m_first = std::move(other.m_first);
         m_last = std::move(other.m_last);
@@ -68,11 +68,11 @@ public:
         m_last = 0;
     } 
 
-    inline auto size() const -> u64 {
+    constexpr auto size() const noexcept -> u64 {
         return m_last - m_first;
     }
 
-    inline auto data() const -> const T* {
+    constexpr auto data() const noexcept -> const T* {
         return m_data + m_first;
     }
 

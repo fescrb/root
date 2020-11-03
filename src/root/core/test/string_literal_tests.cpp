@@ -17,25 +17,20 @@
  * along with The Root Engine.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#pragma once
+#include <root/core/string_literal.h>
 
-#include <root/io/formatter.h>
+#include <gtest/gtest.h>
 
-namespace root {
+TEST(string_literal_tests, constexpr_strlen) {
+    constexpr root::string_literal lit = "Test string please ignore.";
+    constexpr root::u64 size = strlen(lit);
 
-class format {
-public:
-    template<typename T>
-    static auto to_string(const T& object) -> string {
-        return m_default_formatter->to_string(object);
-    }
+    EXPECT_EQ(size, strlen(lit.data()));
+}
 
-    format() = delete;
-    format(const format&) = delete;
-    format(format&&) = delete;
+TEST(string_literal_tests, constexpr_find) {
+    constexpr root::string_literal lit = "Test string please ignore.";
+    constexpr root::u64 size = strlen(lit);
 
-private:
-    static formatter* m_default_formatter;
-};
-
-} // namespace root
+    EXPECT_EQ(size, strlen(lit.data()));
+}

@@ -5,6 +5,7 @@
         'array_view_tests.cpp',
         'string_tests.cpp',
         'string_view_tests.cpp',
+        'string_literal_tests.cpp',
         'buffer_tests.cpp',
         'buffer_view_tests.cpp',
         'error_tests.cpp',

@@ -22,9 +22,10 @@
 #include <root/math/math.h>
 
 #include <cmath>
-#include <iostream> // TODO remove
 
 namespace root {
+
+formatter* format::m_default_formatter = new formatter();
 
 auto format_to(const bool& boolean) -> const char* {
     return boolean ? "true" : "false";
