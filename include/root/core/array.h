@@ -25,7 +25,7 @@
 #include <root/core/assert.h>
 #include <root/core/buffer.h>
 #include <root/memory/allocator.h>
-#include <root/core/array_view.h>
+#include <root/core/array_slice.h>
 
 namespace root {
 
@@ -116,26 +116,26 @@ public:
     }
 
     template<typename I>
-    inline auto offset(const I& off) const -> array_view<T> {
+    inline auto offset(const I& off) const -> array_slice<T> {
         root_assert(off < size());
-        return array_view<T>(m_data, static_cast<u64>(off), size());
+        return array_slice<T>(m_data, static_cast<u64>(off), size());
     } 
 
     template<typename I1, typename I2>
-    inline auto range(const I1& start, const I2& end) const -> array_view<T> {
+    inline auto range(const I1& start, const I2& end) const -> array_slice<T> {
         root_assert(start < size());
         root_assert(end <= size());
-        return array_view<T>(m_data, static_cast<u64>(start), static_cast<u64>(end));
+        return array_slice<T>(m_data, static_cast<u64>(start), static_cast<u64>(end));
     }   
 
     template<typename I>
-    inline auto limit(const I& new_limit) const -> array_view<T> {
+    inline auto limit(const I& new_limit) const -> array_slice<T> {
         root_assert(new_limit < size());
-        return array_view<T>(m_data, 0, new_limit);
+        return array_slice<T>(m_data, 0, new_limit);
     }
 
     template<typename I>
-    inline auto operator+(const I& extra_offset) const -> array_view<T> {
+    inline auto operator+(const I& extra_offset) const -> array_slice<T> {
         return offset(extra_offset);
     }
 

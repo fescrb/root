@@ -17,13 +17,13 @@
  * along with The Root Engine.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <root/core/array_view.h>
+#include <root/core/array_slice.h>
 
 #include <gtest/gtest.h>
 
 #include <cstring>
 
-class array_view_tests : public ::testing::Test {
+class array_slice_tests : public ::testing::Test {
 public:
     void SetUp() override {
         for(int i = 0; i < ARRAY_SIZE; i++)
@@ -38,24 +38,24 @@ public:
     int memory[ARRAY_SIZE];
 };
 
-TEST_F(array_view_tests, empty_init) {
-    root::array_view<int> array;
+TEST_F(array_slice_tests, empty_init) {
+    root::array_slice<int> array;
 
     EXPECT_FALSE(array);
     EXPECT_EQ(array.size(), 0);
 }
 
-TEST_F(array_view_tests, init) {
-    root::array_view<int> array(memory, 0, ARRAY_SIZE);
+TEST_F(array_slice_tests, init) {
+    root::array_slice<int> array(memory, 0, ARRAY_SIZE);
 
     EXPECT_TRUE(array);
     EXPECT_EQ(array.size(), ARRAY_SIZE);
     EXPECT_EQ(memcmp(array, memory, ARRAY_SIZE*sizeof(int)), 0);
 }
 
-TEST_F(array_view_tests, init_copy) {
-    root::array_view<int> array(memory, 0, ARRAY_SIZE);
-    root::array_view<int> copy_array(array);
+TEST_F(array_slice_tests, init_copy) {
+    root::array_slice<int> array(memory, 0, ARRAY_SIZE);
+    root::array_slice<int> copy_array(array);
 
     EXPECT_TRUE(copy_array);
     EXPECT_EQ(copy_array.size(), ARRAY_SIZE);
@@ -63,18 +63,18 @@ TEST_F(array_view_tests, init_copy) {
     EXPECT_EQ(memcmp(copy_array, memory, ARRAY_SIZE*sizeof(int)), 0);
 }
 
-TEST_F(array_view_tests, init_move) {
-    root::array_view<int> array(memory, 0, ARRAY_SIZE);
-    root::array_view<int> move_array(std::move(array));
+TEST_F(array_slice_tests, init_move) {
+    root::array_slice<int> array(memory, 0, ARRAY_SIZE);
+    root::array_slice<int> move_array(std::move(array));
 
     EXPECT_TRUE(move_array);
     EXPECT_EQ(move_array.size(), ARRAY_SIZE);
     EXPECT_EQ(memcmp(move_array, memory, ARRAY_SIZE*sizeof(int)), 0);
 }
 
-TEST_F(array_view_tests, copy_assign) {
-    root::array_view<int> array(memory, 0, ARRAY_SIZE);
-    root::array_view<int> copy_array;
+TEST_F(array_slice_tests, copy_assign) {
+    root::array_slice<int> array(memory, 0, ARRAY_SIZE);
+    root::array_slice<int> copy_array;
     
     copy_array = array;
 
@@ -84,9 +84,9 @@ TEST_F(array_view_tests, copy_assign) {
     EXPECT_EQ(memcmp(copy_array, memory, ARRAY_SIZE*sizeof(int)), 0);
 }
 
-TEST_F(array_view_tests, move_assign) {
-    root::array_view<int> array(memory, 0, ARRAY_SIZE);
-    root::array_view<int> move_array;
+TEST_F(array_slice_tests, move_assign) {
+    root::array_slice<int> array(memory, 0, ARRAY_SIZE);
+    root::array_slice<int> move_array;
     
     move_array = std::move(array);
 
@@ -95,19 +95,19 @@ TEST_F(array_view_tests, move_assign) {
     EXPECT_EQ(memcmp(move_array, memory, ARRAY_SIZE*sizeof(int)), 0);
 }
 
-TEST_F(array_view_tests, index_op_const) {
-    const root::array_view<int> array(memory, 0, ARRAY_SIZE);
+TEST_F(array_slice_tests, index_op_const) {
+    const root::array_slice<int> array(memory, 0, ARRAY_SIZE);
     
     for(int i = 0; i < ARRAY_SIZE; i++)
         EXPECT_EQ(array[i], memory[i]);
 }
 
-TEST_F(array_view_tests, index_op) {
+TEST_F(array_slice_tests, index_op) {
     int second_array[ARRAY_SIZE];
     for(int i = 0; i < ARRAY_SIZE; i++)
         second_array[i] = rand();
     
-    root::array_view<int> array(memory, 0, ARRAY_SIZE);
+    root::array_slice<int> array(memory, 0, ARRAY_SIZE);
 
     for(int i = 0; i < ARRAY_SIZE; i++)
         array[i] = second_array[i];
@@ -115,34 +115,34 @@ TEST_F(array_view_tests, index_op) {
     EXPECT_EQ(memcmp(array, memory, ARRAY_SIZE*sizeof(int)), 0);
 }
 
-TEST_F(array_view_tests, offset) {
+TEST_F(array_slice_tests, offset) {
     constexpr int OFFSET = ARRAY_SIZE/2;
-    root::array_view<int> array(memory, 0, ARRAY_SIZE);
+    root::array_slice<int> array(memory, 0, ARRAY_SIZE);
 
-    root::array_view<int> offset_array = array.offset(OFFSET);
+    root::array_slice<int> offset_array = array.offset(OFFSET);
 
     EXPECT_TRUE(offset_array);
     EXPECT_EQ(offset_array.size(), ARRAY_SIZE - OFFSET);
     EXPECT_EQ(memcmp(offset_array, memory + OFFSET, offset_array.size()*sizeof(int)), 0);
 }
 
-TEST_F(array_view_tests, limit) {
+TEST_F(array_slice_tests, limit) {
     constexpr int LIMIT = ARRAY_SIZE/4;
-    root::array_view<int> array(memory, 0, ARRAY_SIZE);
+    root::array_slice<int> array(memory, 0, ARRAY_SIZE);
 
-    root::array_view<int> limit_array = array.limit(LIMIT);
+    root::array_slice<int> limit_array = array.limit(LIMIT);
 
     EXPECT_TRUE(limit_array);
     EXPECT_EQ(limit_array.size(), LIMIT);
     EXPECT_EQ(memcmp(limit_array, memory, limit_array.size()*sizeof(int)), 0);
 }
 
-TEST_F(array_view_tests, range) {
+TEST_F(array_slice_tests, range) {
     constexpr int OFFSET = ARRAY_SIZE/4;
     constexpr int LIMIT = ARRAY_SIZE/2;
-    root::array_view<int> array(memory, 0, ARRAY_SIZE);
+    root::array_slice<int> array(memory, 0, ARRAY_SIZE);
 
-    root::array_view<int> range_array = array.range(OFFSET, LIMIT);
+    root::array_slice<int> range_array = array.range(OFFSET, LIMIT);
 
     EXPECT_TRUE(range_array);
     EXPECT_EQ(range_array.size(), LIMIT - OFFSET);

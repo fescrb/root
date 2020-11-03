@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include <root/core/array_view.h>
+#include <root/core/array_slice.h>
 
 namespace root {
 
@@ -27,29 +27,29 @@ inline constexpr auto strlen(const char* str) noexcept -> u64 {
     return str[0] != '\0' ? 1 + strlen(str+1) : 0;
 }
 
-class string_literal : public array_view<const i8> {
+class string_literal : public array_slice<const i8> {
 public:
-    constexpr inline string_literal() noexcept : array_view<const i8>() { }
+    constexpr inline string_literal() noexcept : array_slice<const i8>() { }
 
     constexpr inline string_literal(const i8* data, const u64& first, const u64& last)
-    :   array_view<const i8>(data, first, last) {}
+    :   array_slice<const i8>(data, first, last) {}
 
     constexpr inline string_literal(const i8* data) 
-    :   array_view<const i8>(data, 0, strlen(data)) {}
+    :   array_slice<const i8>(data, 0, strlen(data)) {}
 
     constexpr inline string_literal(string_literal&& other) 
-    :   array_view<const i8>(std::move(other)) {}
+    :   array_slice<const i8>(std::move(other)) {}
 
     constexpr inline string_literal(const string_literal& other)
-    :   array_view<const i8>(other) {}
+    :   array_slice<const i8>(other) {}
 
     auto operator=(const string_literal& other) -> string_literal& {
-        array_view<const i8>::operator=(other);
+        array_slice<const i8>::operator=(other);
         return *this;
     }
 
     auto operator=(string_literal&& other) -> string_literal& {
-        array_view<const i8>::operator=(std::move(other));
+        array_slice<const i8>::operator=(std::move(other));
         return *this;
     }
 

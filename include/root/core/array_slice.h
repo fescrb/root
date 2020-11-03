@@ -27,35 +27,35 @@
 namespace root {
 
 template <typename T>
-class array_view {
+class array_slice {
 public:
     using element_type = T; 
 
-    constexpr inline array_view() noexcept
+    constexpr inline array_slice() noexcept
     :   m_data(nullptr) , m_first(0), m_last(0) { } 
 
-    constexpr inline array_view(T* data, const u64& first, const u64& last) noexcept
+    constexpr inline array_slice(T* data, const u64& first, const u64& last) noexcept
     :   m_data(data), m_first(first), m_last(last) {}
 
-    constexpr inline array_view(array_view&& other) noexcept
+    constexpr inline array_slice(array_slice&& other) noexcept
     :   m_data(std::move(other.m_data)),
         m_first(std::move(other.m_first)),
         m_last(std::move(other.m_last)) {}
 
-    constexpr inline array_view(const array_view& other) noexcept
+    constexpr inline array_slice(const array_slice& other) noexcept
     :   m_data(other.m_data),
         m_first(other.m_first),
         m_last(other.m_last) {
     }
 
-    constexpr inline auto operator=(const array_view& other) noexcept -> array_view& {
+    constexpr inline auto operator=(const array_slice& other) noexcept -> array_slice& {
         m_data = other.m_data;
         m_first = other.m_first;
         m_last = other.m_last;
         return *this;
     }
 
-    constexpr auto operator=(array_view&& other) noexcept -> array_view& {
+    constexpr auto operator=(array_slice&& other) noexcept -> array_slice& {
         m_data = std::move(other.m_data);
         m_first = std::move(other.m_first);
         m_last = std::move(other.m_last);
@@ -101,26 +101,26 @@ public:
     }
 
     template<typename I>
-    inline auto offset(const I& extra_offset) const -> array_view {
+    inline auto offset(const I& extra_offset) const -> array_slice {
         root_assert(m_first + extra_offset < size());
-        return array_view(m_data, static_cast<u64>(m_first + extra_offset), m_last);
+        return array_slice(m_data, static_cast<u64>(m_first + extra_offset), m_last);
     } 
 
     template<typename I1, typename I2>
-    inline auto range(const I1& start, const I2& end) const -> array_view {
+    inline auto range(const I1& start, const I2& end) const -> array_slice {
         root_assert(start + m_first < size());
         root_assert(end + m_first <= size());
-        return array_view(m_data, static_cast<u64>(m_first+start), static_cast<u64>(m_first+end));
+        return array_slice(m_data, static_cast<u64>(m_first+start), static_cast<u64>(m_first+end));
     }   
 
     template<typename I>
-    inline auto limit(const I& new_limit) const -> array_view {
+    inline auto limit(const I& new_limit) const -> array_slice {
         root_assert(new_limit <= size());
-        return array_view(m_data, m_first, new_limit);
+        return array_slice(m_data, m_first, new_limit);
     }
 
     template<typename I>
-    inline auto operator+(const I& extra_offset) const -> array_view {
+    inline auto operator+(const I& extra_offset) const -> array_slice {
         return offset(extra_offset);
     }
 
