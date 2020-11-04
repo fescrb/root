@@ -34,7 +34,7 @@ public:
     void TearDown() override {
     }
 
-    constexpr static size_t STRING_SIZE = 512;
+    constexpr inline static size_t STRING_SIZE = 512;
 
     char memory[STRING_SIZE];
 };

@@ -32,6 +32,16 @@ auto format_to<string_view>(buffer_writer& dst, const string_view& object, const
     dst.write(object.data(), object.size());
 }
 
+template<>
+auto strlen<char*>(char* const& object, const string_view& format_args) -> u64 {
+    return ::strlen(object);
+}
+
+template<>
+auto format_to<char*>(buffer_writer& dst, char* const& object, const string_view& format_args) -> void {
+    dst.write(object, ::strlen(object));
+}
+
 auto format_to(const bool& boolean) -> const char* {
     return boolean ? "true" : "false";
 }
@@ -234,7 +244,7 @@ template<typename T> auto float_format_to(buffer_writer& dst, const T& f, const 
     format_to(dst, static_cast<u64>(integer_part));
     if (digits < precision) {
         u64 left_over_digits = precision - (digits < 0 ? 1 : digits);
-        format_to(dst, ".");
+        format_to(dst, '.');
         unsigned_int_format_to(dst, static_cast<u64>(round(split.at<1>() * pow(10, floor(left_over_digits)))), left_over_digits);
     }
 }

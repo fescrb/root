@@ -27,7 +27,7 @@
 
 #else 
 
-#define root_assert(_expr_) root::assert(_expr_, "_expr_", __FILE__, __LINE__)
+#define root_assert(_expr_) root::assert(_expr_, #_expr_, __FILE__, __LINE__)
 
 #define root_static_assert(_expr_) static_assert(_expr_)
 

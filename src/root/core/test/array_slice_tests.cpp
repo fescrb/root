@@ -39,7 +39,7 @@ public:
     void TearDown() override {
     }
 
-    constexpr static size_t ARRAY_SIZE = 512;
+    constexpr inline static size_t ARRAY_SIZE = 512;
 
     int memory[ARRAY_SIZE];
 };

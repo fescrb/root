@@ -36,7 +36,7 @@ public:
 
     void TearDown() override {}
 
-    constexpr static size_t BUFFER_SIZE = 512;
+    constexpr inline static size_t BUFFER_SIZE = 512;
     root::mock_stream stream;
     root::reader reader;
 };

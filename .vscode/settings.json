@@ -61,7 +61,8 @@
         "condition_variable": "cpp",
         "mutex": "cpp",
         "variant": "cpp",
-        "string_view": "cpp"
+        "string_view": "cpp",
+        "*.txt": "cmake"
     },
     "files.watcherExclude": {
         "**/.git/objects/**": true,

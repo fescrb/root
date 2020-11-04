@@ -36,8 +36,8 @@ public:
         free(memory);
     }
 
-    constexpr static size_t ALLOCATION_SIZE = 512;
-    constexpr static size_t ALIGNMENT = 1;
+    constexpr inline static size_t ALLOCATION_SIZE = 512;
+    constexpr inline static size_t ALIGNMENT = 1;
 
     root::mock_allocator allocator;
     void* memory;

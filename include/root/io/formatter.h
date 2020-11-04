@@ -34,8 +34,49 @@ auto strlen(const T& object, const string_view& format_args = string_view()) -> 
 template<typename T>
 auto format_to(buffer_writer& dst, const T& object, const string_view& format_args = string_view()) -> void;
 
-inline auto format_to(buffer_writer& dst, const char* object, const string_view& = string_view()) -> void {
+template<typename T> 
+inline auto strlen(T* const& object, const string_view& format_args = string_view()) -> u64 {
+    return strlen(reinterpret_cast<u64>(object), format_args);
+}
+
+template<typename T> 
+inline auto format_to(buffer_writer& dst, T* const& object, const string_view& format_args = string_view()) -> void {
+    return format_to(dst, reinterpret_cast<u64>(object), format_args);
+}
+
+template<int N> 
+inline auto strlen(char const (&object)[N], const string_view& = string_view()) -> u64 {
+    return N-1; // Do not copy \0
+}
+
+template<int N> 
+inline auto format_to(buffer_writer& dst, char const (&object)[N], const string_view& = string_view()) -> void {
+    dst.write(object, N-1); // Do not copy \0
+}
+
+template<> 
+inline auto strlen<const char>(const char* const& object, const string_view&) -> u64 {
+    return ::strlen(object);
+}
+
+template<> 
+inline auto format_to<const char>(buffer_writer& dst, const char* const& object, const string_view&) -> void {
     dst.write(object, strlen(object));
+}
+
+template<> 
+inline auto strlen<char>(char* const& object, const string_view&) -> u64 {
+    return ::strlen(object);
+}
+
+template<> 
+inline auto format_to<char>(buffer_writer& dst, char* const& object, const string_view&) -> void {
+    dst.write(object, strlen(object));
+}
+
+template<>
+inline auto strlen<string_view>(const string_view& object, const string_view& format_args) -> u64 {
+    return object.size();
 }
 
 template<typename... Args>
@@ -47,8 +88,8 @@ template<typename T, typename... Args>
 constexpr auto strlen(const format_string& fmt, const T& object, Args... args) -> u64 {
     auto placeholder_end = find(fmt.begin(), fmt.end(), '}');
     root_assert(placeholder_end != fmt.end());
-    u64 t_size = strlen(string_view(fmt.begin(), ++placeholder_end), object);
-    return t_size + strlen(string_view(placeholder_end, fmt.end(), args...));
+    u64 t_size = strlen<T>(string_view(fmt.begin(), ++placeholder_end), object);
+    return t_size + strlen<Args...>(string_view(placeholder_end, fmt.end()), args...);
 }
 
 template<typename T>
@@ -62,6 +103,16 @@ constexpr auto strlen(const format_string& fmt, const T& object) -> u64 {
     return pre_placeholder_size + post_placeholder_size + strlen(object, format_args);
 }
 
+template<>
+constexpr auto strlen<>(const format_string& fmt) -> u64 {
+    return fmt.size();
+}
+
+template<>
+constexpr auto strlen<char const*>(const format_string& fmt, char const* const& object) -> u64 {
+    return strlen<string_view>(fmt, string_view(object));
+}
+
 template<typename... Args>
 inline auto format_to(buffer_writer& dst, const format_string& fmt, Args... args) -> void {}
 
@@ -69,8 +120,8 @@ template<typename T, typename... Args>
 inline auto format_to(buffer_writer& dst, const format_string& fmt, const T& object, Args... args) -> void {
     auto placeholder_end = find(fmt.begin(), fmt.end(), '}');
     root_assert(placeholder_end != fmt.end());
-    format_to(dst, string_view(fmt.begin(), ++placeholder_end), object);
-    format_to(dst, string_view(placeholder_end, fmt.end(), args...));
+    format_to<T>(dst, string_view(fmt.begin(), ++placeholder_end), object);
+    format_to<Args...>(dst, string_view(placeholder_end, fmt.end()), args...);
 }
 
 template<typename T>
@@ -82,6 +133,11 @@ inline auto format_to(buffer_writer& dst, const format_string& fmt, const T& obj
     string_view format_args(++placeholder_start, placeholder_end);
     format_to(dst, object, format_args);
     format_to(dst, string_view(++placeholder_end, fmt.end()));
+}
+
+template<>
+inline auto format_to<>(buffer_writer& dst,const format_string& fmt) -> void {
+    if(fmt.size()) dst.write(fmt.data(), fmt.size());
 }
 
 class formatter {

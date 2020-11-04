@@ -13,13 +13,16 @@ fi
 
 source $DIR/setup_environment.env 
 
-cd $DIR/../src
+if [ ! -f $DIR/../build ]; then
+    mkdir $DIR/../build
+fi
 
-gyp build/unit_tests.gyp
+cd $DIR/../build
 
+cmake -DCMAKE_BUILD_TYPE=Test -DCMAKE_INSTALL_PREFIX="$DIR/.." ..
 
 if [ ! $? -eq 0 ]; then
-    echo 'GYP failed. Quitting.'
+    echo 'CMake failed. Quitting.'
     exit 1
 fi
 
@@ -30,4 +33,5 @@ if [ ! $? -eq 0 ]; then
     exit 1
 fi
 
-./out/Default/unit_tests
+make install 
+$DIR/../bin/root_test

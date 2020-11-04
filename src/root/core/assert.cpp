@@ -18,16 +18,24 @@
  */
 
 #include <root/core/assert.h>
+#include <root/io/log.h>
 
-#include <iostream> // TODO: will we use iostream?
+#include <execinfo.h>
 
 namespace root {
 
 #ifdef ROOT_ASSERT
 auto _assert_fail(const char* expr_str, const char* file, const int line_num) -> void {
-    // TODO must refactor
-    std::cout << "assert(" << expr_str << ") failed at " << file << ":" << line_num << std::endl;
-    exit(1); // probs should crash instead
+    log::e("", "assert({}) failed at {}:{}", expr_str, file, line_num);
+    constexpr i32 MAX_BT = 64;
+    void* bt[MAX_BT];
+    i32 size = backtrace(bt, MAX_BT);
+    char** bt_symbols = backtrace_symbols(bt, size);
+    log::e("assert", "backtrace:");
+    for(int i = 0; i < size; i++) {
+        log::e("assert", "{} {} {}", i, bt[i], bt_symbols[i]);
+    }
+    abort();
 }
 #endif
 
