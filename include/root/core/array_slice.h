@@ -172,22 +172,22 @@ public:
         constexpr iterator(iterator&& other) noexcept = default;
 
         constexpr auto operator<=(const mutable_iterator& other) const noexcept -> bool {
-            root_assert(m_data == other.data);
+            root_assert(m_data == other.m_data);
             return m_index <= other.m_index;
         }
         
         constexpr auto operator<=(const const_iterator& other) const noexcept -> bool {
-            root_assert(m_data == other.data);
+            root_assert(m_data == other.m_data);
             return m_index <= other.m_index;
         }
 
         constexpr auto operator==(const mutable_iterator& other) const noexcept -> bool {
-            root_assert(m_data == other.data);
+            root_assert(m_data == other.m_data);
             return m_index == other.m_index;
         }
 
         constexpr auto operator==(const const_iterator& other) const noexcept -> bool {
-            root_assert(m_data == other.data);
+            root_assert(m_data == other.m_data);
             return m_index == other.m_index;
         }
 

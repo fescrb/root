@@ -37,10 +37,27 @@ TEST(string_view_tests, constexpr_find) {
 }
 
 TEST(string_view_tests, iterator_init) {
+
+#define STRING_VIEW_TEST(_str_view_, _string_lit_) \
+    EXPECT_EQ(strlen(_string_lit_), _str_view_.size()); \
+    EXPECT_EQ(memcmp(_string_lit_, _str_view_.data(), _str_view_.size()), 0);
+
     constexpr root::string_view lit = "Test string please ignore.";
     constexpr root::string_view::iterator p_location = root::find(lit.begin(), lit.end(), 'p');
     constexpr root::string_view smaller = root::string_view(lit.begin(), p_location);
 
-    EXPECT_EQ(strlen("Test string "), smaller.size());
-    EXPECT_EQ(memcmp("Test string ", smaller.data(), smaller.size()), 0);
+    STRING_VIEW_TEST(smaller, "Test string ");
+
+    constexpr root::string_view lit2 = "This is a {formatting} test";
+    auto placeholder_start = find(lit2.begin(), lit2.end(), '{');
+    auto placeholder_end = find(placeholder_start, lit2.end(), '}');
+
+
+    root::string_view pre_placeholder = root::string_view(lit2.begin(), placeholder_start);
+    root::string_view format = root::string_view(++placeholder_start, placeholder_end);
+    root::string_view post_placeholder = root::string_view(++placeholder_end, lit2.end());
+
+    STRING_VIEW_TEST(pre_placeholder, "This is a ");
+    STRING_VIEW_TEST(format, "formatting");
+    STRING_VIEW_TEST(post_placeholder, " test");
 }

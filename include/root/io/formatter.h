@@ -78,8 +78,8 @@ inline auto format_to(buffer_writer& dst, const format_string& fmt, const T& obj
     auto placeholder_start = find(fmt.begin(), fmt.end(), '{');
     auto placeholder_end = find(placeholder_start, fmt.end(), '}');
     root_assert(placeholder_end != fmt.end());
+    format_to(dst, string_view(fmt.begin(), placeholder_start));
     string_view format_args(++placeholder_start, placeholder_end);
-    format_to(dst, string_view(fmt.begin(), --placeholder_start));
     format_to(dst, object, format_args);
     format_to(dst, string_view(++placeholder_end, fmt.end()));
 }

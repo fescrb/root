@@ -47,6 +47,56 @@ public:
 
 using ::testing::Return;
 
+template<typename T, const char* root_fmt_string, const char* c_fmt_string>
+auto int_format_test() -> void {
+}
+
+TEST_F(formatter_tests, format) {
+    constexpr size_t NUM_TESTS = 10;
+    constexpr size_t MAX_STR_SIZE = 512;
+
+#define INT_FORMAT_TEST(_T_, _root_fmt_string_, _c_fmt_string_) \
+    _T_ test = (rand() % std::numeric_limits<_T_>::max()) - (std::numeric_limits<_T_>::max()/2); \
+    char str_lit[MAX_STR_SIZE]; \
+    sprintf(str_lit, _c_fmt_string_, test); \
+    EXPECT_CALL(allocator, malloc(strlen(str_lit)+1, alignof(root::i8))).Times(1).WillOnce(Return(memory));\
+    root::string str = formatter.format(_root_fmt_string_, test);\
+    EXPECT_EQ(memcmp(str, str_lit, strlen(str_lit)), 0);\
+    EXPECT_CALL(allocator, free(memory, strlen(str_lit)+1,  alignof(root::i8))).Times(1);
+
+    for(int i = 0; i < NUM_TESTS; i++) {
+        INT_FORMAT_TEST(root::i8, "Formatting {} test", "Formatting %c test");
+    }
+
+    for(int i = 0; i < NUM_TESTS; i++) {
+        INT_FORMAT_TEST(root::i16, "Formatting {} test", "Formatting %d test");
+    }
+    
+    for(int i = 0; i < NUM_TESTS; i++) {
+        INT_FORMAT_TEST(root::i32, "Formatting {} test", "Formatting %d test");
+    }
+
+    for(int i = 0; i < NUM_TESTS; i++) {
+        INT_FORMAT_TEST(root::i64, "Formatting {} test", "Formatting %lld test");
+    }
+
+        for(int i = 0; i < NUM_TESTS; i++) {
+        INT_FORMAT_TEST(root::u8, "Formatting {} test", "Formatting %d test");
+    }
+
+    for(int i = 0; i < NUM_TESTS; i++) {
+        INT_FORMAT_TEST(root::u16, "Formatting {} test", "Formatting %d test");
+    }
+    
+    for(int i = 0; i < NUM_TESTS; i++) {
+        INT_FORMAT_TEST(root::u32, "Formatting {} test", "Formatting %u test");
+    }
+
+    for(int i = 0; i < NUM_TESTS; i++) {
+        INT_FORMAT_TEST(root::u64, "Formatting {} test", "Formatting %llu test");
+    }
+}
+
 TEST_F(formatter_tests, bool_to_string) {
     const char* TRUE_BOOLEAN = "true";
     const char* FALSE_BOOLEAN = "false";
@@ -69,13 +119,6 @@ TEST_F(formatter_tests, bool_to_string) {
         EXPECT_EQ(root::strlen("{}", false), strlen(FALSE_BOOLEAN));
         EXPECT_EQ(root::strlen("This is {}", true), strlen("This is ") + strlen(TRUE_BOOLEAN));
         EXPECT_EQ(root::strlen("{} it was", false), strlen(" it was") + strlen(FALSE_BOOLEAN));
-    }
-    {
-        EXPECT_CALL(allocator, malloc(strlen("This is ") + strlen(TRUE_BOOLEAN) + 1, alignof(root::i8))).Times(1).WillOnce(Return(memory));
-        root::string str = formatter.format("This is {}", true);
-        std::cout << str.data() << std::endl;
-        EXPECT_EQ(memcmp(str, "This is true", strlen("This is true")), 0);
-        EXPECT_CALL(allocator, free(memory, strlen("This is ") + strlen(TRUE_BOOLEAN) + 1,  alignof(root::i8))).Times(1);
     }
 }
 

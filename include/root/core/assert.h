@@ -35,9 +35,9 @@ namespace root {
 
 auto _assert_fail(const char* expr_str, const char* file, const int line_num) -> void;
 
-auto inline assert(const bool expr_result, const char* expr_str, const char* file, const int line_num) -> void {
+auto constexpr assert(const bool expr_result, const char* expr_str, const char* file, const int line_num) -> void {
     if(!expr_result) {
-        _asert_fail(expr_str, file, line_num);
+        _assert_fail(expr_str, file, line_num);
     }
 }
 
