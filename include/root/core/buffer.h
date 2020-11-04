@@ -22,7 +22,7 @@
 #include <root/memory/allocator.h>
 #include <root/core/primitives.h>
 #include <root/core/assert.h>
-#include <root/core/buffer_view.h>
+#include <root/core/buffer_slice.h>
 
 #include <utility>
 #include <cstring>
@@ -92,32 +92,32 @@ public:
     }
 
     template<typename T>
-    inline auto offset(const T& offset) const -> buffer_view {
+    inline auto offset(const T& offset) const -> buffer_slice {
         root_assert(offset < m_byte_size);
-        return buffer_view(reinterpret_cast<void*>(m_data), static_cast<u64>(offset), m_byte_size);
+        return buffer_slice(reinterpret_cast<void*>(m_data), static_cast<u64>(offset), m_byte_size);
     } 
 
     // TODO ensure that T is unsigned
     template<typename T>
-    inline auto operator+(const T& offset) const -> buffer_view {
+    inline auto operator+(const T& offset) const -> buffer_slice {
         return buffer::offset(offset);
     }
 
     template<typename T1, typename T2>
-    inline auto range(const T1& start, const T2& end) const -> buffer_view {
+    inline auto range(const T1& start, const T2& end) const -> buffer_slice {
         root_assert(start < m_byte_size);
         root_assert(end < m_byte_size);
-        return buffer_view(reinterpret_cast<void*>(m_data), static_cast<u64>(start), static_cast<u64>(end));
+        return buffer_slice(reinterpret_cast<void*>(m_data), static_cast<u64>(start), static_cast<u64>(end));
     }
 
     template<typename T>
-    inline auto limit(const T& size) const -> buffer_view {
+    inline auto limit(const T& size) const -> buffer_slice {
         root_assert(size < m_byte_size);
-        return buffer_view(reinterpret_cast<void*>(m_data), static_cast<u64>(0), static_cast<u64>(size));
+        return buffer_slice(reinterpret_cast<void*>(m_data), static_cast<u64>(0), static_cast<u64>(size));
     }
 
-    inline operator buffer_view() const {
-        return buffer_view(reinterpret_cast<void*>(m_data), static_cast<u64>(0), m_byte_size);
+    inline operator buffer_slice() const {
+        return buffer_slice(reinterpret_cast<void*>(m_data), static_cast<u64>(0), m_byte_size);
     }
 
 private:

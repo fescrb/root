@@ -20,13 +20,13 @@
 #pragma once
 
 #include <root/core/array_slice.h>
-#include <root/core/string_literal.h>
+#include <root/core/string_view.h>
 
 namespace root {
 
 class string_slice : public array_slice<i8> {
 public:
-    constexpr inline string_slice() : array_slice<i8>() { }
+    constexpr string_slice() noexcept : array_slice<i8>() { }
 
     inline string_slice(i8* data, const u64& first, const u64& last)
     :   array_slice<i8>(data, first, last) {}
@@ -77,8 +77,8 @@ public:
         return offset(extra_offset);
     }
 
-    inline operator string_literal() const {
-        return string_literal(static_cast<const element_type*>(m_data), m_first, m_last);
+    inline operator string_view() const {
+        return string_view(static_cast<const element_type*>(m_data), m_first, m_last);
     }
 };
 

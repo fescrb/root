@@ -23,6 +23,21 @@
 
 namespace root {
 
+template<typename... Ts>
+struct variadric_type_count {
+    constexpr static u64 value = 0;
+};
+
+template<typename T, typename... Ts>
+struct variadric_type_count<T, Ts...> {
+    constexpr static u64 value = 1 + variadric_type_count<Ts...>::value;
+};
+
+template<typename T>
+struct variadric_type_count<T> {
+    constexpr static u64 value = 1;
+};
+
 template<u64 I, typename T, typename... Ts> 
 struct variadric_type_by_index {
     typedef typename variadric_type_by_index<I-1, Ts...>::type type;

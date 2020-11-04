@@ -17,20 +17,29 @@
  * along with The Root Engine.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <root/core/string_literal.h>
+#pragma once
 
-#include <gtest/gtest.h>
+#include <root/core/string_view.h> 
+#include <root/core/private/variadric_type_info.h>
 
-TEST(string_literal_tests, constexpr_strlen) {
-    constexpr root::string_literal lit = "Test string please ignore.";
-    constexpr root::u64 size = strlen(lit);
+namespace root {
 
-    EXPECT_EQ(size, strlen(lit.data()));
-}
+class format_string : public string_view {
+public:
+    constexpr format_string(const char* str_lit) noexcept 
+    :   string_view(str_lit) { }
 
-TEST(string_literal_tests, constexpr_find) {
-    constexpr root::string_literal lit = "Test string please ignore.";
-    constexpr root::u64 size = strlen(lit);
+    constexpr format_string(const iterator& begin, const iterator& end) noexcept
+    :   string_view(begin, end) {}
 
-    EXPECT_EQ(size, strlen(lit.data()));
-}
+    constexpr format_string(const string_view& str_lit) noexcept
+    :   string_view(str_lit) {}
+
+    format_string(const format_string&) = delete;
+    format_string(format_string&&) = delete;
+
+
+
+};
+
+} // namespace root

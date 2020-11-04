@@ -27,32 +27,32 @@
 
 namespace root {
 
-class buffer_view {
+class buffer_slice {
 public:
-    inline buffer_view() { clear(); } // \TODO unit test
+    inline buffer_slice() { clear(); } // \TODO unit test
 
-    inline buffer_view(void* b, const u64& o, const u64& l) 
+    inline buffer_slice(void* b, const u64& o, const u64& l) 
     :  m_buffer(b), m_offset(o), m_limit(l) {}
 
-    inline buffer_view(buffer_view&& other) 
+    inline buffer_slice(buffer_slice&& other) 
     :   m_buffer(std::move(other.m_buffer)),
         m_offset(std::move(other.m_offset)),
         m_limit(std::move(other.m_limit)) {}
 
-    inline buffer_view(const buffer_view& other)
+    inline buffer_slice(const buffer_slice& other)
     :   m_buffer(other.m_buffer),
         m_offset(other.m_offset),
         m_limit(other.m_limit) {
     }
 
-    auto operator=(const buffer_view& other) -> buffer_view& {
+    auto operator=(const buffer_slice& other) -> buffer_slice& {
         m_buffer = other.m_buffer;
         m_offset = other.m_offset;
         m_limit = other.m_limit;
         return *this;
     }
 
-    auto operator=(buffer_view&& other) -> buffer_view& {
+    auto operator=(buffer_slice&& other) -> buffer_slice& {
         m_buffer = std::move(other.m_buffer);
         m_offset = std::move(other.m_offset);
         m_limit = std::move(other.m_limit);
@@ -84,26 +84,26 @@ public:
     }
     
     template<typename T>
-    inline auto offset(const T& extra_offset) const -> buffer_view {
+    inline auto offset(const T& extra_offset) const -> buffer_slice {
         root_assert(m_offset + extra_offset < size());
-        return buffer_view(m_buffer, static_cast<u64>(m_offset + extra_offset), m_limit);
+        return buffer_slice(m_buffer, static_cast<u64>(m_offset + extra_offset), m_limit);
     } 
 
     template<typename T1, typename T2>
-    inline auto range(const T1& start, const T2& end) const -> buffer_view {
+    inline auto range(const T1& start, const T2& end) const -> buffer_slice {
         root_assert(start + m_offset < size());
         root_assert(end + m_offset < size());
-        return buffer_view(m_buffer, static_cast<u64>(m_offset+start), static_cast<u64>(m_offset+end));
+        return buffer_slice(m_buffer, static_cast<u64>(m_offset+start), static_cast<u64>(m_offset+end));
     }   
 
     template<typename T>
-    inline auto limit(const T& new_limit) const -> buffer_view {
+    inline auto limit(const T& new_limit) const -> buffer_slice {
         root_assert(new_limit < size());
-        return buffer_view(m_buffer, m_offset, new_limit);
+        return buffer_slice(m_buffer, m_offset, new_limit);
     }
 
     template<typename T>
-    inline auto operator+(const T& extra_offset) const -> buffer_view {
+    inline auto operator+(const T& extra_offset) const -> buffer_slice {
         return offset(extra_offset);
     }
 

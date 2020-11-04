@@ -32,7 +32,7 @@ public:
     :   backing(b),
         pointer(0) {}
 
-    explicit buffer_stream(const buffer_view& b)
+    explicit buffer_stream(const buffer_slice& b)
     :   backing(b),
         pointer(0) {}
 
@@ -54,7 +54,7 @@ private:
         return write_len;
     }
 
-    buffer_view backing;
+    buffer_slice backing;
     i64 pointer;
 };
 

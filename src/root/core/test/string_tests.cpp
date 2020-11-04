@@ -43,7 +43,7 @@ public:
 
 using ::testing::Return;
 
-TEST_F(string_tests, string_literal_initializer) {
+TEST_F(string_tests, string_view_initializer) {
     const char* TEST_STRING = "Hello Tests!";
     const int STRING_LENGTH = strlen(TEST_STRING);
     EXPECT_CALL(allocator, malloc(sizeof(char) * STRING_LENGTH, alignof(char))).Times(1).WillOnce(Return(memory));

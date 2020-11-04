@@ -27,58 +27,61 @@ inline constexpr auto strlen(const char* str) noexcept -> u64 {
     return str[0] != '\0' ? 1 + strlen(str+1) : 0;
 }
 
-class string_literal : public array_slice<const i8> {
+class string_view : public array_slice<const i8> {
 public:
-    constexpr inline string_literal() noexcept : array_slice<const i8>() { }
+    constexpr string_view() noexcept : array_slice<const i8>() { }
 
-    constexpr inline string_literal(const i8* data, const u64& first, const u64& last)
+    constexpr string_view(const i8* data, const u64& first, const u64& last) noexcept
     :   array_slice<const i8>(data, first, last) {}
 
-    constexpr inline string_literal(const i8* data) 
+    constexpr string_view(const i8* data) noexcept
     :   array_slice<const i8>(data, 0, strlen(data)) {}
 
-    constexpr inline string_literal(string_literal&& other) 
+    constexpr string_view(string_view&& other) noexcept
     :   array_slice<const i8>(std::move(other)) {}
 
-    constexpr inline string_literal(const string_literal& other)
+    constexpr string_view(const string_view& other) noexcept
     :   array_slice<const i8>(other) {}
 
-    auto operator=(const string_literal& other) -> string_literal& {
+    constexpr string_view(const iterator& begin, const iterator& end) noexcept
+    :   array_slice<const i8>(begin, end) {}
+
+    auto operator=(const string_view& other) -> string_view& {
         array_slice<const i8>::operator=(other);
         return *this;
     }
 
-    auto operator=(string_literal&& other) -> string_literal& {
+    auto operator=(string_view&& other) -> string_view& {
         array_slice<const i8>::operator=(std::move(other));
         return *this;
     }
 
     template<typename I>
-    inline auto offset(const I& extra_offset) const -> string_literal {
+    inline auto offset(const I& extra_offset) const -> string_view {
         root_assert(m_first + extra_offset < size());
-        return string_literal(m_data, static_cast<u64>(m_first + extra_offset), m_last);
+        return string_view(m_data, static_cast<u64>(m_first + extra_offset), m_last);
     } 
 
     template<typename I1, typename I2>
-    inline auto range(const I1& start, const I2& end) const -> string_literal {
+    inline auto range(const I1& start, const I2& end) const -> string_view {
         root_assert(start + m_first < size());
         root_assert(end + m_first <= size());
-        return string_literal(m_data, static_cast<u64>(m_first+start), static_cast<u64>(m_first+end));
+        return string_view(m_data, static_cast<u64>(m_first+start), static_cast<u64>(m_first+end));
     }   
 
     template<typename I>
-    inline auto limit(const I& new_limit) const -> string_literal {
+    inline auto limit(const I& new_limit) const -> string_view {
         root_assert(new_limit <= size());
-        return string_literal(m_data, m_first, new_limit);
+        return string_view(m_data, m_first, new_limit);
     }
 
     template<typename I>
-    inline auto operator+(const I& extra_offset) const -> string_literal {
+    inline auto operator+(const I& extra_offset) const -> string_view {
         return offset(extra_offset);
     }
 };
 
-inline constexpr auto strlen(const string_literal& str) noexcept -> u64 {
+inline constexpr auto strlen(const string_view& str) noexcept -> u64 {
     return str.size();
 }
 

@@ -26,9 +26,9 @@
 #include <limits>
 #include <iostream> // TODO remove
 
-class format_tests : public ::testing::Test {
+class formatter_tests : public ::testing::Test {
 public:
-    format_tests() 
+    formatter_tests() 
     :   formatter(&allocator) {}
 
     void SetUp() override {
@@ -47,7 +47,7 @@ public:
 
 using ::testing::Return;
 
-TEST_F(format_tests, bool_to_string) {
+TEST_F(formatter_tests, bool_to_string) {
     const char* TRUE_BOOLEAN = "true";
     const char* FALSE_BOOLEAN = "false";
     {
@@ -63,9 +63,23 @@ TEST_F(format_tests, bool_to_string) {
         EXPECT_EQ(memcmp(str, FALSE_BOOLEAN, strlen(FALSE_BOOLEAN)), 0);
         EXPECT_CALL(allocator, free(memory, strlen(FALSE_BOOLEAN)+1,  alignof(root::i8))).Times(1);
     }
+
+    {
+        EXPECT_EQ(root::strlen("{}", true), strlen(TRUE_BOOLEAN));
+        EXPECT_EQ(root::strlen("{}", false), strlen(FALSE_BOOLEAN));
+        EXPECT_EQ(root::strlen("This is {}", true), strlen("This is ") + strlen(TRUE_BOOLEAN));
+        EXPECT_EQ(root::strlen("{} it was", false), strlen(" it was") + strlen(FALSE_BOOLEAN));
+    }
+    {
+        EXPECT_CALL(allocator, malloc(strlen("This is ") + strlen(TRUE_BOOLEAN) + 1, alignof(root::i8))).Times(1).WillOnce(Return(memory));
+        root::string str = formatter.format("This is {}", true);
+        std::cout << str.data() << std::endl;
+        EXPECT_EQ(memcmp(str, "This is true", strlen("This is true")), 0);
+        EXPECT_CALL(allocator, free(memory, strlen("This is ") + strlen(TRUE_BOOLEAN) + 1,  alignof(root::i8))).Times(1);
+    }
 }
 
-TEST_F(format_tests, i8_to_string) {
+TEST_F(formatter_tests, i8_to_string) {
     constexpr size_t NUM_TESTS = 10;
     constexpr size_t MAX_STR_SIZE = 512;
     constexpr root::i8 MAX = std::numeric_limits<root::i8>::max();
@@ -80,7 +94,7 @@ TEST_F(format_tests, i8_to_string) {
     }
 }
 
-TEST_F(format_tests, u8_to_string) {
+TEST_F(formatter_tests, u8_to_string) {
     constexpr size_t NUM_TESTS = 10;
     constexpr size_t MAX_STR_SIZE = 512;
     constexpr root::u8 MAX = std::numeric_limits<root::u8>::max();
@@ -95,7 +109,7 @@ TEST_F(format_tests, u8_to_string) {
     }
 }
 
-TEST_F(format_tests, i16_to_string) {
+TEST_F(formatter_tests, i16_to_string) {
     constexpr size_t NUM_TESTS = 10;
     constexpr size_t MAX_STR_SIZE = 512;
     constexpr root::i16 MAX = std::numeric_limits<root::i16>::max();
@@ -110,7 +124,7 @@ TEST_F(format_tests, i16_to_string) {
     }
 }
 
-TEST_F(format_tests, u16_to_string) {
+TEST_F(formatter_tests, u16_to_string) {
     constexpr size_t NUM_TESTS = 10;
     constexpr size_t MAX_STR_SIZE = 512;
     constexpr root::u16 MAX = std::numeric_limits<root::u16>::max();
@@ -125,7 +139,7 @@ TEST_F(format_tests, u16_to_string) {
     }
 }
 
-TEST_F(format_tests, u32_to_string) {
+TEST_F(formatter_tests, u32_to_string) {
     constexpr size_t NUM_TESTS = 10;
     constexpr size_t MAX_STR_SIZE = 512;
     constexpr root::u32 MAX = std::numeric_limits<root::u32>::max();
@@ -140,7 +154,7 @@ TEST_F(format_tests, u32_to_string) {
     }
 }
 
-TEST_F(format_tests, u64_to_string) {
+TEST_F(formatter_tests, u64_to_string) {
     constexpr size_t NUM_TESTS = 10;
     constexpr size_t MAX_STR_SIZE = 512;
     constexpr root::u64 MAX = std::numeric_limits<root::u64>::max();
@@ -155,7 +169,7 @@ TEST_F(format_tests, u64_to_string) {
     }
 }
 
-TEST_F(format_tests, i32_to_string) {
+TEST_F(formatter_tests, i32_to_string) {
     constexpr size_t NUM_TESTS = 10;
     constexpr size_t MAX_STR_SIZE = 512;
     constexpr root::i32 MAX = std::numeric_limits<root::i32>::max();
@@ -170,7 +184,7 @@ TEST_F(format_tests, i32_to_string) {
     }
 }
 
-TEST_F(format_tests, i64_to_string) {
+TEST_F(formatter_tests, i64_to_string) {
     constexpr size_t NUM_TESTS = 10;
     constexpr size_t MAX_STR_SIZE = 512;
     constexpr root::i64 MAX = std::numeric_limits<root::i64>::max();
@@ -185,7 +199,7 @@ TEST_F(format_tests, i64_to_string) {
     }
 }
 
-TEST_F(format_tests, f32_to_string) {
+TEST_F(formatter_tests, f32_to_string) {
     constexpr size_t NUM_TESTS = 100;
     constexpr size_t MAX_STR_SIZE = 512;
     for (int _ = 0; _ < NUM_TESTS; _++) {
