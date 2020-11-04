@@ -22,12 +22,10 @@
  */ 
 
 #include <root/graphics/instance.h>
-#include <root/io/format.h>
+#include <root/io/log.h>
 
 #include <root/graphics/window.h>
 #include <root/graphics/surface.h>
-
-#include <iostream>
 
 int main() {
     root::instance::init();
@@ -39,11 +37,11 @@ int main() {
     auto devices = root::instance::get()->physical_devices();
 
     for(int i = 0; i < devices.size(); i++) {
-        std::cout << root::format().to_string(*(devices[i].properties())) << std::endl;
+        root::log::d("", "{}", *(devices[i].properties()));
 
         auto& familyProperties = devices[i].queue_family_properties();
         for(int j = 0; j < familyProperties.size(); j++) {
-            std::cout << root::format().to_string(familyProperties[j]) << std::endl;
+            root::log::d("", "{}:{}", i, familyProperties[j]);
         }
     }
 

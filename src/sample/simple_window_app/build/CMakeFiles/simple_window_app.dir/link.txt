@@ -1,0 +1,1 @@
+/usr/bin/clang++-10   -std=c++17 -fPIC -g -g   CMakeFiles/simple_window_app.dir/simple_window_app.cpp.o  -o simple_window_app  -lroot -lvulkan -lglfw3 -ldl -lpthread 

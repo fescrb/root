@@ -1,0 +1,7 @@
+/home/fernando/Code/root/src/sample/simple_window_app/build/CMakeFiles/install/strip.dir
+/home/fernando/Code/root/src/sample/simple_window_app/build/CMakeFiles/install/local.dir
+/home/fernando/Code/root/src/sample/simple_window_app/build/CMakeFiles/install.dir
+/home/fernando/Code/root/src/sample/simple_window_app/build/CMakeFiles/list_install_components.dir
+/home/fernando/Code/root/src/sample/simple_window_app/build/CMakeFiles/rebuild_cache.dir
+/home/fernando/Code/root/src/sample/simple_window_app/build/CMakeFiles/edit_cache.dir
+/home/fernando/Code/root/src/sample/simple_window_app/build/CMakeFiles/simple_window_app.dir

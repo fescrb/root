@@ -85,20 +85,20 @@ public:
     
     template<typename T>
     inline auto offset(const T& extra_offset) const -> buffer_slice {
-        root_assert(extra_offset < size());
+        root_assert(extra_offset <= size());
         return buffer_slice(m_buffer, static_cast<u64>(m_offset + extra_offset), m_limit);
     } 
 
     template<typename T1, typename T2>
     inline auto range(const T1& start, const T2& end) const -> buffer_slice {
-        root_assert(start < size());
-        root_assert(end < size());
+        root_assert(start <= size());
+        root_assert(end <= size());
         return buffer_slice(m_buffer, static_cast<u64>(m_offset+start), static_cast<u64>(m_offset+end));
     }   
 
     template<typename T>
     inline auto limit(const T& new_limit) const -> buffer_slice {
-        root_assert(new_limit < size());
+        root_assert(new_limit <= size());
         return buffer_slice(m_buffer, m_offset, new_limit);
     }
 

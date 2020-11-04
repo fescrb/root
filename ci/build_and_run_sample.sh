@@ -6,13 +6,16 @@ PWD="$( pwd )"
 
 source $DIR/setup_environment.env 
 
-cd $DIR/../src/
+if [ ! -f $DIR/../build ]; then
+    mkdir $DIR/../build
+fi
 
-gyp sample/universal_test.gyp
+cd $DIR/../build
 
+cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX="$DIR/.." ..
 
 if [ ! $? -eq 0 ]; then
-    echo 'GYP failed. Quitting.'
+    echo 'CMake failed. Quitting.'
     exit 1
 fi
 
@@ -23,4 +26,28 @@ if [ ! $? -eq 0 ]; then
     exit 1
 fi
 
-./out/Default/universal_test
+make install 
+
+if [ ! -f $DIR/../src/sample/simple_window_app/build ]; then
+    mkdir $DIR/../src/sample/simple_window_app/build 
+fi
+
+cd $DIR/../src/sample/simple_window_app/build 
+
+cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX="$DIR/.." ..
+
+if [ ! $? -eq 0 ]; then
+    echo 'CMake failed. Quitting.'
+    exit 1
+fi
+
+make
+
+if [ ! $? -eq 0 ]; then
+    echo 'Make failed. Quitting.'
+    exit 1
+fi
+
+make install
+
+$DIR/../bin/simple_window_app
