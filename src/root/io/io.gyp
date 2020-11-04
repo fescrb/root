@@ -9,6 +9,7 @@
             'sources' : [
                 'buffer_stream.cpp',
                 'format.cpp',
+                'log.cpp'
             ]
         }
     ]

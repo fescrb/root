@@ -19,39 +19,40 @@
 
 #pragma once
 
-#if defined(ROOT_LINUX)
-#include <root/io/platform/linux/logger.h>
-#endif
-
-#if defined(ROOT_ANDROID)
-#include <root/io/platform/android/logger.h>
-#endif
+#include <android/log.h>
+#include <root/io/format.h>
 
 namespace root {
 
-class log {
+class logger {
 public:
-    // TODO control log level printing depending on build type
     template<typename... Args>
-    inline static auto i(const string_view& tag, const format_string& fmt, Args... args) -> void {
-        m_logger->i(tag, fmt, args...);
-    }
-    template<typename... Args>
-    inline static auto d(const string_view& tag, const format_string& fmt, Args... args) -> void {
-        m_logger->d(tag, fmt, args...);
+    inline auto i(const string_view& tag, const format_string& fmt, Args... args) -> void {
+        log<ANDROID_LOG_INFO>(tag, fmt, args...);
     }
 
     template<typename... Args>
-    inline static auto e(const string_view& tag, const format_string& fmt, Args... args) -> void {
-        m_logger->e(tag, fmt, args...);
+    inline auto e(const string_view& tag, const format_string& fmt, Args... args) -> void {
+        log<ANDROID_LOG_ERROR>(tag, fmt, args...);
     }
 
     template<typename... Args>
-    inline static auto w(const string_view& tag, const format_string& fmt, Args... args) -> void {
-        m_logger->w(tag, fmt, args...);
+    inline auto d(const string_view& tag, const format_string& fmt, Args... args) -> void {
+        log<ANDROID_LOG_DEBUG>(tag, fmt, args...);
     }
+
+    template<typename... Args>
+    inline auto w(const string_view& tag, const format_string& fmt, Args... args) -> void {
+        log<ANDROID_LOG_WARN>(tag, fmt, args...);
+    }
+
 private:
-    static logger* m_logger;
+    template<int p, typename... Args> 
+    inline auto log(const string_view& tag, const format_string& fmt, Args... args) -> void {
+        string str = format(fmt, args...);
+        __android_log_buf_write(LOG_ID_MAIN, p, tag.size()? tag.data(), "", str.data());
+    }
+    
 };
 
-} // namespace root
+}

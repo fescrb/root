@@ -20,6 +20,7 @@
 #pragma once
 
 #include <root/io/stream.h>
+#include <root/io/file_stream.h>
 #include <root/io/buffer_stream.h>
 
 namespace root {
@@ -48,8 +49,9 @@ private:
 /*
  * Class definitions
  */
-
 using writer = writer_interface<>;
+// TODO: should I move these to the file defining file_stream & buffer_stream?
+using file_writer = writer_interface<file_stream>;
 using buffer_writer = writer_interface<buffer_stream>;
 
 } // namespace root

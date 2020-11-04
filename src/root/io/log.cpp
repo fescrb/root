@@ -17,33 +17,21 @@
  * along with The Root Engine.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#pragma once
+#include <root/io/log.h>
 
-#include <root/io/formatter.h>
+#if defined(ROOT_LINUX)
+#include <cstdio>
+#endif
+
 
 namespace root {
 
-class format {
-public:
-    inline static auto set_default_formatter(formatter* fmtr) -> void {
-        m_default_formatter = fmtr;
-    }
+#if defined(ROOT_LINUX)
+logger* log::m_logger = new logger(new writer(new file_stream(stdout)));
+#endif
 
-    inline static auto get_default_formatter() -> formatter* {
-        return m_default_formatter;
-    }
-private:
-    static formatter* m_default_formatter;
-}; 
-
-template<typename T>
-inline auto to_string(const T& object) -> string {
-    return format::get_default_formatter()->to_string(object);
-}
-
-template<typename... Args>
-inline auto format(const format_string& fmt, Args... args) -> string {
-    return format::get_default_formatter()->format(fmt, args...);
-}
+#if defined(ROOT_ANDROID)
+logger* log::m_logger = new logger();
+#endif
 
 } // namespace root
