@@ -1,1 +1,0 @@
-/home/fernando/Code/root/bin/simple_window_app
