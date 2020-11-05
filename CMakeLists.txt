@@ -19,7 +19,7 @@ add_library(root STATIC $<TARGET_OBJECTS:root_core>
 
 target_link_libraries(root vulkan glfw3 dl pthread)
 
-install(TARGETS root)
+install(TARGETS root ARCHIVE DESTINATION lib)
 
 if(${CMAKE_BUILD_TYPE} MATCHES "Test")
     add_executable(root_test $<TARGET_OBJECTS:root_core_test> 
@@ -29,5 +29,5 @@ if(${CMAKE_BUILD_TYPE} MATCHES "Test")
 
     target_link_libraries(root_test root gtest_maind gtestd gmockd)
 
-    install(TARGETS root_test)
+    install(TARGETS root_test RUNTIME DESTINATION bin)
 endif(${CMAKE_BUILD_TYPE} MATCHES "Test")

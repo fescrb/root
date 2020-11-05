@@ -16,4 +16,4 @@ add_executable(simple_window_app ${simple_window_app_sources})
 
 target_link_libraries(simple_window_app root vulkan glfw3 dl pthread)
 
-install(TARGETS simple_window_app)
+install(TARGETS simple_window_app RUNTIME DESTINATION bin)

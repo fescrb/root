@@ -13,7 +13,7 @@ fi
 
 source $DIR/setup_environment.env 
 
-if [! -d $DIR/../build ]; then
+if [ ! -d $DIR/../build ]; then
     mkdir $DIR/../build
 fi
 
