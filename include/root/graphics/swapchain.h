@@ -37,6 +37,8 @@ public:
     VkSurfaceCapabilitiesKHR surface_capabilities;
     array<VkSurfaceFormatKHR> formats;
     array<VkPresentModeKHR> present_modes;
+    VkFormat format;
+    VkExtent2D extent;
 
 private:
     allocator* m_alloc;

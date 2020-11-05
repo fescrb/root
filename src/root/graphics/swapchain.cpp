@@ -81,13 +81,14 @@ auto swapchain::refresh(const surface& s, const device& d) -> void {
      * Choose extent
      */
     // TODO: we can do this better?
-    VkExtent2D chosen_extent = surface_capabilities.maxImageExtent; 
+    extent = surface_capabilities.maxImageExtent; 
 
     /*
      * Choose format
      */
     // TODO
     VkSurfaceFormatKHR surface_format = formats[0];
+    format = surface_format.format;
 
     /*
      * Create swapchain
@@ -99,7 +100,7 @@ auto swapchain::refresh(const surface& s, const device& d) -> void {
     create_info.minImageCount = surface_capabilities.minImageCount;
     create_info.imageFormat = surface_format.format;
     create_info.imageColorSpace = surface_format.colorSpace;
-    create_info.imageExtent = chosen_extent;
+    create_info.imageExtent = extent;
     create_info.imageArrayLayers = 1;
     create_info.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
     create_info.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE; // TODO handle sharing
@@ -117,6 +118,45 @@ auto swapchain::refresh(const surface& s, const device& d) -> void {
         log::e("swapchain", "vkCreateSwapchainKHR failed with {}", res);
         abort();
     }
+
+    u32 num_images;
+    vkGetSwapchainImagesKHR(d.handle, handle, &num_images, nullptr);
+    array<VkImage> temp_images(num_images, m_alloc);
+    vkGetSwapchainImagesKHR(d.handle, handle, &num_images, temp_images.data());
+    
+    array<VkImageView> temp_image_views(num_images, m_alloc);
+    
+    for(int i = 0; i < num_images; i++) {
+        VkImageViewCreateInfo view_create_info;
+        view_create_info.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+        view_create_info.pNext = nullptr;
+        view_create_info.flags = 0;
+        view_create_info.image = temp_images[i];
+        view_create_info.viewType = VK_IMAGE_VIEW_TYPE_2D;
+        view_create_info.format = format;
+        VkComponentMapping components;
+        components.r = VK_COMPONENT_SWIZZLE_IDENTITY;
+        components.g = VK_COMPONENT_SWIZZLE_IDENTITY;
+        components.b = VK_COMPONENT_SWIZZLE_IDENTITY;
+        components.a = VK_COMPONENT_SWIZZLE_IDENTITY;
+        view_create_info.components = components;
+        VkImageSubresourceRange subresource_range;
+        subresource_range.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+        subresource_range.baseMipLevel = 0;
+        subresource_range.levelCount = 1;
+        subresource_range.baseArrayLayer = 0;
+        subresource_range.layerCount = 1;
+        view_create_info.subresourceRange = subresource_range;
+
+        res = vkCreateImageView(d.handle, &view_create_info, nullptr, &(temp_image_views[i]));
+
+        if (res != VK_SUCCESS) {
+            log::e("swapchain", "vkCreateImageView failed with {}", res);
+        }
+    }
+
+    // TODO: save these images
+    
 }
 
 } // namespace root
