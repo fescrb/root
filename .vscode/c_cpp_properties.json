@@ -9,23 +9,10 @@
             ],
             "defines": [
                 "ROOT_ASSERT",
+                "ROOT_DEBUG",
                 "ROOT_LINUX"
             ],
-            "compilerPath": "/usr/bin/clang++-8",
-            "cStandard": "gnu11",
-            "cppStandard": "c++17",
-            "intelliSenseMode": "clang-x64"
-        },
-        {
-            "name": "linux_release",
-            "includePath": [
-                "${workspaceFolder}/include",
-                "${workspaceFolder}/src"
-            ],
-            "defines": [
-                "ROOT_LINUX"
-            ],
-            "compilerPath": "/usr/bin/clang++-8",
+            "compilerPath": "/usr/bin/clang++-10",
             "cStandard": "gnu11",
             "cppStandard": "c++17",
             "intelliSenseMode": "clang-x64"
