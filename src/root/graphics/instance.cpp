@@ -19,6 +19,8 @@
 
 #include <root/graphics/instance.h>
 
+#include <root/io/log.h>
+
 #if defined(ROOT_LINUX)
 #include <GLFW/glfw3.h>
 #endif
@@ -33,18 +35,37 @@ auto instance::init() -> void {
     create_info.pNext = nullptr;
     create_info.flags = 0;
     create_info.pApplicationInfo = nullptr; // TODO
+
+#if defined(ROOT_DEBUG)
+    const char* instance_layers[] = {
+        "VK_LAYER_KHRONOS_validation"
+    };
+    create_info.enabledLayerCount = 1;
+    create_info.ppEnabledLayerNames = instance_layers;
+
+#else
     create_info.enabledLayerCount = 0;
     create_info.ppEnabledLayerNames = nullptr;
+#endif
 
 #if defined(ROOT_LINUX)
     // TODO where do I put this?
-    if(!glfwInit()) {
-        // TODO: handle error
+    if(glfwInit() != GLFW_TRUE) {
+        log::e("instance", "glfwInit failed");
+        abort();
     }
 
-    // TODO only on desktop builds
+    if(glfwVulkanSupported() != GLFW_TRUE) {
+        log::e("instance", "glfwVulkanSupported returned false");
+        abort();
+    }
+
     uint32_t glfw_ext_count;
     auto glfw_extensions = glfwGetRequiredInstanceExtensions(&glfw_ext_count);
+
+    for(int i = 0; i < glfw_ext_count; i++) {
+        log::d("instance", "glfw_extension[{}]: {}", i, glfw_extensions[i]);
+    }
 
     create_info.enabledExtensionCount = glfw_ext_count;
     create_info.ppEnabledExtensionNames = glfw_extensions;
@@ -54,8 +75,10 @@ auto instance::init() -> void {
 #endif
 
     VkInstance handle;
-    if (vkCreateInstance(&create_info, nullptr, &handle) != VK_SUCCESS) {
-        // TODO: handle error
+    VkResult res = vkCreateInstance(&create_info, nullptr, &handle);
+    if (res != VK_SUCCESS) {
+        log::e("instance", "vkCreateInstance failed with {}", res);
+        abort();
     }
     m_instance = new instance(handle); // TODO: perhaps provide allocator?
 }

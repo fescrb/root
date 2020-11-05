@@ -21,26 +21,26 @@
 
 #include <root/graphics/device.h>
 
+#include <root/io/log.h>
+
 #include <limits>
 
 namespace root {
 
-device::device(physical_device& d, const surface& s) {
+device::device(const physical_device& d, const surface& s)
+:   handle(VK_NULL_HANDLE),
+    m_graphics_family_index(d.graphics_queue_family_index()),
+    m_physical_device(d) {
     auto& fam_props = d.queue_family_properties();
 
-    constexpr uint32_t FAMILY_INVALID = std::numeric_limits<uint32_t>::max();
-    uint32_t m_graphics_family_index = FAMILY_INVALID;
+    root_assert(m_graphics_family_index != physical_device::FAMILY_INVALID);
 
-    for(uint32_t i = 0; i < fam_props.size(); i++) {
-        VkBool32 present_support = false;
-        vkGetPhysicalDeviceSurfaceSupportKHR(d.handle, i, s.handle, &present_support);
-        if(fam_props[i].queueFlags & VK_QUEUE_GRAPHICS_BIT) {
-            m_graphics_family_index = i; 
-            break;
-        }
+    if(d.graphics_queue_family_index() != d.present_queue_family_index(s)) {
+        log::e("device", "graphics family differs from present family, we do not handle this currently");
+        abort();
     }
 
-    root_assert(m_graphics_family_index != FAMILY_INVALID);
+    // TODO: handle the graphics queue and the present queue being different
 
     VkDeviceQueueCreateInfo queue_create;
     queue_create.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
@@ -67,8 +67,10 @@ device::device(physical_device& d, const surface& s) {
     device_create.ppEnabledExtensionNames = device_extensions;
     device_create.pEnabledFeatures = nullptr; // TODO?
 
-    if(vkCreateDevice(d.handle, &device_create, nullptr, &handle) != VK_SUCCESS) {
-        // TODO: handle error
+    VkResult res = vkCreateDevice(d.handle, &device_create, nullptr, &handle);
+
+    if(res != VK_SUCCESS) {
+        log::e("device", "vkCreateDevice failed with {}", res);
     }
 }
 

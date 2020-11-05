@@ -19,12 +19,20 @@
 
 #include <root/graphics/surface.h>
 
+#include <root/graphics/instance.h>
+#include <root/io/log.h>
+
 namespace root {
 
-surface::surface(window& w, instance& i) {
-    if(glfwCreateWindowSurface(i.handle, w.handle, NULL, &handle) != VK_SUCCESS) {
+surface::surface(window& w) {
+#if defined(ROOT_LINUX)
+    VkResult res = glfwCreateWindowSurface(instance::get()->handle, w.handle, NULL, &handle);
+    if(res != VK_SUCCESS) {
         // TODO: error handling
+        log::e("surface", "glfwCreateWindowSurface failed with {}", res);
+        abort();
     }
+#endif
 }
 
 }

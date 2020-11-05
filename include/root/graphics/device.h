@@ -26,14 +26,20 @@ namespace root {
 
 class device final {
 public:
-    explicit device(physical_device& d, const surface& s);
+    device(const physical_device& d, const surface& s);
+
+    static device auto_select_device();
 
     VkDevice handle;
 
     auto get_graphics_queue() const -> VkQueue;
+    inline auto get_physical_device() const -> const physical_device& {
+        return m_physical_device;
+    }
 
 private:
     uint32_t m_graphics_family_index;
+    const physical_device& m_physical_device;
 };
 
 } // namespace root

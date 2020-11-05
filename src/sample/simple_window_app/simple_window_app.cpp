@@ -26,24 +26,40 @@
 
 #include <root/graphics/window.h>
 #include <root/graphics/surface.h>
+#include <root/graphics/device.h>
+#include <root/graphics/swapchain.h>
 
 int main() {
     root::instance::init();
 
     root::window window(640u, 480u, "Test");
 
-    root::surface surface(window, *root::instance::get());
+    root::surface surface(window);
 
     auto devices = root::instance::get()->physical_devices();
 
+    root::device* device = nullptr;
+
     for(int i = 0; i < devices.size(); i++) {
-        root::log::d("", "{}", *(devices[i].properties()));
+        root::log::d("", "Device {}: {}", i, *(devices[i].properties()));
 
         auto& familyProperties = devices[i].queue_family_properties();
         for(int j = 0; j < familyProperties.size(); j++) {
-            root::log::d("", "{}:{}", i, familyProperties[j]);
+            root::log::d("", "Queue {}:{}", j, familyProperties[j]);
+        }
+
+        if(devices[i].has_graphics_queue() && devices[i].has_present_queue(surface)) {
+
+            device = new root::device(devices[i], surface);
         }
     }
+
+    if(!device) {
+        root::log::e("", "No suitable device found");
+        abort();
+    }
+
+    root::swapchain swapchain(surface, *device);
 
     while(true){}
 }

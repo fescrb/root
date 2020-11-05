@@ -25,6 +25,47 @@
 namespace root {
 
 template<>
+auto strlen<VkFormat>(const VkFormat& object, const string_view&) -> u64 {
+    return strlen(to_string(object));
+}
+
+template<>
+auto format_to<VkFormat>(buffer_writer& dst, const VkFormat& object, const string_view&) -> void {
+    return format_to(dst, to_string(object));
+}
+
+
+template<>
+auto strlen<VkPresentModeKHR>(const VkPresentModeKHR& object, const string_view&) -> u64 {
+    return strlen(to_string(object));
+}
+
+template<>
+auto format_to<VkPresentModeKHR>(buffer_writer& dst, const VkPresentModeKHR& object, const string_view&) -> void {
+    return format_to(dst, to_string(object));
+}
+
+template<>
+auto strlen<VkColorSpaceKHR>(const VkColorSpaceKHR& object, const string_view&) -> u64 {
+    return strlen(to_string(object));
+}
+
+template<>
+auto format_to<VkColorSpaceKHR>(buffer_writer& dst, const VkColorSpaceKHR& object, const string_view&) -> void {
+    return format_to(dst, to_string(object));
+}
+
+template<>
+auto strlen<VkResult>(const VkResult& object, const string_view&) -> u64 {
+    return strlen(to_string(object));
+}
+
+template<>
+auto format_to<VkResult>(buffer_writer& dst, const VkResult& object, const string_view&) -> void {
+    return format_to(dst, to_string(object));
+}
+
+template<>
 auto strlen<VkPhysicalDeviceType>(const VkPhysicalDeviceType& object, const string_view&) -> u64 {
     return strlen(to_string(object));
 }
@@ -105,7 +146,7 @@ inline auto format_to(buffer_writer& dst, const VkFlagsWrapper<E,first,last>& ob
         if(object.value & bit) {
             if (has_printed) format_to(dst, " | ");
             has_printed = true;
-            format_to(dst, static_cast<E>(bit));
+            format_to(dst, to_string(static_cast<E>(bit)));
         }
     }
 }
@@ -189,7 +230,7 @@ auto format_to<VkQueueFamilyProperties>(buffer_writer& dst, const VkQueueFamilyP
 template<>
 auto strlen<VkSurfaceCapabilitiesKHR>(const VkSurfaceCapabilitiesKHR& object, const string_view&) -> u64 {
     constexpr u64 MIN_IMAGE_COUNT_STR_LEN = strlen("{ minImageCount: ");
-    u64 min_image_count_len = strlen(object.maxImageCount);
+    u64 min_image_count_len = strlen(object.minImageCount);
     constexpr u64 MAX_IMAGE_COUNT_STR_LEN = strlen(" maxImageCount: ");
     u64 max_image_count_len = strlen(object.maxImageCount);
     constexpr u64 CURRENT_EXTENT_STR_LEN = strlen(" currentExtent: ");
@@ -208,7 +249,6 @@ auto strlen<VkSurfaceCapabilitiesKHR>(const VkSurfaceCapabilitiesKHR& object, co
     u64 supported_composite_alpha_len = strlen(VkCompositeAlphaFlagWrapper(object.supportedCompositeAlpha));
     constexpr u64 SUPPORTED_USAGE_FLAGS_STR_LEN = strlen(" supportedUsageFlags: ");
     u64 supported_usage_flags_len = strlen(VkImageUsageFlagWrapper(object.supportedUsageFlags));
-    // TODO: the rest
     constexpr u64 CLOSING_STR_LEN = strlen(" }");
     return MIN_IMAGE_COUNT_STR_LEN + min_image_count_len + 
            MAX_IMAGE_COUNT_STR_LEN + max_image_count_len +
@@ -221,6 +261,52 @@ auto strlen<VkSurfaceCapabilitiesKHR>(const VkSurfaceCapabilitiesKHR& object, co
            SUPPORTED_COMPOSITE_ALPHA_STR_LEN + supported_composite_alpha_len +
            SUPPORTED_USAGE_FLAGS_STR_LEN + supported_usage_flags_len +
            CLOSING_STR_LEN;
+}
+
+template<>
+auto format_to<VkSurfaceCapabilitiesKHR>(buffer_writer& dst, const VkSurfaceCapabilitiesKHR& object, const string_view&) -> void {
+    format_to(dst, "{ minImageCount: ");
+    format_to(dst, object.minImageCount);
+    format_to(dst, " maxImageCount: ");
+    format_to(dst, object.maxImageCount);
+    format_to(dst, " currentExtent: ");
+    format_to(dst, object.currentExtent);
+    format_to(dst, " minImageExtent: ");
+    format_to(dst, object.minImageExtent);
+    format_to(dst, " maxImageExtent: ");
+    format_to(dst, object.maxImageExtent);
+    format_to(dst, " maxImageArrayLayers: ");
+    format_to(dst, object.maxImageArrayLayers);
+    format_to(dst, " supportedTransforms: ");
+    format_to(dst, VkSurfaceTransformFlagWrapper(object.supportedTransforms));
+    format_to(dst, " currentTransform: ");
+    format_to(dst, to_string(object.currentTransform));
+    format_to(dst, " supportedCompositeAlpha: ");
+    format_to(dst, VkCompositeAlphaFlagWrapper(object.supportedCompositeAlpha));
+    format_to(dst, " supportedUsageFlags: ");
+    format_to(dst, VkImageUsageFlagWrapper(object.supportedUsageFlags));
+    format_to(dst, " }");
+}
+
+template<>
+auto strlen<VkSurfaceFormatKHR>(const VkSurfaceFormatKHR& object, const string_view&) -> u64 {
+    constexpr u64 FORMAT_STR_LEN = strlen("{ format: ");
+    u64 format_len = strlen(object.format);
+    constexpr u64 COLOR_SPACE_STR_LEN = strlen(" colorSpace: ");
+    u64 color_space_len = strlen(object.colorSpace);
+    constexpr u64 CLOSING_STR_LEN = strlen(" }");
+    return FORMAT_STR_LEN + format_len +
+           COLOR_SPACE_STR_LEN + color_space_len +
+           CLOSING_STR_LEN;
+}
+
+template<>
+auto format_to<VkSurfaceFormatKHR>(buffer_writer& dst, const VkSurfaceFormatKHR& object, const string_view&) -> void {
+    format_to(dst, "{ format: ");
+    format_to(dst, object.format);
+    format_to(dst, " colorSpace: ");
+    format_to(dst, object.colorSpace);
+    format_to(dst, " }");
 }
 
 // TODO: VkPhysicalDeviceLimits

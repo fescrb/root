@@ -22,13 +22,12 @@
 #include <vulkan/vulkan.h>
 
 #include <root/graphics/window.h>
-#include <root/graphics/instance.h>
 
 namespace root {
 
 class surface {
 public:
-    surface(window& w, instance& i);
+    surface(window& w);
 
     VkSurfaceKHR handle;
 };

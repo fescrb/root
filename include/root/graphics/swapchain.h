@@ -21,13 +21,25 @@
 
 #include <vulkan/vulkan.h>
 
+#include <root/graphics/device.h>
 #include <root/graphics/surface.h>
+
 namespace root {
 
 class swapchain {
 public:
-    swapchain(surface& s, instance& i); // TODO: query formats etc
+    swapchain(const surface& s, const device& d, allocator* alloc = allocator::default_allocator());
 
+    auto refresh(const surface& s, const device& d) -> void;
+
+    VkSwapchainKHR handle;
+
+    VkSurfaceCapabilitiesKHR surface_capabilities;
+    array<VkSurfaceFormatKHR> formats;
+    array<VkPresentModeKHR> present_modes;
+
+private:
+    allocator* m_alloc;
 };
 
 } // namespace root

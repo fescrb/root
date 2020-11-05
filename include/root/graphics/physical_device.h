@@ -19,23 +19,23 @@
 
 #pragma once
 
+#include <limits>
+
 #include <vulkan/vulkan.h>
 
 #include <root/memory/allocator.h>
 #include <root/core/array.h>
+#include <root/graphics/surface.h>
 
 namespace root {
 
 class physical_device final {
 public:
-    explicit physical_device(const VkPhysicalDevice& h, allocator* alloc = allocator::default_allocator())
-    :   handle(h),
-        m_alloc(alloc),
-        m_properties(nullptr),
-        m_memory_properties(nullptr) {}
+    explicit physical_device(const VkPhysicalDevice& h, allocator* alloc = allocator::default_allocator());
 
     VkPhysicalDevice handle;
 
+    auto operator=(const physical_device&) -> physical_device& = delete;
     inline auto operator=(physical_device&& other) -> physical_device& {
         handle = std::move(other.handle);
         m_alloc = std::move(other.m_alloc);
@@ -47,12 +47,22 @@ public:
 
     auto properties() -> VkPhysicalDeviceProperties*;
     auto memory_properties() -> VkPhysicalDeviceMemoryProperties*;
-    auto queue_family_properties() -> array<VkQueueFamilyProperties>&;
+    auto queue_family_properties() const -> const array<VkQueueFamilyProperties>&;
 
     ~physical_device() {
         if (m_properties) m_alloc->free(m_properties, sizeof(VkPhysicalDeviceProperties), alignof(VkPhysicalDeviceProperties));
         if (m_memory_properties) m_alloc->free(m_properties, sizeof(VkPhysicalDeviceMemoryProperties), alignof(VkPhysicalDeviceMemoryProperties));
     }
+
+    auto has_graphics_queue() const -> bool;
+    auto has_present_queue(const surface& s) const -> bool;
+    
+    auto graphics_queue_family_index() const -> u32;
+    auto present_queue_family_index(const surface& s) const -> u32;
+
+    auto can_present(const surface& s, const u32& family_queue_index) const -> VkBool32;
+
+    static constexpr u32 FAMILY_INVALID = std::numeric_limits<uint32_t>::max();
 
 private:
     allocator *m_alloc;
