@@ -46,12 +46,14 @@ inline auto format_to(buffer_writer& dst, T* const& object, const string_view& f
 
 template<int N> 
 inline auto strlen(char const (&object)[N], const string_view& = string_view()) -> u64 {
-    return N-1; // Do not copy \0
+    const u64 len = strlen(reinterpret_cast<const char*>(&object));
+    return len < (N - 1) ? len : N - 1; 
 }
 
 template<int N> 
 inline auto format_to(buffer_writer& dst, char const (&object)[N], const string_view& = string_view()) -> void {
-    dst.write(object, N-1); // Do not copy \0
+    const u64 len = strlen(reinterpret_cast<const char*>(&object));
+    dst.write(object, len < (N - 1) ? len : N - 1);
 }
 
 template<> 

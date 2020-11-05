@@ -37,9 +37,19 @@ auto instance::init() -> void {
     create_info.pApplicationInfo = nullptr; // TODO
 
 #if defined(ROOT_DEBUG)
+    u32 num_layer_properties;
+    vkEnumerateInstanceLayerProperties(&num_layer_properties, nullptr);
+    array<VkLayerProperties> layer_properties(num_layer_properties);
+    vkEnumerateInstanceLayerProperties(&num_layer_properties, layer_properties.data());
+
+    for(int i = 0; i < num_layer_properties; i++) {
+        log::d("instance", "Instance Layer Properties {}: {}", i, layer_properties[i]);
+    }
+
     const char* instance_layers[] = {
-        "VK_LAYER_KHRONOS_validation"
+        "VK_LAYER_LUNARG_standard_validation"
     };
+
     create_info.enabledLayerCount = 1;
     create_info.ppEnabledLayerNames = instance_layers;
 

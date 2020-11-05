@@ -51,6 +51,7 @@ device::device(const physical_device& d, const surface& s)
     float priority = 1.0f;
     queue_create.pQueuePriorities = &priority;
 
+
     const char* device_extensions[] = {
         "VK_KHR_swapchain"
     };
@@ -61,11 +62,31 @@ device::device(const physical_device& d, const surface& s)
     device_create.flags = 0;
     device_create.queueCreateInfoCount = 1;
     device_create.pQueueCreateInfos = &queue_create;
-    device_create.enabledLayerCount = 0;
-    device_create.ppEnabledLayerNames = nullptr;
     device_create.enabledExtensionCount = 1; 
     device_create.ppEnabledExtensionNames = device_extensions;
     device_create.pEnabledFeatures = nullptr; // TODO?
+
+#if defined(ROOT_DEBUG)
+    u32 num_layer_property;
+    vkEnumerateDeviceLayerProperties(d.handle, &num_layer_property, nullptr);
+
+    array<VkLayerProperties> layer_properties(num_layer_property);
+    vkEnumerateDeviceLayerProperties(d.handle, &num_layer_property, layer_properties.data());
+
+    for(int i = 0; i < num_layer_property; i++) {
+        log::d("device", "Device Layer Properties {}: {}", i, layer_properties[i]);
+    }
+
+    const char* device_layers[] = {
+        "VK_LAYER_LUNARG_standard_validation"
+    };
+
+    device_create.enabledLayerCount = 1;
+    device_create.ppEnabledLayerNames = device_layers;
+#else 
+    device_create.enabledLayerCount = 0;
+    device_create.ppEnabledLayerNames = nullptr;
+#endif
 
     VkResult res = vkCreateDevice(d.handle, &device_create, nullptr, &handle);
 

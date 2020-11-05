@@ -309,6 +309,37 @@ auto format_to<VkSurfaceFormatKHR>(buffer_writer& dst, const VkSurfaceFormatKHR&
     format_to(dst, " }");
 }
 
+template<>
+auto strlen<VkLayerProperties>(const VkLayerProperties& object, const string_view&) -> u64 {
+    constexpr u64 LAYER_NAME_STR_LEN = strlen("{ layerName: ");
+    u64 layer_name_len = strlen(object.layerName);
+    constexpr u64 SPEC_VERSION_STR_LEN = strlen(" specVersion: ");
+    u64 spec_version_len = strlen(object.specVersion);
+    constexpr u64 IMPLEMENTATION_VERSION_STR_LEN = strlen(" implementationVersion: ");
+    u64 implementation_version_len = strlen(object.implementationVersion);
+    constexpr u64 DESCRIPTION_STR_LEN = strlen(" description: ");
+    u64 description_len = strlen(object.description);
+    constexpr u64 CLOSING_STR_LEN = strlen(" }");
+    return LAYER_NAME_STR_LEN + layer_name_len +
+           SPEC_VERSION_STR_LEN + spec_version_len +
+           IMPLEMENTATION_VERSION_STR_LEN + implementation_version_len +
+           DESCRIPTION_STR_LEN + description_len +
+           CLOSING_STR_LEN;
+}
+
+template<>
+auto format_to<VkLayerProperties>(buffer_writer& dst, const VkLayerProperties& object, const string_view&) -> void {
+    format_to(dst, "{ layerName: ");
+    format_to(dst, object.layerName);
+    format_to(dst, " specVersion: ");
+    format_to(dst, object.specVersion);
+    format_to(dst, " implementationVersion: ");
+    format_to(dst, object.implementationVersion);
+    format_to(dst, " description: ");
+    format_to(dst, object.description);
+    format_to(dst, " }");
+}
+
 // TODO: VkPhysicalDeviceLimits
 // TODO: VkPhysicalDeviceSparseProperties
 
