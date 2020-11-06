@@ -210,6 +210,33 @@ TEST_F(array_slice_tests, find) {
     EXPECT_EQ(ARRAY_SIZE, root::distance(const_array.begin(), cnot_found));
 }
 
+TEST_F(array_slice_tests, rfind) {
+    const int ELEMENT_INDEX = rand() % ARRAY_SIZE;
+    const int ELEMENT = memory[ELEMENT_INDEX];
+
+    root::array_slice<int> array(memory, 0, ARRAY_SIZE);
+
+    auto found = root::find(array.rbegin(), array.rend(), ELEMENT);
+    EXPECT_NE(found, array.rend());
+    EXPECT_EQ(*found, ELEMENT);
+    EXPECT_EQ(ARRAY_SIZE-1 - ELEMENT_INDEX, root::distance(array.rbegin(), found));
+
+    auto not_found = root::find(array.rbegin(), array.rend(), ARRAY_SIZE);
+    EXPECT_EQ(not_found, array.rend());
+    EXPECT_EQ(ARRAY_SIZE, root::distance(array.rbegin(), not_found));
+
+    const root::array_slice<int> const_array(memory, 0, ARRAY_SIZE);
+
+    auto cfound = root::find(const_array.rbegin(), const_array.rend(), ELEMENT);
+    EXPECT_NE(cfound, const_array.rend());
+    EXPECT_EQ(*cfound, ELEMENT);
+    EXPECT_EQ(ARRAY_SIZE-1 - ELEMENT_INDEX, root::distance(const_array.rbegin(), cfound));
+
+    auto cnot_found = root::find(const_array.rbegin(), const_array.rend(), ARRAY_SIZE);
+    EXPECT_EQ(cnot_found, const_array.rend());
+    EXPECT_EQ(ARRAY_SIZE, root::distance(const_array.rbegin(), cnot_found));
+}
+
 TEST_F(array_slice_tests, find_small_slices) {
     const int MIN = rand() % (ARRAY_SIZE/2);
     const int MAX = (ARRAY_SIZE/2) + (rand() % (ARRAY_SIZE/2));

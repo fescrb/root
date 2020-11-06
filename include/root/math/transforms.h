@@ -46,7 +46,7 @@ inline auto scaling(const vec3<T>& scale_factors) -> mat4x4<T> {
 
 template<typename T>
 inline auto rotate_around_x(const T& angle) -> mat4x4<T> {
-    root_static_assert(std::is_floating_point<T>::value);
+    static_assert(std::is_floating_point<T>::value);
     return mat4x4<T>({{1           0,           0, 0},
                       {0, cos(angle), -sin(angle), 0},
                       {0, sin(angle),  cos(angle), 0},
@@ -55,7 +55,7 @@ inline auto rotate_around_x(const T& angle) -> mat4x4<T> {
 
 template<typename T>
 inline auto rotate_around_y(const T& angle) -> mat4x4<T> {
-    root_static_assert(std::is_floating_point<T>::value);
+    static_assert(std::is_floating_point<T>::value);
     return mat4x4<T>({{ cos(angle), 0, sin(angle), 0},
                       {          0, 1,          0, 0},
                       {-sin(angle), 0, cos(angle), 0},
@@ -64,7 +64,7 @@ inline auto rotate_around_y(const T& angle) -> mat4x4<T> {
 
 template<typename T>
 inline auto rotate_around_z(const T& angle) -> mat4x4<T> {
-    root_static_assert(std::is_floating_point<T>::value);
+    static_assert(std::is_floating_point<T>::value);
     return mat4x4<T>({{cos(angle), -sin(angle), 0, 0},
                       {sin(angle),  cos(angle), 0, 0},
                       {         0,           0, 1, 0},
@@ -74,7 +74,7 @@ inline auto rotate_around_z(const T& angle) -> mat4x4<T> {
 
 template<typename T>
 inline auto rotate_around_axis(const vec3<T>& axis, const T& angle) -> mat4x4<T> {
-    root_static_assert(std::is_floating_point<T>::value);
+    static_assert(std::is_floating_point<T>::value);
     // TODO assert that the axis is normalized?
     // TODO in general
     
@@ -82,7 +82,7 @@ inline auto rotate_around_axis(const vec3<T>& axis, const T& angle) -> mat4x4<T>
 
 template <typename T>
 inline auto look_at(const vec3<T>& position, const vec3<T>& target, const vec3<T>& up) {
-    root_static_assert(std::is_floating_point<T>::value);
+    static_assert(std::is_floating_point<T>::value);
     vec3<T> camera_to_target = normalize(target - position);
     vec3<T> right = normalize(cross(up, camera_to_target));
     vec3<T> camera_up = cross(camera_to_target, right);

@@ -17,29 +17,30 @@
  * along with The Root Engine.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <root/core/error.h>
+#pragma once
 
-#include <gtest/gtest.h>
-#include <gmock/gmock.h>
+#include <root/core/primitives.h>
 
-TEST(error_tests, value_or_error_error) {
-    constexpr root::error SAMPLE_ERROR = root::error::UNKNOWN_ERROR;
-    root::value_or_error<int> voe(SAMPLE_ERROR);
+#include <functional>
+#include <utility>
 
-    EXPECT_EQ(voe, SAMPLE_ERROR);
-    EXPECT_FALSE(voe);
-    // Comparison operators are underfined for errors
-}
+namespace root {
 
-TEST(error_tests, value_or_error_valie) {
-    constexpr int SAMPLE_VALUE = 42;
-    root::value_or_error<int> voe(SAMPLE_VALUE);
+template<typename cointainer_t, 
+         typename index_t = i64,
+         typename element_t = decltype(std::declval<cointainer_t>()[std::declval<index_t>()]), 
+         std::function<index_t(const index_t)> next_f = [](const index_t i){return ++i;}, 
+         std::function<index_t(const index_t)> prev_f = [](const index_t i){return --i;}>
+class linear_iterator {
+public:
+    using mutable_element = std::remove_const_t<element_t>;
+    using const_element = std::add_const_t<element_t>;
 
-    EXPECT_EQ(voe, SAMPLE_VALUE);
-    EXPECT_TRUE(voe);
-    EXPECT_NE(voe, -SAMPLE_VALUE);
-    EXPECT_LT(voe, SAMPLE_VALUE+1);
-    EXPECT_GT(voe, SAMPLE_VALUE-1);
-    EXPECT_GE(voe, SAMPLE_VALUE);
-    EXPECT_LE(voe, SAMPLE_VALUE);
-}
+    
+
+protected:
+    container_t& m_container;
+    index_t index;
+};
+
+} // namespace root

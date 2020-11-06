@@ -35,7 +35,7 @@
             "name": "android_debug",
             "includePath": [
                 "Does not allow wildcards:",
-                "${ANDROID_HOME}/ndk/21.3.6528147/sysroot/usr/include", 
+                "${ANDROID_HOME}/ndk/21.3.6528147/sysroot/usr/include",
                 "${workspaceFolder}/include",
                 "${workspaceFolder}/src"
             ],

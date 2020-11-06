@@ -17,29 +17,24 @@
  * along with The Root Engine.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <root/core/error.h>
+#pragma once
 
-#include <gtest/gtest.h>
-#include <gmock/gmock.h>
+#include <root/core/buffer.h>
+#include <root/core/string_view.h>
 
-TEST(error_tests, value_or_error_error) {
-    constexpr root::error SAMPLE_ERROR = root::error::UNKNOWN_ERROR;
-    root::value_or_error<int> voe(SAMPLE_ERROR);
+namespace root {
 
-    EXPECT_EQ(voe, SAMPLE_ERROR);
-    EXPECT_FALSE(voe);
-    // Comparison operators are underfined for errors
-}
+class asset_manager {
+public:
+    static auto load(const string_view& id) -> buffer&;
 
-TEST(error_tests, value_or_error_valie) {
-    constexpr int SAMPLE_VALUE = 42;
-    root::value_or_error<int> voe(SAMPLE_VALUE);
+    asset_manager() = delete;
+    asset_manager(const asset_manager&) = delete;
+    asset_manager(asset_manager&&) = delete;
+private:
+    explicit asset_manager(const string_view& asset_root);
 
-    EXPECT_EQ(voe, SAMPLE_VALUE);
-    EXPECT_TRUE(voe);
-    EXPECT_NE(voe, -SAMPLE_VALUE);
-    EXPECT_LT(voe, SAMPLE_VALUE+1);
-    EXPECT_GT(voe, SAMPLE_VALUE-1);
-    EXPECT_GE(voe, SAMPLE_VALUE);
-    EXPECT_LE(voe, SAMPLE_VALUE);
-}
+    static asset_manager* m_manager;
+};
+
+} // namespace root

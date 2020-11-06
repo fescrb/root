@@ -43,10 +43,12 @@ TEST(string_view_tests, iterator_init) {
     EXPECT_EQ(memcmp(_string_lit_, _str_view_.data(), _str_view_.size()), 0);
 
     constexpr root::string_view lit = "Test string please ignore.";
-    constexpr root::string_view::iterator p_location = root::find(lit.begin(), lit.end(), 'p');
+    constexpr auto p_location = root::find(lit.begin(), lit.end(), 'p');
     constexpr root::string_view smaller = root::string_view(lit.begin(), p_location);
+    constexpr root::string_view after = root::string_view(p_location, lit.end());
 
     STRING_VIEW_TEST(smaller, "Test string ");
+    STRING_VIEW_TEST(after, "please ignore.");
 
     constexpr root::string_view lit2 = "This is a {formatting} test";
     auto placeholder_start = find(lit2.begin(), lit2.end(), '{');
@@ -60,4 +62,33 @@ TEST(string_view_tests, iterator_init) {
     STRING_VIEW_TEST(pre_placeholder, "This is a ");
     STRING_VIEW_TEST(format, "formatting");
     STRING_VIEW_TEST(post_placeholder, " test");
+}
+
+TEST(string_view_tests, reverse_iterator_init) {
+
+#define STRING_VIEW_TEST(_str_view_, _string_lit_) \
+    EXPECT_EQ(strlen(_string_lit_), _str_view_.size()); \
+    EXPECT_EQ(memcmp(_string_lit_, _str_view_.data(), _str_view_.size()), 0);
+
+    constexpr root::string_view lit = "Test string please ignore.";
+    constexpr auto p_location = root::find(lit.rbegin(), lit.rend(), 'p');
+    constexpr root::string_view smaller = root::string_view(lit.rbegin(), p_location);
+    constexpr root::string_view after = root::string_view(p_location, lit.rend());
+
+    STRING_VIEW_TEST(smaller, "lease ignore.");
+    STRING_VIEW_TEST(after, "Test string p");
+}
+
+TEST(string_view_tests, equality) {
+    constexpr root::string_view str = "Test string please ignore.";
+    constexpr root::string_view same = "Test string please ignore.";
+    constexpr root::string_view extended = "Test string please ignore. Again.";
+    constexpr root::string_view diff = "Test str1ng please ignore.";
+    
+    EXPECT_EQ(str, same);
+    EXPECT_EQ(same, str);
+    EXPECT_NE(str, extended);
+    EXPECT_NE(extended, str);
+    EXPECT_NE(str, diff);
+    EXPECT_NE(diff, str);
 }

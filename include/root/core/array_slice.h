@@ -73,6 +73,9 @@ public:
         return m_last - m_first;
     }
 
+    /*
+     * BIG TODO: remove these
+     */ 
     constexpr auto data() const noexcept -> const T* {
         return m_data + m_first;
     }
@@ -159,13 +162,15 @@ public:
     }
 
     class iterator;
+    class reverse_iterator;
 
     using mutable_slice = array_slice<std::remove_const_t<T>>;
     using mutable_iterator = typename mutable_slice::iterator;
     using const_slice = array_slice<std::add_const_t<T>>;
     using const_iterator = typename const_slice::iterator;
 
-    class iterator final {
+    // Replace with outside classes
+    class iterator {
     public:
         constexpr iterator() noexcept = default;
         constexpr iterator(const iterator& other) noexcept = default;
@@ -207,6 +212,14 @@ public:
             return m_index - other.m_index;
         }
 
+        constexpr auto operator=(const iterator& other) noexcept -> iterator& {
+            if(this != &other) {
+                m_data = other.m_data;
+                m_index = other.m_index;
+            }
+            return *this;
+        }
+
         constexpr auto operator++() noexcept -> iterator& {
             m_index++;
             return *this;
@@ -242,7 +255,7 @@ public:
         friend class array_slice<std::remove_const_t<T>>::iterator;
         friend class array_slice<std::add_const_t<T>>::iterator;
 
-    private:
+    protected:
         constexpr iterator(T* data, i64 index) 
         :   m_data(data), m_index(index) {}
 
@@ -250,8 +263,111 @@ public:
         i64 m_index;
     }; 
 
+
+    using mutable_reverse_iterator = typename mutable_slice::reverse_iterator;
+    using const_reverse_iterator = typename const_slice::reverse_iterator;
+
+
+    class reverse_iterator {
+    public:
+        constexpr reverse_iterator() noexcept = default;
+        constexpr reverse_iterator(const reverse_iterator& other) noexcept = default;
+        constexpr reverse_iterator(reverse_iterator&& other) noexcept = default;
+
+
+        constexpr auto operator<=(const mutable_reverse_iterator& other) const noexcept -> bool {
+            root_assert(m_data == other.m_data);
+            return m_index >= other.m_index;
+        }
+        
+        constexpr auto operator<=(const const_reverse_iterator& other) const noexcept -> bool {
+            root_assert(m_data == other.m_data);
+            return m_index >= other.m_index;
+        }
+
+        constexpr auto operator==(const mutable_reverse_iterator& other) const noexcept -> bool {
+            root_assert(m_data == other.m_data);
+            return m_index == other.m_index;
+        }
+
+        constexpr auto operator==(const const_reverse_iterator& other) const noexcept -> bool {
+            root_assert(m_data == other.m_data);
+            return m_index == other.m_index;
+        }
+
+        constexpr auto operator!=(const mutable_reverse_iterator& other) const noexcept -> bool {
+            return !operator==(other);
+        }
+
+        constexpr auto operator!=(const const_reverse_iterator& other) const noexcept -> bool {
+            return !operator==(other);
+        }
+
+        constexpr auto operator-(const mutable_reverse_iterator& other) const noexcept -> i64 {
+            return other.m_index - m_index;
+        }
+
+        constexpr auto operator-(const const_reverse_iterator& other) const noexcept -> i64 {
+            return other.m_index - m_index;
+        }
+
+        constexpr auto operator=(const reverse_iterator& other) noexcept -> reverse_iterator& {
+            if(this != &other) {
+                m_data = other.m_data;
+                m_index = other.m_index;
+            }
+            return *this;
+        }
+
+        constexpr auto operator++() noexcept -> reverse_iterator& {
+            m_index--;
+            return *this;
+        }
+
+        constexpr auto operator++(int) noexcept -> reverse_iterator {
+            reverse_iterator copy = *this;
+            m_index--;
+            return copy;
+        }
+
+        constexpr auto operator--() noexcept -> reverse_iterator& {
+            m_index++;
+            return *this;
+        }
+
+        constexpr auto operator--(int) noexcept -> reverse_iterator {
+            reverse_iterator copy = *this;
+            m_index++;
+            return copy;
+        }
+
+        constexpr auto operator*() noexcept -> T& {
+            return m_data[m_index];
+        } 
+
+        constexpr operator const_reverse_iterator() {
+            return const_reverse_iterator(static_cast<std::add_const_t<T>>(m_data), m_index);
+        }
+
+        friend class array_slice<std::remove_const_t<T>>;
+        friend class array_slice<std::add_const_t<T>>;
+        friend class array_slice<std::remove_const_t<T>>::reverse_iterator;
+        friend class array_slice<std::add_const_t<T>>::reverse_iterator;
+    protected:
+        constexpr reverse_iterator(T* data, i64 index) 
+        :   m_data(data), m_index(index) {}
+        
+        T* m_data;
+        i64 m_index;
+    };
+
     constexpr array_slice(const iterator& start, const iterator& end)
     :   m_data(start.m_data), m_first(start.m_index), m_last(end.m_index) {
+        root_assert(start.m_data == end.m_data);
+    }
+
+    constexpr array_slice(const reverse_iterator& start, const reverse_iterator& end)
+    :   m_data(start.m_data), m_first(end.m_index+1), m_last(start.m_index+1) {
         root_assert(start.m_data == end.m_data);
     }
 
@@ -269,6 +385,22 @@ public:
 
     constexpr auto end() noexcept -> iterator {
         return iterator(m_data, m_last);
+    }
+
+    constexpr auto rbegin() const noexcept -> const_reverse_iterator {
+        return const_reverse_iterator(m_data, m_last-1);
+    }
+
+    constexpr auto rbegin() noexcept -> reverse_iterator {
+        return reverse_iterator(m_data, m_last-1);
+    }
+
+    constexpr auto rend() const noexcept -> const_reverse_iterator {
+        return const_reverse_iterator(m_data, m_first-1);
+    }
+
+    constexpr auto rend() noexcept -> reverse_iterator {
+        return reverse_iterator(m_data, m_first-1);
     }
 
     constexpr auto offset(const iterator& it) const -> const_slice {

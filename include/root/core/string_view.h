@@ -45,6 +45,9 @@ public:
 
     constexpr string_view(const iterator& begin, const iterator& end) noexcept
     :   array_slice<const i8>(begin, end) {}
+    
+    constexpr string_view(const reverse_iterator& begin, const reverse_iterator& end) noexcept
+    :   array_slice<const i8>(begin, end) {}
 
     auto operator=(const string_view& other) -> string_view& {
         array_slice<const i8>::operator=(other);
@@ -54,6 +57,18 @@ public:
     auto operator=(string_view&& other) -> string_view& {
         array_slice<const i8>::operator=(std::move(other));
         return *this;
+    }
+
+    constexpr auto operator==(const string_view& other) const -> bool {
+        if(size() != other.size()) return false;
+        for(int i = 0; i < size(); i++) {
+            if(m_data[i] != other[i]) return false;
+        }
+        return true;
+    }
+
+    constexpr auto operator!=(const string_view& other) const -> bool {
+        return !operator==(other);
     }
 
     template<typename I>

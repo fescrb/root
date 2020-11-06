@@ -17,29 +17,8 @@
  * along with The Root Engine.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <root/core/error.h>
+#include <root/asset/asset_manager.h>
 
 #include <gtest/gtest.h>
-#include <gmock/gmock.h>
 
-TEST(error_tests, value_or_error_error) {
-    constexpr root::error SAMPLE_ERROR = root::error::UNKNOWN_ERROR;
-    root::value_or_error<int> voe(SAMPLE_ERROR);
-
-    EXPECT_EQ(voe, SAMPLE_ERROR);
-    EXPECT_FALSE(voe);
-    // Comparison operators are underfined for errors
-}
-
-TEST(error_tests, value_or_error_valie) {
-    constexpr int SAMPLE_VALUE = 42;
-    root::value_or_error<int> voe(SAMPLE_VALUE);
-
-    EXPECT_EQ(voe, SAMPLE_VALUE);
-    EXPECT_TRUE(voe);
-    EXPECT_NE(voe, -SAMPLE_VALUE);
-    EXPECT_LT(voe, SAMPLE_VALUE+1);
-    EXPECT_GT(voe, SAMPLE_VALUE-1);
-    EXPECT_GE(voe, SAMPLE_VALUE);
-    EXPECT_LE(voe, SAMPLE_VALUE);
-}
+// TODO
