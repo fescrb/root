@@ -25,8 +25,12 @@
 namespace root {
 
 #ifdef ROOT_ASSERT
-auto _assert_fail(const char* expr_str, const char* file, const int line_num) -> void {
-    log::e("", "assert({}) failed at {}:{}", expr_str, file, line_num);
+auto _assert_fail(const char* expr_str, const char* message, const char* file, const int line_num) -> void {
+    if(!message) {
+        log::e("", "assert({}) failed at {}:{}", expr_str, file, line_num);
+    } else {
+        log::e("", "assert({}, {}) failed at {}:{}", expr_str, message, file, line_num);
+    }
     constexpr i32 MAX_BT = 64;
     void* bt[MAX_BT];
     i32 size = backtrace(bt, MAX_BT);

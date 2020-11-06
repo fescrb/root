@@ -23,21 +23,17 @@
 
 #define root_assert(_expr_) ((void) 0)
 
-#define root_static_assert(_expr_) ((void) 0)
-
 #else 
 
-#define root_assert(_expr_) root::assert(_expr_, #_expr_, __FILE__, __LINE__)
-
-#define root_static_assert(_expr_) static_assert(_expr_)
+#define root_assert(_expr_) root::assert(_expr_, #_expr_, nullptr, __FILE__, __LINE__)
 
 namespace root {
 
-auto _assert_fail(const char* expr_str, const char* file, const int line_num) -> void;
+auto _assert_fail(const char* expr_str, const char* message, const char* file, const int line_num) -> void;
 
-auto constexpr assert(const bool expr_result, const char* expr_str, const char* file, const int line_num) -> void {
+auto constexpr assert(const bool expr_result, const char* expr_str, const char* message, const char* file, const int line_num) -> void {
     if(!expr_result) {
-        _assert_fail(expr_str, file, line_num);
+        _assert_fail(expr_str, message, file, line_num);
     }
 }
 

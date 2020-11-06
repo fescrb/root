@@ -17,7 +17,10 @@
  * along with The Root Engine.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <root/core/assert.h>
 #include <root/core/primitives.h>
+
+#include <type_traits>
 
 namespace root {
 
@@ -25,69 +28,92 @@ enum class error : u64 {
     NO_ERROR = 0,
     UNKNOWN_ERROR = 1,
     DEAD_OBJECT = 2,
-    INVALID_OPERATION = 3
+    INVALID_OPERATION = 3,
+    NOT_FOUND = 4
 };
 
-// TODO: disable value_or_error<error>
-// Maybe allow/disallow ref types?
-// Disallow bools?
 template<typename T>
 struct value_or_error final {
+    static_assert(!std::is_reference<T>::value, "This class must hold a copy of the value");
+    static_assert(!std::is_same<T,bool>::value, "We won't store booleans");
+    static_assert(!std::is_same<T,error>::value, "We won't store errors");
+
     inline value_or_error(const T v) 
-    :   value(v), error(error::NO_ERROR) {}
+    :   m_value(v), m_error(error::NO_ERROR) {}
     
     inline value_or_error(const error e) 
-    :   value(), error(e) {}
+    :   m_value(), m_error(e) {}
 
     template<typename O>
     inline auto operator==(const O v) const {
-        return valid() && value == v;
+        root_assert(has_value());
+        return m_value == v;
     }
 
     template<typename O>
     inline auto operator!=(const O v) const {
-        return valid() && value != v;
+        root_assert(has_value());
+        return m_value != v;
     }
 
     template<typename O>
     inline auto operator<(const O v) const {
-        return valid() && value < v;
+        root_assert(has_value());
+        return m_value < v;
     }
 
     template<typename O>
     inline auto operator<=(const O v) const {
-        return valid() && value <= v;
+        root_assert(has_value());
+        return m_value <= v;
     }
 
     template<typename O>
     inline auto operator>(const O v) const {
-        return valid() && value > v;
+        root_assert(has_value());
+        return m_value > v;
     }
 
     template<typename O>
     inline auto operator>=(const O v) const {
-        return valid() && value >= v;
+        root_assert(has_value());
+        return m_value >= v;
     }
 
     template<>
     inline auto operator==<error>(const error e) const {
-        return error == e;
+        return m_error == e;
     }
 
-    inline auto valid() const -> bool {
-        return error == error::NO_ERROR;
+    inline auto has_value() const -> bool {
+        return m_error == error::NO_ERROR;
+    }
+
+    inline auto value_or(const T v) const -> T {
+        return has_value() ? m_value : v;
+    }
+
+    inline auto value() const -> T {
+        root_assert(has_value());
+        return m_value;
+    }
+
+    inline auto error() const -> error {
+        root_assert(!has_value());
+        return m_error;
     }
 
     inline operator T() const {
-        return value;
+        return value();
     }
 
     inline explicit operator bool() const {
-        return valid();
+        return has_value();
     }
 
-    T value;
-    error error;
+private:
+    T m_value;
+    enum error m_error;
 };
 
 } // namespace root
