@@ -30,12 +30,25 @@ namespace root {
 
 namespace path {
 
+constexpr i8 EXTENSION_DELIMITER = '.';
+
 #if defined(ROOT_LINUX)
 constexpr i8 FOLDER_DELIMITER = '/';
 #else 
 #pragma message( "FOLDER_DELIMITER not defined" )
 #endif
 
+constexpr auto basename(const string_view& path) -> string_view {
+    auto location = find(path.rbegin(), path.rend(), FOLDER_DELIMITER);
+    if(location == path.rbegin()) {
+        if(distance(location, path.rend()) > 1) {
+            location = find(++path.rbegin(), path.rend(), FOLDER_DELIMITER);
+            return string_view(++path.rbegin(), location);
+        }
+        return path; // Path is "/"
+    }
+    return string_view(path.rbegin(), location);
+}
 
 constexpr auto dirname(const string_view& path) -> string_view {
     auto location = find(path.rbegin(), path.rend(), FOLDER_DELIMITER);
@@ -43,6 +56,15 @@ constexpr auto dirname(const string_view& path) -> string_view {
     if(location == path.rbegin()&& distance(location, path.rend()) > 1) location = find(++path.rbegin(), path.rend(), FOLDER_DELIMITER);
     if(*location == FOLDER_DELIMITER && distance(location, path.rend()) > 1) location++;
     return string_view(location, path.rend());
+}
+
+constexpr auto ext(const string_view& path) -> string_view {
+    constexpr string_view NO_EXT = "";
+    if(*path.rbegin() == FOLDER_DELIMITER) return NO_EXT;
+    const string_view filename = basename(path);
+    auto location = find(filename.rbegin(), filename.rend(), EXTENSION_DELIMITER);
+    if(location == filename.rend()) return NO_EXT;
+    return string_view(path.rbegin(), location);
 }
 
 inline auto binary_location() -> const string_view& {

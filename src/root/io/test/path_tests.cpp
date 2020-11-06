@@ -28,6 +28,22 @@
 
 #include <iostream>
 
+TEST(path_tests, basename) {
+    constexpr root::string_view ROOT = "/";
+    constexpr root::string_view ONLY_FILE = "file";
+    constexpr root::string_view ROOT_FILE_LOCATION = "/file";
+    constexpr root::string_view FOLDER_LOCATION = "/home/";
+    constexpr root::string_view FILE_LOCATION = "/home/file";
+
+    constexpr root::string_view BASENAME_FOLDER_LOCATION = "home";
+
+    EXPECT_EQ(ROOT, root::path::basename(ROOT));
+    EXPECT_EQ(BASENAME_FOLDER_LOCATION, root::path::basename(FOLDER_LOCATION));
+    EXPECT_EQ(ONLY_FILE, root::path::basename(FILE_LOCATION));
+    EXPECT_EQ(ONLY_FILE, root::path::basename(ONLY_FILE));
+    EXPECT_EQ(ONLY_FILE, root::path::basename(ROOT_FILE_LOCATION));
+}
+
 TEST(path_tests, dirname) {
     constexpr root::string_view ROOT = "/";
     constexpr root::string_view REDUCE_TO_ROOT = "/home";
@@ -41,6 +57,26 @@ TEST(path_tests, dirname) {
     EXPECT_EQ(ROOT, root::path::dirname(REDUCE_TO_ROOT));
     EXPECT_EQ(DIRNAME_FOLDER_LOCATION, root::path::dirname(FOLDER_LOCATION));
     EXPECT_EQ(DIRNAME_FILE_LOCATION, root::path::dirname(FILE_LOCATION));
+}
+
+TEST(path_tests, ext) {
+    constexpr root::string_view ROOT = "/";
+    constexpr root::string_view FOLDER_LOCATION = "/home/user/";
+    constexpr root::string_view FOLDER_AS_FOLDER_LOCATION = "/home/user/file.vert/";
+    constexpr root::string_view FILE_LOCATION = "/home/user/file.vert";
+    constexpr root::string_view JUST_FILE = "file.frag";
+    constexpr root::string_view FILE_NO_EXT_LOCATION = "/home/user/file";
+
+    constexpr root::string_view EXT_EMPTY = "";
+    constexpr root::string_view VERT_EXT = "vert";
+    constexpr root::string_view FRAG_EXT = "frag";
+
+    EXPECT_EQ(EXT_EMPTY, root::path::ext(ROOT));
+    EXPECT_EQ(EXT_EMPTY, root::path::ext(FOLDER_LOCATION));
+    EXPECT_EQ(EXT_EMPTY, root::path::ext(FOLDER_AS_FOLDER_LOCATION));
+    EXPECT_EQ(VERT_EXT, root::path::ext(FILE_LOCATION));
+    EXPECT_EQ(FRAG_EXT, root::path::ext(JUST_FILE));
+    EXPECT_EQ(EXT_EMPTY, root::path::ext(FILE_NO_EXT_LOCATION));
 }
 
 TEST(path_tests, binary_location) {
