@@ -90,8 +90,8 @@ template<typename T, typename... Args>
 constexpr auto strlen(const format_string& fmt, const T& object, Args... args) -> u64 {
     auto placeholder_end = find(fmt.begin(), fmt.end(), '}');
     root_assert(placeholder_end != fmt.end());
-    u64 t_size = strlen<T>(string_view(fmt.begin(), ++placeholder_end), object);
-    return t_size + strlen<Args...>(string_view(placeholder_end, fmt.end()), args...);
+    u64 t_size = strlen<T>(format_string(fmt.begin(), ++placeholder_end), object);
+    return t_size + strlen<Args...>(format_string(placeholder_end, fmt.end()), args...);
 }
 
 template<typename T>
@@ -122,8 +122,8 @@ template<typename T, typename... Args>
 inline auto format_to(buffer_writer& dst, const format_string& fmt, const T& object, Args... args) -> void {
     auto placeholder_end = find(fmt.begin(), fmt.end(), '}');
     root_assert(placeholder_end != fmt.end());
-    format_to<T>(dst, string_view(fmt.begin(), ++placeholder_end), object);
-    format_to<Args...>(dst, string_view(placeholder_end, fmt.end()), args...);
+    format_to<T>(dst, format_string(fmt.begin(), ++placeholder_end), object);
+    format_to<Args...>(dst, format_string(placeholder_end, fmt.end()), args...);
 }
 
 template<typename T>
@@ -131,10 +131,10 @@ inline auto format_to(buffer_writer& dst, const format_string& fmt, const T& obj
     auto placeholder_start = find(fmt.begin(), fmt.end(), '{');
     auto placeholder_end = find(placeholder_start, fmt.end(), '}');
     root_assert(placeholder_end != fmt.end());
-    format_to(dst, string_view(fmt.begin(), placeholder_start));
+    format_to(dst, format_string(fmt.begin(), placeholder_start));
     string_view format_args(++placeholder_start, placeholder_end);
     format_to(dst, object, format_args);
-    format_to(dst, string_view(++placeholder_end, fmt.end()));
+    format_to(dst, format_string(++placeholder_end, fmt.end()));
 }
 
 template<>

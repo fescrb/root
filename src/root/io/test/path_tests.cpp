@@ -21,12 +21,16 @@
 
 #include <gtest/gtest.h>
 
+#include <root/memory/test/mock_allocator.h>
+
 #if !defined(ROOT_TESTS_BINARY_PATH)
 #pragma message( "ROOT_TESTS_BINARY_PATH not defined. Cannot test binary_location()." )
 #define ROOT_TESTS_BINARY_PATH ""
 #endif
 
 #include <iostream>
+
+using ::testing::Return;
 
 TEST(path_tests, basename) {
     constexpr root::string_view ROOT = "/";
@@ -85,4 +89,21 @@ TEST(path_tests, binary_location) {
     if(BINARY_LOCATION.size()) {
         EXPECT_EQ(BINARY_LOCATION, root::path::binary_location());
     } 
+}
+
+TEST(path_tests, join) {
+    constexpr const char* FOLDER_LOCATION = "/home/user";
+    constexpr const char* FILE = "file.frag";
+    constexpr const char* FULL_PATH = "/home/user/file.frag";
+
+    root::mock_allocator mock_allocator;
+    char memory[PATH_MAX];
+
+    EXPECT_CALL(mock_allocator, malloc(strlen(FOLDER_LOCATION) + sizeof(root::path::FOLDER_DELIMITER) + strlen(FILE) +1, alignof(char))).WillOnce(Return(memory));
+
+    root::string full_path = root::path::join(FOLDER_LOCATION, FILE, &mock_allocator);
+    printf("%s\n", full_path.data());
+    EXPECT_EQ(strcmp(full_path.data(), FULL_PATH), 0);
+    
+    EXPECT_CALL(mock_allocator, free(memory, strlen(FOLDER_LOCATION) + sizeof(root::path::FOLDER_DELIMITER) + strlen(FILE) +1, alignof(char)));
 }

@@ -19,7 +19,9 @@
 
 #pragma once
 
+#include <root/core/string.h>
 #include <root/core/string_view.h>
+#include <root/io/formatter.h>
 
 #if defined(ROOT_LINUX)
 #include <unistd.h> 
@@ -78,6 +80,11 @@ inline auto binary_location() -> const string_view& {
     } 
 #endif
     return location;
+}
+
+inline auto join(const string_view& lhs, const string_view& rhs, allocator* alloc = allocator::default_allocator()) -> string {
+    formatter formatter(alloc);
+    return formatter.format("{}{}{}", lhs, FOLDER_DELIMITER, rhs);
 }
 
 } // namespace path

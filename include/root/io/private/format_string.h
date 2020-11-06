@@ -29,10 +29,10 @@ public:
     constexpr format_string(const char* str_lit) noexcept 
     :   string_view(str_lit) { }
 
-    constexpr format_string(const iterator& begin, const iterator& end) noexcept
+    constexpr explicit format_string(const iterator& begin, const iterator& end) noexcept
     :   string_view(begin, end) {}
 
-    constexpr format_string(const string_view& str_lit) noexcept
+    constexpr explicit format_string(const string_view& str_lit) noexcept
     :   string_view(str_lit) {}
 
     format_string(const format_string&) = delete;

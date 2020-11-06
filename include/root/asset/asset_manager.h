@@ -32,9 +32,11 @@ public:
     asset_manager(const asset_manager&) = delete;
     asset_manager(asset_manager&&) = delete;
 private:
-    explicit asset_manager(const string_view& asset_root);
+    explicit asset_manager(const string_view& asset_root, allocator* alloc = allocator::default_allocator());
 
     static asset_manager* m_manager;
+
+    allocator* m_alloc;
 };
 
 } // namespace root
