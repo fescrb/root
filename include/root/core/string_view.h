@@ -43,6 +43,12 @@ public:
     constexpr string_view(const string_view& other) noexcept
     :   array_slice<const i8>(other) {}
 
+    constexpr string_view(array_slice<const i8>&& other) noexcept
+    :   array_slice<const i8>(std::move(other)) {}
+
+    constexpr string_view(const array_slice<const i8>& other) noexcept
+    :   array_slice<const i8>(other) {}
+
     constexpr string_view(const iterator& begin, const iterator& end) noexcept
     :   array_slice<const i8>(begin, end) {}
     

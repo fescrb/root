@@ -19,3 +19,30 @@
 
 #include <root/asset/asset_manager.h>
 
+#include <root/io/file_stream.h>
+
+namespace root {
+
+auto asset_manager::raw_load(const string_view& id) -> buffer {
+    if(!m_manager) {
+        m_manager = new asset_manager();
+    }
+
+    return m_manager->load_buffer(id);
+}
+
+auto asset_manager::load_buffer(const string_view& id) -> buffer {
+    string full_path = path::join(m_asset_root, id, m_alloc);
+    FILE* file = fopen(full_path.data(), "r");
+    root_assert(file);
+    file_stream stream(file);
+    u64 size = stream.tell();
+    buffer buff(size, alignof(u8), m_alloc);
+    stream.read(buff, size);
+    return buff;
+}
+
+asset_manager::asset_manager(const string_view& asset_root, allocator* alloc) 
+:   m_asset_root(asset_root.size(), alloc), m_alloc(alloc) {}
+
+} // namespace root

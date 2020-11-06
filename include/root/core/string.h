@@ -67,6 +67,15 @@ public:
     inline auto operator+(const I& extra_offset) const -> string_slice {
         return offset(extra_offset);
     }
+
+
+    inline operator string_view() const {
+        return string_view(m_data, 0, m_length);
+    }
+
+    inline operator string_slice() {
+        return string_slice(m_data, 0, m_length);
+    }
 };
 
 } // namespace root

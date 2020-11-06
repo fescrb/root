@@ -111,6 +111,14 @@ public:
         return data();
     }
 
+    inline operator array_slice<const T>() const {
+        return array_slice<const T>(m_data, 0, m_length);
+    }
+
+    inline operator array_slice<T>() {
+        return array_slice<T>(m_data, 0, m_length);
+    }
+
     ~array() {
         root_assert((m_allocator && m_data && m_length) ^ (!m_allocator && !m_data && !m_length));
         if(m_allocator && m_data && m_length)

@@ -20,23 +20,31 @@
 #pragma once
 
 #include <root/core/buffer.h>
+#include <root/core/string.h>
 #include <root/core/string_view.h>
+#include <root/io/path.h>
 
 namespace root {
 
 class asset_manager {
 public:
-    static auto load(const string_view& id) -> buffer&;
+    // TODO: May be temporary
+    static auto raw_load(const string_view& id) -> buffer;
 
-    asset_manager() = delete;
+    // Might need to uncomment this if all default parameters are removed
+    //asset_manager() = delete;
     asset_manager(const asset_manager&) = delete;
     asset_manager(asset_manager&&) = delete;
 private:
-    explicit asset_manager(const string_view& asset_root, allocator* alloc = allocator::default_allocator());
+    explicit asset_manager(const string_view& asset_root = path::binary_location(), 
+                           allocator* alloc = allocator::default_allocator());
+
+    auto load_buffer(const string_view& id) -> buffer;
 
     static asset_manager* m_manager;
 
     allocator* m_alloc;
+    string m_asset_root;
 };
 
 } // namespace root
