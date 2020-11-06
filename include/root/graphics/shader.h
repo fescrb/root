@@ -19,24 +19,21 @@
 
 #pragma once
 
-#include <root/core/string_view.h> 
-#include <root/core/private/variadric_type_info.h>
+#include <root/core/buffer.h>
+#include <root/graphics/device.h>
+#include <root/asset/asset_manager.h>
+
+#include <vulkan/vulkan.h>
 
 namespace root {
 
-class format_string : public string_view {
+class shader {
 public:
-    constexpr format_string(const char* str_lit) noexcept 
-    :   string_view(str_lit) { }
+    explicit shader(const device& d, const buffer& b);
+    explicit shader(const device& d, const string_view& asset_id) 
+    :   shader(d, asset_manager::raw_load(asset_id)) {}
 
-    constexpr explicit format_string(const iterator& begin, const iterator& end) noexcept
-    :   string_view(begin, end) {}
-
-    constexpr explicit format_string(const string_view& str_lit) noexcept
-    :   string_view(str_lit) {}
-
-    format_string(const format_string&) = delete;
-    format_string(format_string&&) = delete;
+    VkShaderModule handle;
 };
 
 } // namespace root

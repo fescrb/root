@@ -20,8 +20,11 @@
 #include <root/asset/asset_manager.h>
 
 #include <root/io/file_stream.h>
+#include <root/io/log.h>
 
 namespace root {
+
+asset_manager* asset_manager::m_manager = nullptr;
 
 auto asset_manager::raw_load(const string_view& id) -> buffer {
     if(!m_manager) {
@@ -34,15 +37,21 @@ auto asset_manager::raw_load(const string_view& id) -> buffer {
 auto asset_manager::load_buffer(const string_view& id) -> buffer {
     string full_path = path::join(m_asset_root, id, m_alloc);
     FILE* file = fopen(full_path.data(), "r");
+    log::d("asset_manager", "Opening {} {}", static_cast<string_view>(full_path), file);
     root_assert(file);
     file_stream stream(file);
+    stream.seek(0, relative_to::end);
     u64 size = stream.tell();
+    stream.seek(0, relative_to::start);
+    log::d("asset_manager", "File is {} bytes", size);
     buffer buff(size, alignof(u8), m_alloc);
     stream.read(buff, size);
     return buff;
 }
 
 asset_manager::asset_manager(const string_view& asset_root, allocator* alloc) 
-:   m_asset_root(asset_root.size(), alloc), m_alloc(alloc) {}
+:   m_asset_root(asset_root.size(), alloc), m_alloc(alloc) {
+    memcpy(m_asset_root.data(), asset_root.data(), asset_root.size());
+}
 
 } // namespace root

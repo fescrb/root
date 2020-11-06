@@ -17,26 +17,25 @@
  * along with The Root Engine.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#pragma once
+#include <root/graphics/shader.h>
 
-#include <root/core/string_view.h> 
-#include <root/core/private/variadric_type_info.h>
+#include <root/io/log.h>
 
 namespace root {
 
-class format_string : public string_view {
-public:
-    constexpr format_string(const char* str_lit) noexcept 
-    :   string_view(str_lit) { }
+shader::shader(const device& d,const buffer& buf) {
+    VkShaderModuleCreateInfo create_info;
+    create_info.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+    create_info.pNext = nullptr;
+    create_info.flags = 0;
+    create_info.codeSize = buf.size();
+    create_info.pCode = reinterpret_cast<uint32_t*>(buf.data());
 
-    constexpr explicit format_string(const iterator& begin, const iterator& end) noexcept
-    :   string_view(begin, end) {}
+    VkResult res = vkCreateShaderModule(d.handle, &create_info, nullptr, &handle);
 
-    constexpr explicit format_string(const string_view& str_lit) noexcept
-    :   string_view(str_lit) {}
-
-    format_string(const format_string&) = delete;
-    format_string(format_string&&) = delete;
-};
+    if(res != VK_SUCCESS) {
+        log::e("shader", "vkCreateShaderModule failed with {}", res);
+    }
+}
 
 } // namespace root
