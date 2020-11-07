@@ -340,6 +340,27 @@ auto format_to<VkLayerProperties>(buffer_writer& dst, const VkLayerProperties& o
     format_to(dst, " }");
 }
 
+template<>
+auto strlen<VkExtensionProperties>(const VkExtensionProperties& object, const string_view&) -> u64 {
+    constexpr u64 EXTENSION_NAME_STR_LEN = strlen("{ extensionName: ");
+    u64 extension_name_len = strlen(object.extensionName);
+    constexpr u64 SPEC_VERSION_STR_LEN = strlen(" specVersion: ");
+    u64 spec_version_len = strlen(object.specVersion);
+    constexpr u64 CLOSING_STR_LEN = strlen(" }");
+    return EXTENSION_NAME_STR_LEN + extension_name_len +
+           SPEC_VERSION_STR_LEN + spec_version_len +
+           CLOSING_STR_LEN;
+}
+
+template<>
+auto format_to<VkExtensionProperties>(buffer_writer& dst, const VkExtensionProperties& object, const string_view&) -> void {
+    format_to(dst, "{ extensionName: ");
+    format_to(dst, object.extensionName);
+    format_to(dst, " specVersion: ");
+    format_to(dst, object.specVersion);
+    format_to(dst, " }");
+}
+
 // TODO: VkPhysicalDeviceLimits
 // TODO: VkPhysicalDeviceSparseProperties
 

@@ -19,7 +19,7 @@
 
 #pragma once
 
-#if defined(ROOT_LINUX)
+#if !defined(ROOT_ANDROID)
 #include <GLFW/glfw3.h>
 #endif
 
@@ -31,7 +31,7 @@ class window {
 public:
     window(u32 width, u32 height, const char* title);
 
-#if defined(ROOT_LINUX)
+#if !defined(ROOT_ANDROID)
     GLFWwindow* handle;
 #endif
 };

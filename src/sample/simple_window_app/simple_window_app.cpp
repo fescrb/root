@@ -44,13 +44,18 @@ int main() {
     for(int i = 0; i < devices.size(); i++) {
         root::log::d("", "Device {}: {}", i, *(devices[i].properties()));
 
-        auto& familyProperties = devices[i].queue_family_properties();
-        for(int j = 0; j < familyProperties.size(); j++) {
-            root::log::d("", "Queue {}:{}", j, familyProperties[j]);
+        auto& extension_properties = devices[i].extensions();
+
+        /*for(int j = 0; j < extension_properties.size(); j++) {
+            root::log::d("", "Extension {}:{}", j, extension_properties[j]);
+        }*/
+
+        auto& family_properties = devices[i].queue_family_properties();
+        for(int j = 0; j < family_properties.size(); j++) {
+            root::log::d("", "Queue {}:{}", j, family_properties[j]);
         }
 
         if(devices[i].has_graphics_queue() && devices[i].has_present_queue(surface)) {
-
             device = new root::device(devices[i], surface);
         }
     }
