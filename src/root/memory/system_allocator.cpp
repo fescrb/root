@@ -19,6 +19,10 @@
 
 #include <cstdlib>
 
+#if defined(ROOT_WIN)
+#include <malloc.h>
+#endif
+
 auto& c_free = free;
 
 #include <root/memory/system_allocator.h>
@@ -27,10 +31,18 @@ namespace root {
 system_allocator system_allocator::universal_instance = system_allocator();
 
 auto system_allocator::malloc(const u64& byte_size, const u64& alignment) -> void* {
+#if defined(ROOT_WIN)
+    return _aligned_malloc(byte_size, alignment);
+#else
     return aligned_alloc(alignment, byte_size);
+#endif
 }
 
 auto system_allocator::free(void* mem, const u64&, const u64&) -> void {
-    c_free(mem);
+#if defined(ROOT_WIN)
+    return _aligned_free(mem);
+#else
+    return c_free(mem);
+#endif
 }
 } // namespace root

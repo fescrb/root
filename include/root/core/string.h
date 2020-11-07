@@ -68,11 +68,11 @@ public:
         return offset(extra_offset);
     }
 
-    inline operator string_view() const {
+    inline operator string_view&() const {
         return string_view(m_data, 0, m_length);
     }
 
-    inline operator string_slice() {
+    inline operator string_slice&() {
         return string_slice(m_data, 0, m_length);
     }
 };

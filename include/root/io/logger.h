@@ -17,25 +17,16 @@
  * along with The Root Engine.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <root/io/log.h>
+#pragma once
 
 #if defined(ROOT_LINUX)
-#include <cstdio>
-#endif
-
-
-namespace root {
-
-#if defined(ROOT_LINUX)
-logger* log::m_logger = new logger(new writer(new file_stream(stdout)));
+#include <root/io/platform/default/logger.h>
 #endif
 
 #if defined(ROOT_WIN)
-logger* log::m_logger = new logger(new writer(new file_stream(stdout)));
+#include <root/io/platform/default/logger.h>
 #endif
 
 #if defined(ROOT_ANDROID)
-logger* log::m_logger = new logger();
+#include <root/io/platform/android/logger.h>
 #endif
-
-} // namespace root

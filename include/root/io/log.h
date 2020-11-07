@@ -19,13 +19,7 @@
 
 #pragma once
 
-#if defined(ROOT_LINUX)
-#include <root/io/platform/linux/logger.h>
-#endif
-
-#if defined(ROOT_ANDROID)
-#include <root/io/platform/android/logger.h>
-#endif
+#include <root/io/logger.h>
 
 namespace root {
 

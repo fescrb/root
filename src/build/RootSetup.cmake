@@ -1,13 +1,23 @@
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -fPIC")
-
 # Platform defines
 if(UNIX)
     add_definitions(-DROOT_LINUX)
 endif(UNIX) 
 
+if(WIN32)
+    add_definitions(/DROOT_WIN)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /std:c++17")
+else(WIN32)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -fPIC")
+endif(WIN32) 
+
 if(${CMAKE_BUILD_TYPE} MATCHES "Debug")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
-    add_definitions(-DROOT_ASSERT -DROOT_DEBUG)
+    if(WIN32)
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Z7")
+        add_definitions(-DROOT_ASSERT -DROOT_DEBUG)
+    else(WIN32)
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
+        add_definitions(-DROOT_ASSERT -DROOT_DEBUG)
+    endif(WIN32) 
 endif(${CMAKE_BUILD_TYPE} MATCHES "Debug")
 
 if(${CMAKE_BUILD_TYPE} MATCHES "Test")

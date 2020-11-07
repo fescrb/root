@@ -24,3 +24,4 @@ Makefile
 *.Makefile
 */out/*
 *.spv
+.vs/*

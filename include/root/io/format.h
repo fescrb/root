@@ -23,27 +23,14 @@
 
 namespace root {
 
-class format {
-public:
-    inline static auto set_default_formatter(formatter* fmtr) -> void {
-        m_default_formatter = fmtr;
-    }
-
-    inline static auto get_default_formatter() -> formatter* {
-        return m_default_formatter;
-    }
-private:
-    static formatter* m_default_formatter;
-}; 
-
 template<typename T>
 inline auto to_string(const T& object) -> string {
-    return format::get_default_formatter()->to_string(object);
+    return formatter::get_default_formatter()->to_string(object);
 }
 
 template<typename... Args>
 inline auto format(const format_string& fmt, Args... args) -> string {
-    return format::get_default_formatter()->format(fmt, args...);
+    return formatter::get_default_formatter()->format(fmt, args...);
 }
 
 } // namespace root
