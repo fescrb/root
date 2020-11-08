@@ -19,21 +19,10 @@
 
 #pragma once
 
-#include <vulkan/vulkan.h>
-
 namespace root {
 
-struct input_assembly {
-    input_assembly() = delete;
-    input_assembly(const VkPrimitiveTopology topology) {
-        info.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
-        info.pNext = nullptr;
-        info.flags = 0;
-        info.topology = topology;
-        info.primitiveRestartEnable = VK_FALSE;
-    }
+class viewport {
 
-    VkPipelineInputAssemblyStateCreateInfo info;
 };
 
 } // namespace root

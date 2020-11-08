@@ -19,21 +19,25 @@
 
 #pragma once
 
-#include <vulkan/vulkan.h>
+#include <root/graphics/swapchain.h>
 
 namespace root {
 
-struct input_assembly {
-    input_assembly() = delete;
-    input_assembly(const VkPrimitiveTopology topology) {
-        info.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
-        info.pNext = nullptr;
-        info.flags = 0;
-        info.topology = topology;
-        info.primitiveRestartEnable = VK_FALSE;
+struct attachment {
+    attachment(const swapchain& sw) {
+        description.flags = 0;
+        description.format = sw.format;
+        description.samples = VK_SAMPLE_COUNT_1_BIT;
+        description.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+        description.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+        description.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+        description.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+        description.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+        description.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+
     }
 
-    VkPipelineInputAssemblyStateCreateInfo info;
+    VkAttachmentDescription description;
 };
 
 } // namespace root

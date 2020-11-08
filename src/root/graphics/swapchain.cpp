@@ -155,8 +155,7 @@ auto swapchain::refresh(const surface& s, const device& d) -> void {
         }
     }
 
-    // TODO: save these images
-    
+    swapchain_images = std::move(temp_image_views);
 }
 
 } // namespace root

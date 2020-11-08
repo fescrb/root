@@ -22,41 +22,35 @@
 #include <vulkan/vulkan.h>
 
 #include <root/graphics/device.h>
-#include <root/graphics/surface.h>
+#include <root/graphics/swapchain.h>
+#include <root/io/log.h>
 
 namespace root {
 
-class swapchain {
+class pipeline_layout {
 public:
-    swapchain(const surface& s, const device& d, allocator* alloc = allocator::default_allocator());
+    pipeline_layout(const device& dev, const VkViewport& vp, const VkRect2D& sc);
 
-    auto refresh(const surface& s, const device& d) -> void;
+    // Makes a pipeline with a swapchain target
+    pipeline_layout(const device& dev, const swapchain& sw) 
+    :   pipeline_layout(dev, sw.viewport(), sw.scissor()) {}
 
-    inline auto viewport() const -> VkViewport {
-        VkViewport vp;
-        vp.x = 0.0f, vp.y = 0.0f;
-        vp.width = extent.width, vp.height = extent.height;
-        vp.minDepth = 0.0f, vp.maxDepth = 1.0f;
-        return vp;
+    const VkViewport viewport;
+    const VkRect2D scissor;
+    VkPipelineViewportStateCreateInfo viewport_state;
+    VkPipelineMultisampleStateCreateInfo multisampling_info;
+    VkPipelineColorBlendAttachmentState color_blend_attachment;
+    VkPipelineColorBlendStateCreateInfo color_blend_state;
+
+    inline auto handle() const -> VkPipelineLayout {
+        return m_handle;
     }
 
-    inline auto scissor() const -> VkRect2D {
-        VkRect2D sc;
-        sc.offset = {0, 0};
-        sc.extent = extent;
-        return sc;
-    }
-
-    VkSwapchainKHR handle;
-
-    VkSurfaceCapabilitiesKHR surface_capabilities;
-    array<VkSurfaceFormatKHR> formats;
-    array<VkPresentModeKHR> present_modes;
-    VkFormat format;
-    VkExtent2D extent;
-    array<VkImageView> swapchain_images;
+    ~pipeline_layout();
 
 private:
+    VkPipelineLayout m_handle; 
+    VkDevice m_device_handle;
     allocator* m_alloc;
 };
 

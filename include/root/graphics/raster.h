@@ -17,23 +17,33 @@
  * along with The Root Engine.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#pragma once
+#pragma once 
 
 #include <vulkan/vulkan.h>
 
 namespace root {
 
-struct input_assembly {
-    input_assembly() = delete;
-    input_assembly(const VkPrimitiveTopology topology) {
-        info.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
+struct raster {
+    raster() {
+        info.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
         info.pNext = nullptr;
         info.flags = 0;
-        info.topology = topology;
-        info.primitiveRestartEnable = VK_FALSE;
+        info.depthClampEnable = VK_FALSE;
+        info.rasterizerDiscardEnable = VK_FALSE;
+        info.polygonMode = VK_POLYGON_MODE_FILL; // TODO allow wireframe (VK_POLYGON_MODE_LINE)
+        // TODO: parameterize the following 3
+        info.lineWidth = 1.0f; 
+        info.cullMode = VK_CULL_MODE_BACK_BIT; 
+        info.frontFace = VK_FRONT_FACE_CLOCKWISE;
+        
+        // No depth bias use for now
+        info.depthBiasEnable = VK_FALSE;
+        info.depthBiasConstantFactor = 0.0f;
+        info.depthBiasClamp = 0.0f; 
+        info.depthBiasSlopeFactor = 0.0f; 
     }
 
-    VkPipelineInputAssemblyStateCreateInfo info;
+    VkPipelineRasterizationStateCreateInfo info;
 };
 
 } // namespace root

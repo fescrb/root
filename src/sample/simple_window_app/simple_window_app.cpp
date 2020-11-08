@@ -29,6 +29,12 @@
 #include <root/graphics/device.h>
 #include <root/graphics/swapchain.h>
 #include <root/graphics/shader_module.h>
+#include <root/graphics/vertex_input.h>
+#include <root/graphics/input_assembly.h>
+#include <root/graphics/pipeline_layout.h>
+#include <root/graphics/raster.h>
+#include <root/graphics/renderpass.h>
+#include <root/graphics/pipeline.h>
 
 int main() {
     root::instance::init();
@@ -69,6 +75,23 @@ int main() {
 
     root::shader_module vert(*device, "vert.spv");
     root::shader_module frag(*device, "frag.spv");
+
+    root::shader shaders[2] = {
+        root::shader(vert, VK_SHADER_STAGE_VERTEX_BIT, "main"), 
+        root::shader(frag, VK_SHADER_STAGE_FRAGMENT_BIT, "main")
+    };
+
+    root::vertex_input vertex_input;
+    root::input_assembly input_assembly(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST);
+
+    root::pipeline_layout pipeline_layout(*device, swapchain);
+    root::raster raster;
+
+    root::attachment attachment(swapchain);
+    root::renderpass renderpass(*device, attachment);
+
+
+    root::pipeline pipeline(*device, shaders, vertex_input, input_assembly, pipeline_layout, raster, renderpass);
 
     while(true){}
 }

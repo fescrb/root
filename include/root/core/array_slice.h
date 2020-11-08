@@ -35,6 +35,13 @@ public:
     constexpr inline array_slice() noexcept
     :   m_data(nullptr) , m_first(0), m_last(0) { } 
 
+    constexpr inline array_slice(T* data, const u64& size) noexcept
+    :   m_data(data), m_first(0), m_last(size) {}
+
+    template<u64 N>
+    constexpr inline array_slice(T (&data)[N]) noexcept 
+    :   array_slice(data, N) {} 
+
     constexpr inline array_slice(T* data, const u64& first, const u64& last) noexcept
     :   m_data(data), m_first(first), m_last(last) {}
 
@@ -98,7 +105,7 @@ public:
      ** */
 
     template<typename I>
-    inline auto operator[](const I& index) const -> T {
+    inline auto operator[](const I& index) const -> std::add_const_t<T>& {
         root_assert(index < size());
         return m_data[index + m_first];
     }
