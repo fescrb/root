@@ -171,6 +171,17 @@ public:
         return str;
     }
 
+    inline static auto set_default_formatter(formatter* fmtr) -> void {
+        m_default_formatter = fmtr;
+    }
+
+    inline static auto get_default_formatter() -> formatter* {
+        return m_default_formatter;
+    }
+    
+private:
+    static formatter* m_default_formatter;
+
 protected:
     allocator*  m_allocator;
 };

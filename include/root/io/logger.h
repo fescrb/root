@@ -19,21 +19,14 @@
 
 #pragma once
 
-#if !defined(ROOT_ANDROID)
-#include <GLFW/glfw3.h>
+#if defined(ROOT_LINUX)
+#include <root/io/platform/default/logger.h>
 #endif
 
-#include <root/core/string_slice.h>
-
-namespace root {
-
-class window {
-public:
-    window(u32 width, u32 height, const char* title);
-
-#if !defined(ROOT_ANDROID)
-    GLFWwindow* handle;
+#if defined(ROOT_WIN)
+#include <root/io/platform/default/logger.h>
 #endif
-};
 
-} // namespace root
+#if defined(ROOT_ANDROID)
+#include <root/io/platform/android/logger.h>
+#endif

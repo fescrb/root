@@ -25,7 +25,7 @@
 
 namespace root {
 
-formatter* format::m_default_formatter = new formatter();
+formatter* formatter::m_default_formatter = new formatter();
 
 template<>
 auto format_to<string_view>(buffer_writer& dst, const string_view& object, const string_view& format_args) -> void {

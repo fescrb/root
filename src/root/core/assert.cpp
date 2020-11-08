@@ -20,7 +20,9 @@
 #include <root/core/assert.h>
 #include <root/io/log.h>
 
+#if defined(ROOT_LINUX)
 #include <execinfo.h>
+#endif
 
 namespace root {
 
@@ -31,6 +33,7 @@ auto _assert_fail(const char* expr_str, const char* message, const char* file, c
     } else {
         log::e("", "assert({}, {}) failed at {}:{}", expr_str, message, file, line_num);
     }
+#if defined(ROOT_LINUX)
     constexpr i32 MAX_BT = 64;
     void* bt[MAX_BT];
     i32 size = backtrace(bt, MAX_BT);
@@ -39,6 +42,7 @@ auto _assert_fail(const char* expr_str, const char* message, const char* file, c
     for(int i = 0; i < size; i++) {
         log::e("assert", "{} {} {}", i, bt[i], bt_symbols[i]);
     }
+#endif
     abort();
 }
 #endif

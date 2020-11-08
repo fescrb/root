@@ -95,14 +95,18 @@ auto instance::init() -> void {
 
 auto instance::physical_devices(allocator* alloc) const -> array<physical_device> {
     u32 num;
-    if (vkEnumeratePhysicalDevices(handle, &num, nullptr) != VK_SUCCESS) {
-        // TODO: handle error
+    VkResult res = vkEnumeratePhysicalDevices(handle, &num, nullptr);
+    if (res != VK_SUCCESS) {
+        log::e("instance", "vkEnumeratePhysicalDevices failed with {}", res);
+        abort();
     }
     
-    VkPhysicalDevice phys_devices[num];
+    array<VkPhysicalDevice> phys_devices(num, alloc);
     
-    if (vkEnumeratePhysicalDevices(handle, &num, phys_devices) != VK_SUCCESS) {
-        // TODO: handle error
+    res = vkEnumeratePhysicalDevices(handle, &num, phys_devices.data());
+    if (res != VK_SUCCESS) {
+        log::e("instance", "vkEnumeratePhysicalDevices failed with {}", res);
+        abort();
     }
 
     array<physical_device> devices(num, alloc);

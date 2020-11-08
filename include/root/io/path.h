@@ -34,10 +34,10 @@ namespace path {
 
 constexpr i8 EXTENSION_DELIMITER = '.';
 
-#if defined(ROOT_LINUX)
-constexpr i8 FOLDER_DELIMITER = '/';
+#if defined(ROOT_WIN)
+constexpr i8 FOLDER_DELIMITER = '\\';
 #else 
-#pragma message( "FOLDER_DELIMITER not defined" )
+constexpr i8 FOLDER_DELIMITER = '/';
 #endif
 
 constexpr auto basename(const string_view& path) -> string_view {

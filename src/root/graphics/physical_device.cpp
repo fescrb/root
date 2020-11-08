@@ -19,6 +19,7 @@
 
 #include <root/core/array.h>
 #include <root/graphics/physical_device.h>
+#include <root/io/log.h>
 
 namespace root {
 
@@ -27,13 +28,34 @@ physical_device::physical_device(const VkPhysicalDevice& h, allocator* alloc)
     m_alloc(alloc),
     m_properties(nullptr),
     m_memory_properties(nullptr) {
-    u32 num;
-    vkGetPhysicalDeviceQueueFamilyProperties(handle, &num, nullptr);
+    // Get queue families
 
-    array<VkQueueFamilyProperties> props(num, m_alloc);
-    vkGetPhysicalDeviceQueueFamilyProperties(handle, &num, props.data());
+    u32 num_queues;
+    vkGetPhysicalDeviceQueueFamilyProperties(handle, &num_queues, nullptr);
+
+    array<VkQueueFamilyProperties> props(num_queues, m_alloc);
+    vkGetPhysicalDeviceQueueFamilyProperties(handle, &num_queues, props.data());
 
     m_family_properties = std::move(props);
+
+    // Get extensions
+    u32 num_extensions;
+    VkResult res = vkEnumerateDeviceExtensionProperties(handle, nullptr, &num_extensions, nullptr);
+
+    if(res != VK_SUCCESS) {
+        log::e("physical_device", "vkEnumerateDeviceExtensionProperties failed with {}", res);
+        abort();
+    }
+
+    array<VkExtensionProperties> extens(num_extensions, m_alloc);
+    res = vkEnumerateDeviceExtensionProperties(handle, nullptr, &num_extensions, extens.data());
+
+    if(res != VK_SUCCESS) {
+        log::e("physical_device", "vkEnumerateDeviceExtensionProperties failed with {}", res);
+        abort();
+    }
+
+    m_extensions = std::move(extens);
 }
 
 auto physical_device::properties() -> VkPhysicalDeviceProperties* {
@@ -42,6 +64,10 @@ auto physical_device::properties() -> VkPhysicalDeviceProperties* {
         vkGetPhysicalDeviceProperties(handle, m_properties);
     }
     return m_properties;
+}
+
+auto physical_device::extensions() const -> const array<VkExtensionProperties>& {
+    return m_extensions;
 }
 
 auto physical_device::memory_properties() -> VkPhysicalDeviceMemoryProperties* {

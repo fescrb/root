@@ -48,6 +48,7 @@ public:
     auto properties() -> VkPhysicalDeviceProperties*;
     auto memory_properties() -> VkPhysicalDeviceMemoryProperties*;
     auto queue_family_properties() const -> const array<VkQueueFamilyProperties>&;
+    auto extensions() const -> const array<VkExtensionProperties>&;
 
     ~physical_device() {
         if (m_properties) m_alloc->free(m_properties, sizeof(VkPhysicalDeviceProperties), alignof(VkPhysicalDeviceProperties));
@@ -69,6 +70,7 @@ private:
     VkPhysicalDeviceProperties *m_properties;
     VkPhysicalDeviceMemoryProperties *m_memory_properties;
     array<VkQueueFamilyProperties> m_family_properties;
+    array<VkExtensionProperties> m_extensions;
 };
 
 } // namespace root

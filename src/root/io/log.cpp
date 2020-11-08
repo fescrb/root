@@ -30,6 +30,10 @@ namespace root {
 logger* log::m_logger = new logger(new writer(new file_stream(stdout)));
 #endif
 
+#if defined(ROOT_WIN)
+logger* log::m_logger = new logger(new writer(new file_stream(stdout)));
+#endif
+
 #if defined(ROOT_ANDROID)
 logger* log::m_logger = new logger();
 #endif

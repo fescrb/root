@@ -2,6 +2,9 @@ cmake_minimum_required(VERSION 3.10)
 
 project(root CXX)
 
+find_package(Vulkan REQUIRED)
+
+include_directories(SYSTEM ${Vulkan_INCLUDE_DIR})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/src/build/RootSetup.cmake)
@@ -23,7 +26,7 @@ add_library(root STATIC $<TARGET_OBJECTS:root_core>
                         $<TARGET_OBJECTS:root_graphics>
                         $<TARGET_OBJECTS:root_asset>)
 
-target_link_libraries(root vulkan glfw3 dl pthread)
+target_link_libraries(root ${Vulkan_LIBRARY} glfw3 dl pthread)
 
 install(TARGETS root ARCHIVE DESTINATION lib)
 

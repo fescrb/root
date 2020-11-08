@@ -370,8 +370,9 @@ inline constexpr auto to_string(const VkColorSpaceKHR& color_space) -> const cha
         case VK_COLOR_SPACE_ADOBERGB_NONLINEAR_EXT: return "VK_COLOR_SPACE_ADOBERGB_NONLINEAR_EXT";
         case VK_COLOR_SPACE_PASS_THROUGH_EXT: return "VK_COLOR_SPACE_PASS_THROUGH_EXT";
         case VK_COLOR_SPACE_EXTENDED_SRGB_NONLINEAR_EXT: return "VK_COLOR_SPACE_EXTENDED_SRGB_NONLINEAR_EXT";
-        case VK_COLOR_SPACE_RANGE_SIZE_KHR: return "VK_COLOR_SPACE_RANGE_SIZE_KHR";
-        case VK_COLOR_SPACE_MAX_ENUM_KHR: return "VK_COLOR_SPACE_MAX_ENUM_KHR";
+        // Not defined in Win Vulkan?
+        //case VK_COLOR_SPACE_RANGE_SIZE_KHR: return "VK_COLOR_SPACE_RANGE_SIZE_KHR";
+        //case VK_COLOR_SPACE_MAX_ENUM_KHR: return "VK_COLOR_SPACE_MAX_ENUM_KHR";
     }
 }
 
@@ -383,8 +384,9 @@ inline constexpr auto to_string(const VkPresentModeKHR& present_mode) -> const c
         case VK_PRESENT_MODE_FIFO_RELAXED_KHR: return "VK_PRESENT_MODE_FIFO_RELAXED_KHR";
         case VK_PRESENT_MODE_SHARED_DEMAND_REFRESH_KHR: return "VK_PRESENT_MODE_SHARED_DEMAND_REFRESH_KHR";
         case VK_PRESENT_MODE_SHARED_CONTINUOUS_REFRESH_KHR: return "VK_PRESENT_MODE_SHARED_CONTINUOUS_REFRESH_KHR";
-        case VK_PRESENT_MODE_RANGE_SIZE_KHR: return "VK_PRESENT_MODE_RANGE_SIZE_KHR";
-        case VK_PRESENT_MODE_MAX_ENUM_KHR: return "VK_PRESENT_MODE_MAX_ENUM_KHR";
+        // Not defined in Win Vulkan?
+        //case VK_PRESENT_MODE_RANGE_SIZE_KHR: return "VK_PRESENT_MODE_RANGE_SIZE_KHR";
+        //case VK_PRESENT_MODE_MAX_ENUM_KHR: return "VK_PRESENT_MODE_MAX_ENUM_KHR";
     }
 }
 
