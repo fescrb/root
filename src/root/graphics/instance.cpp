@@ -58,7 +58,7 @@ auto instance::init() -> void {
     create_info.ppEnabledLayerNames = nullptr;
 #endif
 
-#if defined(ROOT_LINUX)
+#if !defined(ROOT_ANDROID)
     // TODO where do I put this?
     if(glfwInit() != GLFW_TRUE) {
         log::e("instance", "glfwInit failed");

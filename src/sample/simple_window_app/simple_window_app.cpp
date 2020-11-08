@@ -46,9 +46,9 @@ int main() {
 
         auto& extension_properties = devices[i].extensions();
 
-        /*for(int j = 0; j < extension_properties.size(); j++) {
+        for(int j = 0; j < extension_properties.size(); j++) {
             root::log::d("", "Extension {}:{}", j, extension_properties[j]);
-        }*/
+        }
 
         auto& family_properties = devices[i].queue_family_properties();
         for(int j = 0; j < family_properties.size(); j++) {
