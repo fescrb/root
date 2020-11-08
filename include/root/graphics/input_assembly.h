@@ -19,28 +19,21 @@
 
 #pragma once
 
-#include <root/graphics/shader_module.h>
+#include <vulkan/vulkan.h>
 
 namespace root {
 
-struct shader {
-    shader(const shader_module& module, 
-           VkShaderStageFlagBits stage_flags, 
-           const string_view& funcname,
-           allocator* alloc = allocator::default_allocator())
-    :   func_name(funcname, alloc),
-        info {
-            VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
-            nullptr,
-            0,
-            stage_flags,
-            module.handle,
-            func_name.data(),
-            nullptr
-        } {}
+struct input_assembly {
+    input_assembly() = delete;
+    input_assembly(const VkPrimitiveTopology topology) {
+        info.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
+        info.pNext == nullptr;
+        info.flags = 0;
+        info.topology = topology;
+        info.primitiveRestartEnable = VK_FALSE;
+    }
 
-    const string func_name; // TODO this means we cannot copy this. Think about making this a strong_ptr or interned string?
-    const VkPipelineShaderStageCreateInfo info;
+    VkPipelineInputAssemblyStateCreateInfo info;
 };
 
 } // namespace root

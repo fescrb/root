@@ -19,28 +19,24 @@
 
 #pragma once
 
-#include <root/graphics/shader_module.h>
+#include <vulkan/vulkan.h>
 
 namespace root {
 
-struct shader {
-    shader(const shader_module& module, 
-           VkShaderStageFlagBits stage_flags, 
-           const string_view& funcname,
-           allocator* alloc = allocator::default_allocator())
-    :   func_name(funcname, alloc),
-        info {
-            VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
-            nullptr,
-            0,
-            stage_flags,
-            module.handle,
-            func_name.data(),
-            nullptr
-        } {}
+struct vertex_input {
+    vertex_input() {
+        // Can be used for vertex shaders with vertex info in the 
+        // shader itself.
+        info.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
+        info.pNext = nullptr;
+        info.flags = 0;
+        info.vertexBindingDescriptionCount = 0;
+        info.pVertexBindingDescriptions = nullptr;
+        info.vertexAttributeDescriptionCount = 0;
+        info.pVertexAttributeDescriptions = nullptr;
+    }
 
-    const string func_name; // TODO this means we cannot copy this. Think about making this a strong_ptr or interned string?
-    const VkPipelineShaderStageCreateInfo info;
+    VkPipelineVertexInputStateCreateInfo info;
 };
 
 } // namespace root
