@@ -17,25 +17,23 @@
  * along with The Root Engine.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <root/graphics/shader.h>
+#pragma once
 
-#include <root/io/log.h>
+#include <root/core/buffer.h>
+#include <root/graphics/device.h>
+#include <root/asset/asset_manager.h>
+
+#include <vulkan/vulkan.h>
 
 namespace root {
 
-shader::shader(const device& d,const buffer& buf) {
-    VkShaderModuleCreateInfo create_info;
-    create_info.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
-    create_info.pNext = nullptr;
-    create_info.flags = 0;
-    create_info.codeSize = buf.size();
-    create_info.pCode = reinterpret_cast<uint32_t*>(buf.data());
+class shader_module {
+public:
+    explicit shader_module(const device& d, const buffer& b);
+    explicit shader_module(const device& d, const string_view& asset_id) 
+    :   shader_module(d, asset_manager::raw_load(asset_id)) {}
 
-    VkResult res = vkCreateShaderModule(d.handle, &create_info, nullptr, &handle);
-
-    if(res != VK_SUCCESS) {
-        log::e("shader", "vkCreateShaderModule failed with {}", res);
-    }
-}
+    VkShaderModule handle;
+};
 
 } // namespace root

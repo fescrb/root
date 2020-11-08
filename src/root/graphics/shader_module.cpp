@@ -17,25 +17,25 @@
  * along with The Root Engine.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#pragma once
-
 #include <root/graphics/shader_module.h>
+
+#include <root/io/log.h>
 
 namespace root {
 
-class shader {
-public:
-    // TODO use internal string types
-    shader(const shader_module& module, 
-           VkPipelineShaderStageCreateFlags flags, 
-           const string_view& funcname,
-           allocator* alloc = allocator::default_allocator()) {
-        
-        info.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-    }
+shader_module::shader_module(const device& d,const buffer& buf) {
+    VkShaderModuleCreateInfo create_info;
+    create_info.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+    create_info.pNext = nullptr;
+    create_info.flags = 0;
+    create_info.codeSize = buf.size();
+    create_info.pCode = reinterpret_cast<uint32_t*>(buf.data());
 
-    VkPipelineShaderStageCreateInfo info;
-    const string func_name;
-};
+    VkResult res = vkCreateShaderModule(d.handle, &create_info, nullptr, &handle);
+
+    if(res != VK_SUCCESS) {
+        log::e("shader_module", "vkCreateShaderModule failed with {}", res);
+    }
+}
 
 } // namespace root

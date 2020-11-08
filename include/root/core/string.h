@@ -37,6 +37,15 @@ public:
     explicit inline string(const u64& length, allocator* alloc = allocator::default_allocator()) 
     : array(length, alloc) {}
 
+    explicit inline string(const string_slice& slice, allocator* alloc = allocator::default_allocator())
+    :   string(static_cast<string_view>(slice), alloc) {}
+
+    explicit inline string(const string_view& view, allocator* alloc = allocator::default_allocator())
+    :   array(view.size()+1, alloc) {
+        memcpy(m_data, view.data(), m_length * sizeof(element_type));
+        m_data[m_length-1] = '\0';
+    }
+
     string(const string&) = delete;
     inline string(string&& other) 
     : array(std::move(other)) {}

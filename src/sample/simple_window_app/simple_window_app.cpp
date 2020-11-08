@@ -28,7 +28,7 @@
 #include <root/graphics/surface.h>
 #include <root/graphics/device.h>
 #include <root/graphics/swapchain.h>
-#include <root/graphics/shader.h>
+#include <root/graphics/shader_module.h>
 
 int main() {
     root::instance::init();
@@ -62,8 +62,8 @@ int main() {
 
     root::swapchain swapchain(surface, *device);
 
-    root::shader vert(*device, "vert.spv");
-    root::shader frag(*device, "frag.spv");
+    root::shader_module vert(*device, "vert.spv");
+    root::shader_module frag(*device, "frag.spv");
 
     while(true){}
 }
