@@ -19,31 +19,36 @@
 
 #pragma once
 
-#include <root/graphics/physical_device.h>
-#include <root/graphics/surface.h>
+#include <vulkan/vulkan.h>
+#include <utility>
 
 namespace root {
 
-class device final {
+template<typename vk_handle_t, typename subclass_t>
+class vk_handle_container {
 public:
-    device(const physical_device& d, const surface& s);
-
-    static device auto_select_device();
-
-    VkDevice handle;
-
-    auto get_graphics_queue() const -> VkQueue;
-    inline auto get_physical_device() const -> const physical_device& {
-        return m_physical_device;
+    inline constexpr vk_handle_container() noexcept 
+    :   m_handle(VK_NULL_HANDLE) {}
+    inline constexpr vk_handle_container(const vk_handle_container& other) noexcept 
+    :   m_handle(other.m_handle) {}
+    inline constexpr vk_handle_container(vk_handle_container&& other) noexcept 
+    :   m_handle(std::move(other.m_handle)) {
+        other.m_handle = VK_NULL_HANDLE;
     }
 
-    inline auto graphics_family_index() const -> u32 {
-        return m_graphics_family_index;
+    inline auto handle() const -> vk_handle_t {
+        return m_handle;
     }
 
-private:
-    u32 m_graphics_family_index;
-    const physical_device& m_physical_device;
+    inline operator bool() const {
+        return m_handle != VK_NULL_HANDLE;
+    }
+
+protected:
+    inline constexpr vk_handle_container(const subclass_t& other) noexcept
+    :   m_handle(other.m_handle) {}
+
+    vk_handle_t m_handle;
 };
 
 } // namespace root

@@ -19,31 +19,21 @@
 
 #pragma once
 
-#include <root/graphics/physical_device.h>
-#include <root/graphics/surface.h>
+#include <root/graphics/vk_handle_container.h>
+#include <root/graphics/device.h>
 
 namespace root {
 
-class device final {
+class command_pool : public vk_handle_container<VkCommandPool, command_pool> {
 public:
-    device(const physical_device& d, const surface& s);
+    // TODO: take into account present/compute pools?
+    command_pool(const device& dev, allocator* alloc = allocator::default_allocator());
 
-    static device auto_select_device();
+    ~command_pool();
 
-    VkDevice handle;
-
-    auto get_graphics_queue() const -> VkQueue;
-    inline auto get_physical_device() const -> const physical_device& {
-        return m_physical_device;
-    }
-
-    inline auto graphics_family_index() const -> u32 {
-        return m_graphics_family_index;
-    }
-
-private:
-    u32 m_graphics_family_index;
-    const physical_device& m_physical_device;
+public:
+    VkDevice m_device_handle;
+    allocator* m_alloc;
 };
 
 } // namespace root

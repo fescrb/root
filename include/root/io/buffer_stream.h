@@ -46,7 +46,7 @@ public:
 private:
     // TODO: read & write should return number of bytes written
     inline auto memcpy_helper(void* dst, const void* src, const u64& len) -> value_or_error<u64> {
-        if (pointer < 0 || pointer > backing.size()) return error::INVALID_OPERATION;
+        if (pointer < 0 || pointer > static_cast<i64>(backing.size())) return error::INVALID_OPERATION;
         u64 remainder = backing.size() - pointer;
         u64 write_len = remainder < len ? remainder : len; 
         memcpy(dst, src, write_len);

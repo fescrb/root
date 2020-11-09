@@ -35,6 +35,8 @@
 #include <root/graphics/raster.h>
 #include <root/graphics/renderpass.h>
 #include <root/graphics/pipeline.h>
+#include <root/graphics/framebuffer.h>
+#include <root/graphics/command_pool.h>
 
 int main() {
     root::instance::init();
@@ -90,8 +92,22 @@ int main() {
     root::attachment attachment(swapchain);
     root::renderpass renderpass(*device, attachment);
 
-
     root::pipeline pipeline(*device, shaders, vertex_input, input_assembly, pipeline_layout, raster, renderpass);
+
+    root::array<root::framebuffer> framebuffers(swapchain.swapchain_images.size());
+
+    for(root::u32 i = 0; i < framebuffers.size(); i++) {
+        framebuffers[i] = std::move(
+            root::framebuffer(
+                *device, 
+                renderpass, 
+                swapchain.swapchain_images.range(i, i+1),
+                swapchain.extent
+            )
+        );
+    }
+
+    root::command_pool command_pool(*device);
 
     while(true){}
 }

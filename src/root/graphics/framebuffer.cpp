@@ -19,13 +19,41 @@
 
 #include <root/graphics/framebuffer.h>
 
+#include <root/io/log.h>
+
 namespace root {
 
-framebuffer::framebuffer(const device& dev, const renderpass& rp, const array_slice<VkImageView>& attachments, VkExtent3D dimensions, allocator* alloc = allocator::default_allocator()) 
-:   m_handle(VK_NULL_HANDLE) {}
+framebuffer::framebuffer(const device& dev, 
+                         const renderpass& rp, 
+                         const array_slice<VkImageView>& attachments, 
+                         VkExtent3D dimensions, 
+                         allocator* alloc) 
+:   vk_handle_container(),
+    m_device_handle(dev.handle),
+    m_alloc(alloc) {
+    VkFramebufferCreateInfo framebuffer_create_info;
+    framebuffer_create_info.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+    framebuffer_create_info.pNext = nullptr;
+    framebuffer_create_info.flags = 0;
+    framebuffer_create_info.renderPass = rp.handle();
+    framebuffer_create_info.attachmentCount = 1;
+    framebuffer_create_info.pAttachments = attachments;
+    framebuffer_create_info.width = dimensions.width;
+    framebuffer_create_info.height = dimensions.height;
+    framebuffer_create_info.layers = dimensions.depth;
+
+    VkResult res = vkCreateFramebuffer(m_device_handle, &framebuffer_create_info, nullptr, &m_handle);
+
+    if(res != VK_SUCCESS) {
+        log::e("framebuffer", "vkCreateFramebuffer failed with {}", res);
+        abort();
+    }
+}
 
 framebuffer::~framebuffer() {
-
+    if(m_handle != VK_NULL_HANDLE) {
+        vkDestroyFramebuffer(m_device_handle, m_handle, nullptr);
+    }
 }
 
 } // namespace root

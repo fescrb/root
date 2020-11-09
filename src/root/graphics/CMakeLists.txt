@@ -7,6 +7,8 @@ list(APPEND root_graphics_sources ${CMAKE_CURRENT_SOURCE_DIR}/device.cpp
                                   ${CMAKE_CURRENT_SOURCE_DIR}/swapchain.cpp
                                   ${CMAKE_CURRENT_SOURCE_DIR}/pipeline_layout.cpp
                                   ${CMAKE_CURRENT_SOURCE_DIR}/renderpass.cpp
+                                  ${CMAKE_CURRENT_SOURCE_DIR}/framebuffer.cpp
+                                  ${CMAKE_CURRENT_SOURCE_DIR}/command_pool.cpp
                                   ${CMAKE_CURRENT_SOURCE_DIR}/shader_module.cpp)
 
 add_library(root_graphics OBJECT ${root_graphics_sources})

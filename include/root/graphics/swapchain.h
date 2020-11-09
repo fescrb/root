@@ -35,7 +35,7 @@ public:
     inline auto viewport() const -> VkViewport {
         VkViewport vp;
         vp.x = 0.0f, vp.y = 0.0f;
-        vp.width = extent.width, vp.height = extent.height;
+        vp.width = static_cast<f32>(extent.width), vp.height = static_cast<f32>(extent.height);
         vp.minDepth = 0.0f, vp.maxDepth = 1.0f;
         return vp;
     }
@@ -54,7 +54,7 @@ public:
     array<VkPresentModeKHR> present_modes;
     VkFormat format;
     VkExtent2D extent;
-    array<VkImageView> swapchain_images;
+    array<VkImageView> swapchain_images; // TODO: Maybe function access?
 
 private:
     allocator* m_alloc;
