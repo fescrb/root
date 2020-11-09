@@ -37,7 +37,8 @@ auto asset_manager::raw_load(const string_view& id) -> buffer {
 auto asset_manager::load_buffer(const string_view& id) -> buffer {
     string full_path = path::join(m_asset_root, id, m_alloc);
     FILE* file = fopen(full_path.data(), "r");
-    log::d("asset_manager", "Opening {} {}", static_cast<string_view>(full_path), file);
+    string_view fp_vigew = full_path;
+    log::d("asset_manager", "Opening {} {}", fp_view , file);
     root_assert(file);
     file_stream stream(file);
     stream.seek(0, relative_to::end);
