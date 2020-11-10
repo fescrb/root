@@ -117,6 +117,20 @@ int main() {
         glfwPollEvents();
         root::command_buffer buffer(command_pool);
         root::u32 image = swapchain.acquire(acquire_s);
+
+        buffer.begin();
+        buffer.start_render_pass(renderpass, framebuffers[image]);
+        buffer.bind_pipeline(pipeline);
+        buffer.draw(3, 1, 0, 0);
+        buffer.end_render_pass();
+        buffer.end();
+
+        VkSubmitInfo submit_info;
+        submit_info.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+        submit_info.pNext = nullptr;
+        submit_info.signalSemaphoreCount = 1;
+        submit_info.pWaitSemaphores = &(acquire_s.handle());
+
         swapchain.present(root::array_slice<root::semaphore>(&present_s, 1), image);
     }
 }

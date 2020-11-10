@@ -36,7 +36,7 @@ public:
         other.m_handle = VK_NULL_HANDLE;
     }
 
-    inline auto handle() const -> vk_handle_t {
+    inline auto handle() const -> const vk_handle_t& {
         return m_handle;
     }
 
