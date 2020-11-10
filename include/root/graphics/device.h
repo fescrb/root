@@ -33,6 +33,8 @@ public:
     VkDevice handle;
 
     auto get_graphics_queue() const -> VkQueue;
+    auto get_present_queue() const -> VkQueue;
+    
     inline auto get_physical_device() const -> const physical_device& {
         return m_physical_device;
     }
@@ -41,8 +43,13 @@ public:
         return m_graphics_family_index;
     }
 
+    inline auto present_family_index() const -> u32 {
+        return m_present_family_index;
+    }
+
 private:
     u32 m_graphics_family_index;
+    u32 m_present_family_index;
     const physical_device& m_physical_device;
 };
 

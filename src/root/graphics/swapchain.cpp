@@ -25,6 +25,7 @@ namespace root {
 
 swapchain::swapchain(const surface& s, const device& d, allocator* alloc)
 :   handle(VK_NULL_HANDLE),
+    m_device(d),
     m_alloc(alloc) {
     refresh(s, d);
 }
@@ -156,6 +157,46 @@ auto swapchain::refresh(const surface& s, const device& d) -> void {
     }
 
     swapchain_images = std::move(temp_image_views);
+}
+
+auto swapchain::acquire(const semaphore& sem, const u64 timeout) -> u32 {
+    u32 image_index;
+    // TODO: deal with fences
+    VkResult res = vkAcquireNextImageKHR(m_device.handle, handle, timeout, sem.handle(), VK_NULL_HANDLE, &image_index);
+    // TODO: deal with out of date swapchain
+    if(res != VK_SUCCESS) {
+        log::e("swapchain", "vkAcquireNextImageKHR failed with {}", res);
+        abort();
+    }
+    return image_index;
+}
+
+auto swapchain::present(const array_slice<semaphore>& wait_semaphores, const u32 image_index) -> void {
+    VkPresentInfoKHR present_info;
+    present_info.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+    present_info.pNext = nullptr;
+    present_info.waitSemaphoreCount = wait_semaphores.size();
+    array<VkSemaphore> semaphores;
+    if(wait_semaphores.size()) {
+        semaphores = std::move(array<VkSemaphore>(wait_semaphores.size(), m_alloc));
+        for(u32 i = 0; i < wait_semaphores.size(); i++) {
+            semaphores[i] = wait_semaphores[i].handle();
+        }
+        present_info.pWaitSemaphores = semaphores.data();
+    } else {
+        present_info.pWaitSemaphores = nullptr;
+    }
+    present_info.swapchainCount = 1;
+    present_info.pSwapchains = &handle;
+    present_info.pImageIndices = &image_index;
+    present_info.pResults = nullptr;
+
+    VkResult res = vkQueuePresentKHR(m_device.get_present_queue(), &present_info);
+    // TODO: deal with out of date swapchain
+    if(res != VK_SUCCESS) {
+        log::e("swapchain", "vkAcquireNextImageKHR failed with {}", res);
+        abort();
+    }
 }
 
 } // namespace root

@@ -23,6 +23,7 @@
 
 #include <root/graphics/device.h>
 #include <root/graphics/surface.h>
+#include <root/graphics/semaphore.h>
 
 namespace root {
 
@@ -47,6 +48,11 @@ public:
         return sc;
     }
 
+    // TODO change the timeout if a time data type is made
+    auto acquire(const semaphore& sem, const u64 timeout = UINT64_MAX) -> u32;
+
+    auto present(const array_slice<semaphore>& wait_semaphores, const u32 image_index) -> void;
+
     VkSwapchainKHR handle;
 
     VkSurfaceCapabilitiesKHR surface_capabilities;
@@ -57,6 +63,7 @@ public:
     array<VkImageView> swapchain_images; // TODO: Maybe function access?
 
 private:
+    const device& m_device;
     allocator* m_alloc;
 };
 

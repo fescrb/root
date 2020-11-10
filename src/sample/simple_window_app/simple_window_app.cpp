@@ -110,8 +110,13 @@ int main() {
 
     root::command_pool command_pool(*device);
 
+    root::semaphore acquire_s(*device);
+    root::semaphore present_s(*device);
+
     while(!glfwWindowShouldClose(window.handle)){
         glfwPollEvents();
         root::command_buffer buffer(command_pool);
+        root::u32 image = swapchain.acquire(acquire_s);
+        swapchain.present(root::array_slice<root::semaphore>(&present_s, 1), image);
     }
 }

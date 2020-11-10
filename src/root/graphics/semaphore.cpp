@@ -19,7 +19,7 @@
 
 #include <root/graphics/semaphore.h>
 
-#include <root/graphics/vk_error.h>
+#include <root/graphics/vk_errors.h>
 
 namespace root {
 

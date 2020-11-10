@@ -30,6 +30,7 @@ namespace root {
 device::device(const physical_device& d, const surface& s)
 :   handle(VK_NULL_HANDLE),
     m_graphics_family_index(d.graphics_queue_family_index()),
+    m_present_family_index(d.present_queue_family_index(s)),
     m_physical_device(d) {
     auto& fam_props = d.queue_family_properties();
 
@@ -98,6 +99,12 @@ device::device(const physical_device& d, const surface& s)
 auto device::get_graphics_queue() const -> VkQueue {
     VkQueue ret;
     vkGetDeviceQueue(handle, m_graphics_family_index, 0, &ret);
+    return ret;
+}
+
+auto device::get_present_queue() const -> VkQueue {
+    VkQueue ret;
+    vkGetDeviceQueue(handle, m_present_family_index, 0, &ret);
     return ret;
 }
 
