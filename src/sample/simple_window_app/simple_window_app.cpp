@@ -118,6 +118,8 @@ int main() {
         root::command_buffer buffer(command_pool);
         root::u32 image = swapchain.acquire(acquire_s);
 
+        root::log::d("simple_window_app", "rendering image {}", image);
+
         buffer.begin();
         buffer.start_render_pass(renderpass, framebuffers[image]);
         buffer.bind_pipeline(pipeline);
@@ -128,9 +130,19 @@ int main() {
         VkSubmitInfo submit_info;
         submit_info.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
         submit_info.pNext = nullptr;
-        submit_info.signalSemaphoreCount = 1;
+        submit_info.waitSemaphoreCount = 1;
         submit_info.pWaitSemaphores = &(acquire_s.handle());
-
+        VkPipelineStageFlags wait_stages[] = {VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT};
+        submit_info.pWaitDstStageMask = wait_stages;
+        submit_info.commandBufferCount = 1;
+        submit_info.pCommandBuffers = &(buffer.handle());
+        submit_info.signalSemaphoreCount = 1;
+        submit_info.pSignalSemaphores = &(present_s.handle());
+        VkResult submit_result = vkQueueSubmit(device->get_graphics_queue(), 1, &submit_info, VK_NULL_HANDLE);
+        if (submit_result != VK_SUCCESS) {
+            root::log::e("simple_window_app", "vkQueueSubmit failed with {}", submit_result);
+            abort();
+        }
         swapchain.present(root::array_slice<root::semaphore>(&present_s, 1), image);
     }
 }
