@@ -37,6 +37,7 @@
 #include <root/graphics/pipeline.h>
 #include <root/graphics/framebuffer.h>
 #include <root/graphics/command_pool.h>
+#include <root/graphics/command_buffer.h>
 
 int main() {
     root::instance::init();
@@ -109,5 +110,8 @@ int main() {
 
     root::command_pool command_pool(*device);
 
-    while(true){}
+    while(!glfwWindowShouldClose(window.handle)){
+        glfwPollEvents();
+        root::command_buffer buffer(command_pool);
+    }
 }
