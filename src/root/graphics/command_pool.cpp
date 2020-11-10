@@ -23,7 +23,7 @@
 
 namespace root {
 
-command_pool::command_pool(const device& dev, allocator* alloc)
+command_pool::command_pool(const root::device& dev, allocator* alloc)
 :   vk_handle_container(),
     m_device_handle(dev.handle),
     m_alloc(alloc) {

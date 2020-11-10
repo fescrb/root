@@ -21,23 +21,31 @@
 
 #include <root/graphics/vk_handle_container.h>
 #include <root/graphics/device.h>
+#include <root/graphics/command_pool.h>
+#include <root/graphics/renderpass.h>
+#include <root/graphics/framebuffer.h>
+#include <root/graphics/pipeline.h>
+
+// TODO: container to allocate/free command buffers in a batch
 
 namespace root {
 
-class command_pool : public vk_handle_container<VkCommandPool, command_pool> {
+class command_buffer : public vk_handle_container<VkCommandBuffer,command_buffer> {
 public:
-    // TODO: take into account present/compute pools?
-    command_pool(const root::device& dev, allocator* alloc = allocator::default_allocator());
+    command_buffer(const command_pool& pool);
 
-    ~command_pool();
+    // Could be const would like a const command_buffer to be immutable
+    auto begin() -> void;
+    auto start_render_pass(const renderpass& rp, const framebuffer& fb) -> void;
+    auto bind_pipeline(const pipeline& p) -> void;
+    auto draw(u32 vertex_count, u32 instance_count, u32 first_vertex, u32 first_instance) -> void;
+    auto end_render_pass() -> void;
+    auto end() -> void;
 
-    inline auto device() const -> VkDevice {
-        return m_device_handle;
-    }
+    ~command_buffer();
 
-public:
-    VkDevice m_device_handle;
-    allocator* m_alloc;
+private:
+    const command_pool& m_command_pool;
 };
 
 } // namespace root

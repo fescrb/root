@@ -61,11 +61,15 @@ public:
         return *this;
     }
 
+    inline auto entent() const -> const VkExtent2D& {
+        return m_extent;
+    }
 
     ~framebuffer();
 
 private:
     VkDevice m_device_handle;
+    VkExtent2D m_extent;
     allocator* m_alloc;
 };
 

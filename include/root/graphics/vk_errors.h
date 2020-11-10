@@ -19,25 +19,15 @@
 
 #pragma once
 
-#include <root/graphics/vk_handle_container.h>
-#include <root/graphics/device.h>
+#include <vulkan/vulkan.h>
 
-namespace root {
+#include <root/io/log.h>
 
-class command_pool : public vk_handle_container<VkCommandPool, command_pool> {
-public:
-    // TODO: take into account present/compute pools?
-    command_pool(const root::device& dev, allocator* alloc = allocator::default_allocator());
-
-    ~command_pool();
-
-    inline auto device() const -> VkDevice {
-        return m_device_handle;
+#define root_check_vk_result(_func_call_) \
+    { \
+        VkResult res = _func_call_; \
+        if (res != VK_SUCCESS) { \
+            log::e(__FUNCTION__, #_func_call_ " failed with {}", res); \
+            abort(); \
+        } \
     }
-
-public:
-    VkDevice m_device_handle;
-    allocator* m_alloc;
-};
-
-} // namespace root
