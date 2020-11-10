@@ -10,7 +10,8 @@ list(APPEND root_graphics_sources ${CMAKE_CURRENT_SOURCE_DIR}/device.cpp
                                   ${CMAKE_CURRENT_SOURCE_DIR}/framebuffer.cpp
                                   ${CMAKE_CURRENT_SOURCE_DIR}/command_pool.cpp
                                   ${CMAKE_CURRENT_SOURCE_DIR}/command_buffer.cpp
-                                  ${CMAKE_CURRENT_SOURCE_DIR}/shader_module.cpp)
+                                  ${CMAKE_CURRENT_SOURCE_DIR}/shader_module.cpp
+                                  ${CMAKE_CURRENT_SOURCE_DIR}/semaphore.cpp)
 
 add_library(root_graphics OBJECT ${root_graphics_sources})
 
