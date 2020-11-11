@@ -43,6 +43,7 @@ public:
     framebuffer(framebuffer&& other) 
     :   vk_handle_container(std::move(other)),
         m_device_handle(std::move(other.m_device_handle)),
+        m_extent(std::move(other.m_extent)),
         m_alloc(std::move(other.m_alloc)) {
         other.m_device_handle = VK_NULL_HANDLE;
         other.m_alloc = nullptr;
@@ -52,6 +53,7 @@ public:
         if(&other != this) {
             m_handle = std::move(other.m_handle);
             m_device_handle = std::move(other.m_device_handle);
+            m_extent = std::move(other.m_extent);
             m_alloc = std::move(other.m_alloc);
             other.m_handle = VK_NULL_HANDLE;
             other.m_device_handle = VK_NULL_HANDLE;

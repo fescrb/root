@@ -76,6 +76,9 @@ int main() {
 
     root::swapchain swapchain(surface, *device);
 
+
+    root::log::d("", "swapchain created viewport {} scissor {}", swapchain.viewport(), swapchain.scissor());
+
     root::shader_module vert(*device, "vert.spv");
     root::shader_module frag(*device, "frag.spv");
 
@@ -106,6 +109,7 @@ int main() {
                 swapchain.extent
             )
         );
+        root::log::d("", "Framebuffer[{}] extent {} ", i, framebuffers[i].entent());
     }
 
     root::command_pool command_pool(*device);
@@ -118,7 +122,6 @@ int main() {
         root::command_buffer buffer(command_pool);
         root::u32 image = swapchain.acquire(acquire_s);
 
-        root::log::d("simple_window_app", "rendering image {}", image);
 
         buffer.begin();
         buffer.start_render_pass(renderpass, framebuffers[image]);
@@ -132,7 +135,7 @@ int main() {
         submit_info.pNext = nullptr;
         submit_info.waitSemaphoreCount = 1;
         submit_info.pWaitSemaphores = &(acquire_s.handle());
-        VkPipelineStageFlags wait_stages[] = {VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT};
+        VkPipelineStageFlags wait_stages[] = {VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT};
         submit_info.pWaitDstStageMask = wait_stages;
         submit_info.commandBufferCount = 1;
         submit_info.pCommandBuffers = &(buffer.handle());

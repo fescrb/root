@@ -34,6 +34,26 @@ auto format_to<VkFormat>(buffer_writer& dst, const VkFormat& object, const strin
     return format_to(dst, to_string(object));
 }
 
+template<>
+auto strlen<VkOffset2D>(const VkOffset2D& object, const string_view&) -> u64 {
+    constexpr u64 X_STR_LEN = strlen("{ x: ");
+    u64 x_len = strlen(object.x);
+    constexpr u64 Y_STR_LEN = strlen(" y: ");
+    u64 y_len = strlen(object.y);
+    constexpr u64 CLOSING_STR_LEN = strlen(" }");
+    return X_STR_LEN + x_len +
+           Y_STR_LEN + y_len +
+           CLOSING_STR_LEN;
+}
+
+template<>
+auto format_to<VkOffset2D>(buffer_writer& dst, const VkOffset2D& object, const string_view&) -> void {
+    format_to(dst, "{ x: ");
+    format_to(dst, object.x);
+    format_to(dst, " y: ");
+    format_to(dst, object.y);
+    format_to(dst, " }");
+}
 
 template<>
 auto strlen<VkPresentModeKHR>(const VkPresentModeKHR& object, const string_view&) -> u64 {
@@ -358,6 +378,68 @@ auto format_to<VkExtensionProperties>(buffer_writer& dst, const VkExtensionPrope
     format_to(dst, object.extensionName);
     format_to(dst, " specVersion: ");
     format_to(dst, object.specVersion);
+    format_to(dst, " }");
+}
+
+template<>
+auto strlen<VkViewport>(const VkViewport& object, const string_view&) -> u64 {
+    constexpr u64 X_STR_LEN = strlen("{ x: ");
+    u64 x_len = strlen(object.x);
+    constexpr u64 Y_STR_LEN = strlen(" y: ");
+    u64 y_len = strlen(object.y);
+    constexpr u64 WIDTH_STR_LEN = strlen(" width: ");
+    u64 width_len = strlen(object.width);
+    constexpr u64 HEIGHT_STR_LEN = strlen(" height: ");
+    u64 height_len = strlen(object.height);
+    constexpr u64 MIN_DEPTH_STR_LEN = strlen(" minDepth: ");
+    u64 min_depth_len = strlen(object.minDepth);
+    constexpr u64 MAX_DEPTH_STR_LEN = strlen(" maxDepth: ");
+    u64 max_depth_len = strlen(object.maxDepth);
+    constexpr u64 CLOSING_STR_LEN = strlen(" }");
+    return X_STR_LEN + x_len +
+           Y_STR_LEN + y_len +
+           WIDTH_STR_LEN + width_len +
+           HEIGHT_STR_LEN + height_len +
+           MIN_DEPTH_STR_LEN + min_depth_len +
+           MAX_DEPTH_STR_LEN + max_depth_len +
+           CLOSING_STR_LEN;
+}
+
+template<>
+auto format_to<VkViewport>(buffer_writer& dst, const VkViewport& object, const string_view&) -> void {
+    format_to(dst, "{ x: ");
+    format_to(dst, object.x);
+    format_to(dst, " y: ");
+    format_to(dst, object.y);
+    format_to(dst, " width: ");
+    format_to(dst, object.width);
+    format_to(dst, " height: ");
+    format_to(dst, object.height);
+    format_to(dst, " minDepth: ");
+    format_to(dst, object.minDepth);
+    format_to(dst, " maxDepth: ");
+    format_to(dst, object.maxDepth);
+    format_to(dst, " }");
+}
+
+template<>
+auto strlen<VkRect2D>(const VkRect2D& object, const string_view&) -> u64 {
+    constexpr u64 OFFSET_STR_LEN = strlen("{ offset: ");
+    u64 offset_len = strlen(object.offset);
+    constexpr u64 EXTENT_STR_LEN = strlen(" extent: ");
+    u64 extent_len = strlen(object.extent);
+    constexpr u64 CLOSING_STR_LEN = strlen(" }");
+    return OFFSET_STR_LEN + offset_len +
+           EXTENT_STR_LEN + extent_len +
+           CLOSING_STR_LEN;
+}
+
+template<>
+auto format_to<VkRect2D>(buffer_writer& dst, const VkRect2D& object, const string_view&) -> void {
+    format_to(dst, "{ offset: ");
+    format_to(dst, object.offset);
+    format_to(dst, " extent: ");
+    format_to(dst, object.extent);
     format_to(dst, " }");
 }
 
