@@ -21,13 +21,17 @@
 
 #include <vulkan/vulkan.h>
 
+#include <root/graphics/vk_handle_container.h>
+
 #include <root/graphics/device.h>
 #include <root/graphics/surface.h>
 #include <root/graphics/semaphore.h>
 
 namespace root {
 
-class swapchain {
+namespace graphics {
+
+class swapchain : public vk_handle_container<VkSwapchainKHR,swapchain> {
 public:
     swapchain(const surface& s, const device& d, allocator* alloc = allocator::default_allocator());
 
@@ -53,8 +57,6 @@ public:
 
     auto present(const array_slice<semaphore>& wait_semaphores, const u32 image_index) -> void;
 
-    VkSwapchainKHR handle;
-
     VkSurfaceCapabilitiesKHR surface_capabilities;
     array<VkSurfaceFormatKHR> formats;
     array<VkPresentModeKHR> present_modes;
@@ -66,5 +68,7 @@ private:
     const device& m_device;
     allocator* m_alloc;
 };
+
+} // namespace graphics
 
 } // namespace root

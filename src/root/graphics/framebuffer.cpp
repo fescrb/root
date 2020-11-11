@@ -23,6 +23,8 @@
 
 namespace root {
 
+namespace graphics {
+
 framebuffer::framebuffer(const device& dev, 
                          const renderpass& rp, 
                          const array_slice<VkImageView>& attachments, 
@@ -56,5 +58,7 @@ framebuffer::~framebuffer() {
         vkDestroyFramebuffer(m_device_handle, m_handle, nullptr);
     }
 }
+
+} // namespace graphics
 
 } // namespace root

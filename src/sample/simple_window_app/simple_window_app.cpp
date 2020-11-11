@@ -74,7 +74,7 @@ int main() {
         abort();
     }
 
-    root::swapchain swapchain(surface, *device);
+    root::graphics::swapchain swapchain(surface, *device);
 
 
     root::log::d("", "swapchain created viewport {} scissor {}", swapchain.viewport(), swapchain.scissor());
@@ -98,11 +98,11 @@ int main() {
 
     root::pipeline pipeline(*device, shaders, vertex_input, input_assembly, pipeline_layout, raster, renderpass);
 
-    root::array<root::framebuffer> framebuffers(swapchain.swapchain_images.size());
+    root::array<root::graphics::framebuffer> framebuffers(swapchain.swapchain_images.size());
 
     for(root::u32 i = 0; i < framebuffers.size(); i++) {
         framebuffers[i] = std::move(
-            root::framebuffer(
+            root::graphics::framebuffer(
                 *device, 
                 renderpass, 
                 swapchain.swapchain_images.range(i, i+1),

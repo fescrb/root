@@ -23,8 +23,10 @@
 
 namespace root {
 
+namespace graphics {
+
 swapchain::swapchain(const surface& s, const device& d, allocator* alloc)
-:   handle(VK_NULL_HANDLE),
+:   vk_handle_container(),
     m_device(d),
     m_alloc(alloc) {
     refresh(s, d);
@@ -111,9 +113,9 @@ auto swapchain::refresh(const surface& s, const device& d) -> void {
     create_info.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
     create_info.presentMode = VK_PRESENT_MODE_FIFO_KHR; // This mode is required to be supported
     create_info.clipped = VK_TRUE; // Don't care covered pixels
-    create_info.oldSwapchain = handle;
+    create_info.oldSwapchain = handle();
 
-    VkResult res = vkCreateSwapchainKHR(d.handle, &create_info, nullptr, &handle);
+    VkResult res = vkCreateSwapchainKHR(d.handle, &create_info, nullptr, &m_handle);
 
     if(res != VK_SUCCESS) {
         log::e("swapchain", "vkCreateSwapchainKHR failed with {}", res);
@@ -121,9 +123,9 @@ auto swapchain::refresh(const surface& s, const device& d) -> void {
     }
 
     u32 num_images;
-    vkGetSwapchainImagesKHR(d.handle, handle, &num_images, nullptr);
+    vkGetSwapchainImagesKHR(d.handle, handle(), &num_images, nullptr);
     array<VkImage> temp_images(num_images, m_alloc);
-    vkGetSwapchainImagesKHR(d.handle, handle, &num_images, temp_images.data());
+    vkGetSwapchainImagesKHR(d.handle, handle(), &num_images, temp_images.data());
     
     array<VkImageView> temp_image_views(num_images, m_alloc);
     
@@ -162,7 +164,7 @@ auto swapchain::refresh(const surface& s, const device& d) -> void {
 auto swapchain::acquire(const semaphore& sem, const u64 timeout) -> u32 {
     u32 image_index;
     // TODO: deal with fences
-    VkResult res = vkAcquireNextImageKHR(m_device.handle, handle, timeout, sem.handle(), VK_NULL_HANDLE, &image_index);
+    VkResult res = vkAcquireNextImageKHR(m_device.handle, handle(), timeout, sem.handle(), VK_NULL_HANDLE, &image_index);
     // TODO: deal with out of date swapchain
     if(res != VK_SUCCESS) {
         log::e("swapchain", "vkAcquireNextImageKHR failed with {}", res);
@@ -187,7 +189,7 @@ auto swapchain::present(const array_slice<semaphore>& wait_semaphores, const u32
         present_info.pWaitSemaphores = nullptr;
     }
     present_info.swapchainCount = 1;
-    present_info.pSwapchains = &handle;
+    present_info.pSwapchains = &m_handle;
     present_info.pImageIndices = &image_index;
     present_info.pResults = nullptr;
 
@@ -198,5 +200,7 @@ auto swapchain::present(const array_slice<semaphore>& wait_semaphores, const u32
         abort();
     }
 }
+
+} // namespace graphics
 
 } // namespace root

@@ -24,6 +24,8 @@
 
 namespace root {
 
+namespace graphics {
+
 class framebuffer : public vk_handle_container<VkFramebuffer,framebuffer> {
 public:
     framebuffer(const device& dev, 
@@ -74,5 +76,7 @@ private:
     VkExtent2D m_extent;
     allocator* m_alloc;
 };
+
+} // namespace graphics
 
 } // namespace root
