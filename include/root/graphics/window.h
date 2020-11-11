@@ -23,13 +23,13 @@
 #include <GLFW/glfw3.h>
 #endif
 
-#include <root/core/string_slice.h>
+#include <root/core/string_view.h>
 
 namespace root {
 
 class window {
 public:
-    window(u32 width, u32 height, const char* title);
+    window(const u32 width, const u32 height, const string_view& title);
 
 #if !defined(ROOT_ANDROID)
     GLFWwindow* handle;
