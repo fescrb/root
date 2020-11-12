@@ -21,8 +21,11 @@
 
 #include <cstdlib>
 #include <root/core/primitives.h>
+#include <root/memory/private/reference_counter.h>
 
 namespace root {
+
+template<typename C> class strong_ptr;
 
 class allocator {
 public:
@@ -30,6 +33,14 @@ public:
     inline auto make(Args... args) -> C* {
         C* ptr = static_cast<C*>(malloc(sizeof(C), alignof(C)));
         new (ptr) C(args...);
+        return ptr;
+    }
+
+    template<typename C, typename... Args>
+    inline auto make_strong(Args... args) -> strong_ptr<C> {
+        C* memory = make<C>(args...);
+        reference_counter* ref_counter = make<reference_counter>();
+        strong_ptr<C> ptr = strong_ptr<C>(memory, ref_counter, this);
         return ptr;
     }
 
@@ -46,7 +57,7 @@ public:
         return m_default_allocator;
     }
 
-    inline static auto set_default_allocator(allocator* alloc) -> void{
+    inline static auto set_default_allocator(allocator* alloc) -> void {
         m_default_allocator = alloc;
     }
 

@@ -29,14 +29,6 @@ template<typename C> class weak_ptr;
 template<typename C>
 class strong_ptr final {
 public:
-    template<typename... Args>
-    static strong_ptr<C> make(allocator* alloc, Args... args) {
-        C* memory = alloc->make<C>(args...);
-        reference_counter* ref_counter = alloc->make<reference_counter>();
-        strong_ptr<C> ptr = strong_ptr<C>(memory, ref_counter, alloc);
-        return ptr;
-    }
-
     strong_ptr(const strong_ptr& other)
     :   m_ptr(other.m_ptr){
         lock();
@@ -108,6 +100,7 @@ private:
 
     managed_ptr<C> m_ptr;
     friend class weak_ptr<C>;
+    friend class allocator;
 };
 
 template <typename C>
@@ -131,5 +124,10 @@ inline auto strong_ptr<C>::lock() -> void {
         m_ptr.m_memory = nullptr;
         m_ptr.m_ref_count = nullptr;
     }
+}
+
+template<typename C, typename... Args>
+inline auto make_strong(Args... args) -> strong_ptr<C> {
+    return allocator::default_allocator()->make_strong<C>(args...);
 }
 } // namespace root

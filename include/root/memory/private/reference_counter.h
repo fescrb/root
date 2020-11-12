@@ -21,8 +21,6 @@
 
 #include <atomic>
 
-#include <root/memory/allocator.h>
-
 namespace root {
 class reference_counter final {
 public:

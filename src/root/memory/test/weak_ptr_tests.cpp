@@ -44,7 +44,7 @@ public:
         memory = new Class(0);
         ON_CALL(allocator, malloc(sizeof(Class), alignof(Class))).WillByDefault(Return(memory));
         ON_CALL(allocator, malloc(sizeof(root::reference_counter), alignof(Class))).WillByDefault(Return(counter));
-        strong = root::strong_ptr<Class>::make(&allocator, data);
+        strong = allocator.make_strong<Class>(data);
     }
 
     void TearDown() override {
