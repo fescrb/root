@@ -24,6 +24,7 @@
 #include <root/graphics/instance.h>
 #include <root/io/log.h>
 
+#include <root/root.h>
 #include <root/graphics/window.h>
 #include <root/graphics/surface.h>
 #include <root/graphics/device.h>
@@ -39,7 +40,7 @@
 #include <root/graphics/command_pool.h>
 #include <root/graphics/command_buffer.h>
 
-int main() {
+int root_main(int arg_c, char** arg_v) {
     root::instance::init();
 
     root::window window(640u, 480u, "Test");
@@ -148,4 +149,6 @@ int main() {
         }
         swapchain.present(root::array_slice<root::semaphore>(&present_s, 1), image);
     }
+
+    return 0;
 }

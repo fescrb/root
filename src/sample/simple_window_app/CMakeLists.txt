@@ -23,6 +23,6 @@ endif(UNIX)
 
 add_executable(simple_window_app ${simple_window_app_sources})
 
-target_link_libraries(simple_window_app root ${Vulkan_LIBRARY} ${ROOT_LIBRARIES})
+target_link_libraries(simple_window_app root root_main ${Vulkan_LIBRARY} ${ROOT_LIBRARIES})
 
 install(TARGETS simple_window_app RUNTIME DESTINATION bin)
