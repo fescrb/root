@@ -17,11 +17,18 @@
  * along with The Root Engine.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <root/root.h>
-
 #include <root/graphics/graphics.h>
 
-int main(int argc, char** argv) {
-    root::graphics::init();
-    return root_main(argc, argv);
+#include <root/graphics/instance.h>
+
+namespace root {
+
+namespace graphics {
+
+auto init(allocator* alloc) -> void {
+    if (!instance::get()) instance::set(alloc->make_strong<instance>());
 }
+
+} // namespace graphics
+
+} // namespace root

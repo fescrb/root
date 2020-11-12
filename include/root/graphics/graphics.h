@@ -17,11 +17,16 @@
  * along with The Root Engine.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <root/root.h>
+#pragma once
 
-#include <root/graphics/graphics.h>
+#include <root/memory/allocator.h>
 
-int main(int argc, char** argv) {
-    root::graphics::init();
-    return root_main(argc, argv);
-}
+namespace root {
+
+namespace graphics {
+
+auto init(allocator* alloc = allocator::default_allocator()) -> void;
+
+} // namespace graphics
+
+} // namespace root

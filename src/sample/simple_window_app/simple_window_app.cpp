@@ -41,12 +41,11 @@
 #include <root/graphics/command_buffer.h>
 
 int root_main(int arg_c, char** arg_v) {
-    auto instance = root::make_strong<root::graphics::instance>();
     root::window window(640u, 480u, "Test");
 
-    root::graphics::surface surface(instance, window);
+    root::graphics::surface surface(root::graphics::instance::get(), window);
 
-    auto devices = instance->physical_devices();
+    auto devices = root::graphics::instance::get()->physical_devices();
 
     root::device* device = nullptr;
 
