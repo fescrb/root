@@ -49,7 +49,7 @@ physical_device::physical_device(const VkPhysicalDevice& h, allocator* alloc)
 
     array<VkExtensionProperties> extens(num_extensions, m_alloc);
     res = vkEnumerateDeviceExtensionProperties(handle, nullptr, &num_extensions, extens.data());
-
+    
     if(res != VK_SUCCESS) {
         log::e("physical_device", "vkEnumerateDeviceExtensionProperties failed with {}", res);
         abort();

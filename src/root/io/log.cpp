@@ -23,7 +23,6 @@
 #include <cstdio>
 #endif
 
-
 namespace root {
 
 #if defined(ROOT_LINUX)

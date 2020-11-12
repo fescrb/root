@@ -23,11 +23,6 @@
 #include <root/core/string_view.h>
 #include <root/io/formatter.h>
 
-#if defined(ROOT_LINUX)
-#include <unistd.h> 
-#include <limits.h>
-#endif
-
 namespace root {
 
 namespace path {
@@ -69,18 +64,7 @@ constexpr auto ext(const string_view& path) -> string_view {
     return string_view(path.rbegin(), location);
 }
 
-inline auto binary_location() -> const string_view& {
-    static string_view location;
-#if defined(ROOT_LINUX)
-    static char location_str[PATH_MAX];
-    if(!location.size()) {
-        size_t loc_len = readlink("/proc/self/exe", location_str, PATH_MAX);
-        location_str[loc_len] = '\0'; // readlink doesn't nul-terminate strings
-        location = dirname(location_str);
-    } 
-#endif
-    return location;
-}
+auto binary_location() -> const string_view&;
 
 inline auto join(const string_view& lhs, const string_view& rhs, allocator* alloc = allocator::default_allocator()) -> string {
     formatter formatter(alloc);

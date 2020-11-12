@@ -17,23 +17,42 @@
  * along with The Root Engine.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#pragma once
+#include <root/io/path.h>
 
-#if !defined(ROOT_ANDROID)
-struct GLFWwindow;
+#if defined(ROOT_LINUX)
+#include <unistd.h> 
+#include <limits.h>
 #endif
 
-#include <root/core/string_slice.h>
+#if defined(ROOT_WIN)
+#include <windows.h>
+#include <libloaderapi.h>
+#endif
 
 namespace root {
 
-class window {
-public:
-    window(u32 width, u32 height, const char* title);
+namespace path {
 
-#if !defined(ROOT_ANDROID)
-    GLFWwindow* handle;
+auto binary_location() -> const string_view& {
+    static string_view location;
+#if defined(ROOT_LINUX)
+    static char location_str[PATH_MAX];
+    if(!location.size()) {
+        size_t loc_len = readlink("/proc/self/exe", location_str, PATH_MAX);
+        location_str[loc_len] = '\0'; // readlink doesn't nul-terminate strings
+        location = dirname(location_str);
+    } 
 #endif
-};
+#if defined(ROOT_WIN)
+    static char location_str[MAX_PATH];
+    if(!location.size()) {
+        GetModuleFileNameA(nullptr, location_str, MAX_PATH);
+        location = dirname(location_str);
+    } 
+#endif
+    return location;
+}
+
+} // namespace path
 
 } // namespace root

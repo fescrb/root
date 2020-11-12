@@ -1,7 +1,8 @@
 list(APPEND root_io_sources ${CMAKE_CURRENT_SOURCE_DIR}/format.cpp
                             ${CMAKE_CURRENT_SOURCE_DIR}/log.cpp
                             ${CMAKE_CURRENT_SOURCE_DIR}/buffer_stream.cpp
-                            ${CMAKE_CURRENT_SOURCE_DIR}/file_stream.cpp)
+                            ${CMAKE_CURRENT_SOURCE_DIR}/file_stream.cpp
+                            ${CMAKE_CURRENT_SOURCE_DIR}/path.cpp)
 
 add_library(root_io OBJECT ${root_io_sources})
 

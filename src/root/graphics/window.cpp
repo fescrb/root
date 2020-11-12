@@ -19,6 +19,10 @@
 
 #include <root/graphics/window.h>
 
+#if !defined(ROOT_ANDROID)
+#include <GLFW/glfw3.h>
+#endif
+
 namespace root {
 
 window::window(u32 width, u32 height, const char* title) {

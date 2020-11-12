@@ -17,13 +17,16 @@
  * along with The Root Engine.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#if !defined(ROOT_ANDROID)
+#if defined(ROOT_WIN)
+//#include <windows.h>
+#endif 
+#include <GLFW/glfw3.h>
+#endif
+
 #include <root/graphics/instance.h>
 
 #include <root/io/log.h>
-
-#if defined(ROOT_LINUX)
-#include <GLFW/glfw3.h>
-#endif
 
 namespace root {
 

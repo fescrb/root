@@ -40,6 +40,7 @@ public:
         handle = std::move(other.handle);
         m_alloc = std::move(other.m_alloc);
         m_properties = std::move(other.m_properties);
+        m_extensions = std::move(other.m_extensions);
         m_memory_properties = std::move(other.m_memory_properties);
         m_family_properties = std::move(other.m_family_properties);
         return *this;

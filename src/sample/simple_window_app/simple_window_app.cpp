@@ -39,6 +39,10 @@
 #include <root/graphics/command_pool.h>
 #include <root/graphics/command_buffer.h>
 
+#if !defined(ROOT_ANDROID)
+#include <GLFW/glfw3.h>
+#endif
+
 int main() {
     root::instance::init();
 
@@ -50,6 +54,8 @@ int main() {
 
     root::device* device = nullptr;
 
+    root::log::d("", "Found {} devices", devices.size());
+
     for(int i = 0; i < devices.size(); i++) {
         root::log::d("", "Device {}: {}", i, *(devices[i].properties()));
 
@@ -60,12 +66,17 @@ int main() {
         }
 
         auto& family_properties = devices[i].queue_family_properties();
+        
+        root::log::d("", "Device {} has {} queues", i, family_properties.size());
         for(int j = 0; j < family_properties.size(); j++) {
             root::log::d("", "Queue {}:{}", j, family_properties[j]);
         }
 
         if(devices[i].has_graphics_queue() && devices[i].has_present_queue(surface)) {
+            root::log::d("", "Device {} has both a present and a graphics queue", i);
             device = new root::device(devices[i], surface);
+        } else {
+            root::log::d("", "Device {} does not have both a present and a graphics queue", i);
         }
     }
 
@@ -75,7 +86,6 @@ int main() {
     }
 
     root::swapchain swapchain(surface, *device);
-
 
     root::log::d("", "swapchain created viewport {} scissor {}", swapchain.viewport(), swapchain.scissor());
 
