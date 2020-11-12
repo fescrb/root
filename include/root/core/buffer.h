@@ -83,7 +83,7 @@ public:
     ~buffer() {
         root_assert((m_data && m_allocator && m_byte_size) ^ (!m_data && !m_allocator && !m_byte_size)); 
         if(m_data && m_allocator && m_byte_size) {
-            m_allocator->free(m_data, m_byte_size, m_alignment);
+            m_allocator->free(m_data);
         }
         m_data = nullptr;
         m_allocator = nullptr;

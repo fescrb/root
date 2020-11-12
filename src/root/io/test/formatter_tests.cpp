@@ -62,7 +62,7 @@ TEST_F(formatter_tests, format) {
     EXPECT_CALL(allocator, malloc(strlen(str_lit)+1, alignof(root::i8))).Times(1).WillOnce(Return(memory));\
     root::string str = formatter.format(_root_fmt_string_, test);\
     EXPECT_EQ(memcmp(str, str_lit, strlen(str_lit)), 0);\
-    EXPECT_CALL(allocator, free(memory, strlen(str_lit)+1,  alignof(root::i8))).Times(1);
+    EXPECT_CALL(allocator, free(memory)).Times(1);
 
     for(int i = 0; i < NUM_TESTS; i++) {
         INT_FORMAT_TEST(root::i8, "Formatting {} test", "Formatting %c test");
@@ -104,14 +104,14 @@ TEST_F(formatter_tests, bool_to_string) {
         EXPECT_CALL(allocator, malloc(strlen(TRUE_BOOLEAN)+1, alignof(root::i8))).Times(1).WillOnce(Return(memory));
         root::string str = formatter.to_string(true);
         EXPECT_EQ(memcmp(str, TRUE_BOOLEAN, strlen(TRUE_BOOLEAN)), 0);
-        EXPECT_CALL(allocator, free(memory, strlen(TRUE_BOOLEAN)+1,  alignof(root::i8))).Times(1);
+        EXPECT_CALL(allocator, free(memory)).Times(1);
     }
 
     {
         EXPECT_CALL(allocator, malloc(strlen(FALSE_BOOLEAN)+1, alignof(root::i8))).Times(1).WillOnce(Return(memory));
         root::string str = formatter.to_string(false);
         EXPECT_EQ(memcmp(str, FALSE_BOOLEAN, strlen(FALSE_BOOLEAN)), 0);
-        EXPECT_CALL(allocator, free(memory, strlen(FALSE_BOOLEAN)+1,  alignof(root::i8))).Times(1);
+        EXPECT_CALL(allocator, free(memory)).Times(1);
     }
 
     {
@@ -133,7 +133,7 @@ TEST_F(formatter_tests, i8_to_string) {
         EXPECT_CALL(allocator, malloc(strlen(str_lit)+1, alignof(root::i8))).Times(1).WillOnce(Return(memory));
         root::string str = formatter.to_string(test);
         EXPECT_EQ(memcmp(str, str_lit, strlen(str_lit)), 0);
-        EXPECT_CALL(allocator, free(memory, strlen(str_lit)+1,  alignof(root::i8))).Times(1);
+        EXPECT_CALL(allocator, free(memory)).Times(1);
     }
 }
 
@@ -148,7 +148,7 @@ TEST_F(formatter_tests, u8_to_string) {
         EXPECT_CALL(allocator, malloc(strlen(str_lit)+1, alignof(root::i8))).Times(1).WillOnce(Return(memory));
         root::string str = formatter.to_string(test);
         EXPECT_EQ(memcmp(str, str_lit, strlen(str_lit)), 0);
-        EXPECT_CALL(allocator, free(memory, strlen(str_lit)+1,  alignof(root::i8))).Times(1);
+        EXPECT_CALL(allocator, free(memory)).Times(1);
     }
 }
 
@@ -163,7 +163,7 @@ TEST_F(formatter_tests, i16_to_string) {
         EXPECT_CALL(allocator, malloc(strlen(str_lit)+1, alignof(root::i8))).Times(1).WillOnce(Return(memory));
         root::string str = formatter.to_string(test);
         EXPECT_EQ(memcmp(str, str_lit, strlen(str_lit)), 0);
-        EXPECT_CALL(allocator, free(memory, strlen(str_lit)+1,  alignof(root::i8))).Times(1);
+        EXPECT_CALL(allocator, free(memory)).Times(1);
     }
 }
 
@@ -178,7 +178,7 @@ TEST_F(formatter_tests, u16_to_string) {
         EXPECT_CALL(allocator, malloc(strlen(str_lit)+1, alignof(root::i8))).Times(1).WillOnce(Return(memory));
         root::string str = formatter.to_string(test);
         EXPECT_EQ(memcmp(str, str_lit, strlen(str_lit)), 0);
-        EXPECT_CALL(allocator, free(memory, strlen(str_lit)+1,  alignof(root::i8))).Times(1);
+        EXPECT_CALL(allocator, free(memory)).Times(1);
     }
 }
 
@@ -193,7 +193,7 @@ TEST_F(formatter_tests, u32_to_string) {
         EXPECT_CALL(allocator, malloc(strlen(str_lit)+1, alignof(root::i8))).Times(1).WillOnce(Return(memory));
         root::string str = formatter.to_string(test);
         EXPECT_EQ(memcmp(str, str_lit, strlen(str_lit)), 0);
-        EXPECT_CALL(allocator, free(memory, strlen(str_lit)+1,  alignof(root::i8))).Times(1);
+        EXPECT_CALL(allocator, free(memory)).Times(1);
     }
 }
 
@@ -208,7 +208,7 @@ TEST_F(formatter_tests, u64_to_string) {
         EXPECT_CALL(allocator, malloc(strlen(str_lit)+1, alignof(root::i8))).Times(1).WillOnce(Return(memory));
         root::string str = formatter.to_string(test);
         EXPECT_EQ(memcmp(str, str_lit, strlen(str_lit)), 0);
-        EXPECT_CALL(allocator, free(memory, strlen(str_lit)+1,  alignof(root::i8))).Times(1);
+        EXPECT_CALL(allocator, free(memory)).Times(1);
     }
 }
 
@@ -223,7 +223,7 @@ TEST_F(formatter_tests, i32_to_string) {
         EXPECT_CALL(allocator, malloc(strlen(str_lit)+1, alignof(root::i8))).Times(1).WillOnce(Return(memory));
         root::string str = formatter.to_string(test);
         EXPECT_EQ(memcmp(str, str_lit, strlen(str_lit)), 0);
-        EXPECT_CALL(allocator, free(memory, strlen(str_lit)+1,  alignof(root::i8))).Times(1);
+        EXPECT_CALL(allocator, free(memory)).Times(1);
     }
 }
 
@@ -238,7 +238,7 @@ TEST_F(formatter_tests, i64_to_string) {
         EXPECT_CALL(allocator, malloc(strlen(str_lit)+1, alignof(root::i8))).Times(1).WillOnce(Return(memory));
         root::string str = formatter.to_string(test);
         EXPECT_EQ(memcmp(str, str_lit, strlen(str_lit)), 0);
-        EXPECT_CALL(allocator, free(memory, strlen(str_lit)+1,  alignof(root::i8))).Times(1);
+        EXPECT_CALL(allocator, free(memory)).Times(1);
     }
 }
 
@@ -254,7 +254,7 @@ TEST_F(formatter_tests, f32_to_string) {
         EXPECT_CALL(allocator, malloc(strlen(str_lit)+1, alignof(root::i8))).Times(1).WillOnce(Return(memory));
         root::string str = formatter.to_string(test);
         EXPECT_EQ(memcmp(str, str_lit, strlen(str_lit)), 0);
-        EXPECT_CALL(allocator, free(memory, strlen(str_lit)+1,  alignof(root::i8))).Times(1);
+        EXPECT_CALL(allocator, free(memory)).Times(1);
     }
 
     for (int _ = 0; _ < NUM_TESTS; _++) {
@@ -266,7 +266,7 @@ TEST_F(formatter_tests, f32_to_string) {
         EXPECT_CALL(allocator, malloc(strlen(str_lit)+1, alignof(root::i8))).Times(1).WillOnce(Return(memory));
         root::string str = formatter.to_string(test);
         EXPECT_EQ(memcmp(str, str_lit, strlen(str_lit)), 0);
-        EXPECT_CALL(allocator, free(memory, strlen(str_lit)+1,  alignof(root::i8))).Times(1);
+        EXPECT_CALL(allocator, free(memory)).Times(1);
     }
 
     /*for (int _ = 0; _ < NUM_TESTS; _++) {
@@ -278,7 +278,7 @@ TEST_F(formatter_tests, f32_to_string) {
         EXPECT_CALL(allocator, malloc(strlen(str_lit)+1, alignof(root::i8))).Times(1).WillOnce(Return(memory));
         root::string str = formatter.to_string(test);
         EXPECT_EQ(memcmp(str, str_lit, strlen(str_lit)), 0);
-        EXPECT_CALL(allocator, free(memory, strlen(str_lit)+1,  alignof(root::i8))).Times(1);
+        EXPECT_CALL(allocator, free(memory)).Times(1);
     }*/
 
     for (int _ = 0; _ < NUM_TESTS; _++) {
@@ -290,6 +290,6 @@ TEST_F(formatter_tests, f32_to_string) {
         EXPECT_CALL(allocator, malloc(strlen(str_lit)+1, alignof(root::i8))).Times(1).WillOnce(Return(memory));
         root::string str = formatter.to_string(test);
         EXPECT_EQ(memcmp(str, str_lit, strlen(str_lit)), 0);
-        EXPECT_CALL(allocator, free(memory, strlen(str_lit)+1,  alignof(root::i8))).Times(1);
+        EXPECT_CALL(allocator, free(memory)).Times(1);
     }
 }

@@ -27,7 +27,7 @@
 
 namespace root {
 
-device::device(const physical_device& d, const surface& s)
+device::device(const physical_device& d, const graphics::surface& s)
 :   handle(VK_NULL_HANDLE),
     m_graphics_family_index(d.graphics_queue_family_index()),
     m_present_family_index(d.present_queue_family_index(s)),

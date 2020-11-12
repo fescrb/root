@@ -62,7 +62,7 @@ TEST_F(buffer_tests, blank_init) {
     EXPECT_TRUE(buffer);
     EXPECT_EQ(buffer.data(), memory);
 
-    EXPECT_CALL(allocator, free(memory, ALLOCATION_SIZE, ALIGNMENT)).Times(1);
+    EXPECT_CALL(allocator, free(memory)).Times(1);
 }
 
 TEST_F(buffer_tests, move_init) {
@@ -82,7 +82,7 @@ TEST_F(buffer_tests, move_init) {
     EXPECT_EQ(buffer.size(), 0);
     EXPECT_FALSE(buffer);
 
-    EXPECT_CALL(allocator, free(memory, ALLOCATION_SIZE, ALIGNMENT)).Times(1);
+    EXPECT_CALL(allocator, free(memory)).Times(1);
 }
 
 TEST_F(buffer_tests, move_assign) {
@@ -107,7 +107,7 @@ TEST_F(buffer_tests, move_assign) {
     EXPECT_FALSE(buffer);
     EXPECT_NE(buffer.data(), memory);
 
-    EXPECT_CALL(allocator, free(memory, ALLOCATION_SIZE, ALIGNMENT)).Times(1);
+    EXPECT_CALL(allocator, free(memory)).Times(1);
 }
 
 TEST_F(buffer_tests, buffer_offset) {
@@ -133,7 +133,7 @@ TEST_F(buffer_tests, buffer_offset) {
     EXPECT_NE(offset.data(), second_offset.data());
     EXPECT_EQ(second_offset.size(), SECOND_REMAINDER);
 
-    EXPECT_CALL(allocator, free(memory, ALLOCATION_SIZE, ALIGNMENT)).Times(1);
+    EXPECT_CALL(allocator, free(memory)).Times(1);
 }
 
 
@@ -160,7 +160,7 @@ TEST_F(buffer_tests, buffer_range) {
     EXPECT_EQ(second_range.data(), buffer + (OFFSET * 2));
     EXPECT_TRUE(second_range);
 
-    EXPECT_CALL(allocator, free(memory, ALLOCATION_SIZE, ALIGNMENT)).Times(1);
+    EXPECT_CALL(allocator, free(memory)).Times(1);
 }
 
 TEST_F(buffer_tests, buffer_limit) {
@@ -184,7 +184,7 @@ TEST_F(buffer_tests, buffer_limit) {
     EXPECT_EQ(second_limit.data(), buffer + OFFSET);
     EXPECT_TRUE(second_limit);
 
-    EXPECT_CALL(allocator, free(memory, ALLOCATION_SIZE, ALIGNMENT)).Times(1);
+    EXPECT_CALL(allocator, free(memory)).Times(1);
 }
 
 TEST_F(buffer_tests, memcpy_buffer) {
@@ -211,5 +211,5 @@ TEST_F(buffer_tests, memcpy_buffer) {
 
     EXPECT_EQ(memcmp(MODIFIED_MESSAGE, buffer.data(), MESSAGE_LENGTH), 0);
 
-    EXPECT_CALL(allocator, free(memory, MESSAGE_LENGTH, alignof(char))).Times(1);
+    EXPECT_CALL(allocator, free(memory)).Times(1);
 }

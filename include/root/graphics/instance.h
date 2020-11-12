@@ -19,10 +19,10 @@
 
 #pragma once
 
-#include <root/graphics/vk_handle_container.h>
-
 #include <root/core/array.h>
-#include <root/memory/allocator.h>
+#include <root/memory/strong_ptr.h>
+#include <root/graphics/vk_handle_container.h>
+#include <root/graphics/vk_allocation_callbacks.h>
 #include <root/graphics/physical_device.h>
 
 namespace root {
@@ -31,18 +31,23 @@ namespace graphics {
 
 class instance final : public vk_handle_container<VkInstance,instance> {
 public:
-    instance();
+    instance(allocator* alloc = allocator::default_allocator());
     ~instance();
 
-    static inline auto get() -> instance* {
+    static inline auto get() -> strong_ptr<instance>& {
+        // TODO maybe auto generate if none exists
         return m_instance;
+    }
+
+    static inline auto set(const strong_ptr<instance>& i) -> void {
+        m_instance = i;
     }
 
     auto physical_devices(allocator* alloc = allocator::default_allocator()) const -> array<::root::physical_device>;
 
 private:
-
-    static instance* m_instance;
+    vk_allocation_callbacks m_callbacks;
+    static strong_ptr<instance> m_instance;
 };
 
 } // namespace graphics

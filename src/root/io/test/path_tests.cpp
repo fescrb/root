@@ -105,5 +105,5 @@ TEST(path_tests, join) {
     printf("%s\n", full_path.data());
     EXPECT_EQ(strcmp(full_path.data(), FULL_PATH), 0);
     
-    EXPECT_CALL(mock_allocator, free(memory, strlen(FOLDER_LOCATION) + sizeof(root::path::FOLDER_DELIMITER) + strlen(FILE) +1, alignof(char)));
+    EXPECT_CALL(mock_allocator, free(memory));
 }

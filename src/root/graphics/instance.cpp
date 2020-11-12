@@ -29,9 +29,10 @@ namespace root {
 
 namespace graphics {
 
-instance* instance::m_instance = nullptr;
+strong_ptr<instance> instance::m_instance;
 
-instance::instance()  {
+instance::instance(allocator* alloc)
+:   m_callbacks(alloc)  {
     VkInstanceCreateInfo create_info;
     create_info.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
     create_info.pNext = nullptr;
@@ -87,7 +88,7 @@ instance::instance()  {
 #endif
 
     VkInstance handle;
-    VkResult res = vkCreateInstance(&create_info, nullptr, &m_handle);
+    VkResult res = vkCreateInstance(&create_info, m_callbacks, &m_handle);
     if (res != VK_SUCCESS) {
         log::e("instance", "vkCreateInstance failed with {}", res);
         abort();
@@ -96,7 +97,7 @@ instance::instance()  {
 
 instance::~instance() {
     if(*this) {
-        vkDestroyInstance(m_handle, nullptr);
+        vkDestroyInstance(m_handle, m_callbacks);
     }
 }
 

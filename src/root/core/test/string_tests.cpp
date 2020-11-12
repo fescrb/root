@@ -56,7 +56,7 @@ TEST_F(string_tests, string_view_initializer) {
         EXPECT_EQ(str[i], TEST_STRING[i]);
     }
 
-    EXPECT_CALL(allocator, free(memory, sizeof(char) * STRING_LENGTH, alignof(char))).Times(1);
+    EXPECT_CALL(allocator, free(memory)).Times(1);
 }
 
 TEST_F(string_tests, move_init) {
@@ -73,5 +73,5 @@ TEST_F(string_tests, move_init) {
         EXPECT_EQ(moved_str[i], TEST_STRING[i]);
     }
 
-    EXPECT_CALL(allocator, free(memory, sizeof(char) * STRING_LENGTH, alignof(char))).Times(1);
+    EXPECT_CALL(allocator, free(memory)).Times(1);
 }

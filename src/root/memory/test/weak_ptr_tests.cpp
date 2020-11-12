@@ -81,11 +81,11 @@ TEST_F(weak_ptr_tests, destroy_strong_first) {
     root::weak_ptr<Class> weak(strong);
     EXPECT_EQ(counter->strong_refs(), 1);
     EXPECT_EQ(counter->weak_refs(), 1);
-    EXPECT_CALL(allocator, free(memory, sizeof(Class), alignof(Class))).Times(1);
+    EXPECT_CALL(allocator, free(memory)).Times(1);
     strong = root::strong_ptr<Class>();
     EXPECT_EQ(counter->strong_refs(), 0);
     EXPECT_EQ(counter->weak_refs(), 1);
-    EXPECT_CALL(allocator, free(counter, sizeof(root::reference_counter), alignof(Class))).Times(1);
+    EXPECT_CALL(allocator, free(counter)).Times(1);
     weak.clear();
     EXPECT_EQ(counter->strong_refs(), 0);
     EXPECT_EQ(counter->weak_refs(), 0);
@@ -125,7 +125,7 @@ TEST_F(weak_ptr_tests, multithread_release) {
     EXPECT_EQ(counter->strong_refs(), 1);
     EXPECT_EQ(counter->weak_refs(), NUM_THREADS);
 
-    EXPECT_CALL(allocator, free(memory, sizeof(Class), alignof(Class))).Times(1);
+    EXPECT_CALL(allocator, free(memory)).Times(1);
 
     strong.clear();
 
@@ -133,7 +133,7 @@ TEST_F(weak_ptr_tests, multithread_release) {
     EXPECT_EQ(counter->weak_refs(), NUM_THREADS);
 
 
-    EXPECT_CALL(allocator, free(counter, sizeof(root::reference_counter), alignof(Class))).Times(1);
+    EXPECT_CALL(allocator, free(counter)).Times(1);
 
     for(int i = 0; i < NUM_THREADS; i++) {
         threads[i] = std::thread([&weaks, i](){
@@ -179,8 +179,8 @@ TEST_F(weak_ptr_tests, multithread_interleaved_release) {
     EXPECT_EQ(counter->strong_refs(), NUM_THREADS/2);
     EXPECT_EQ(counter->weak_refs(), NUM_THREADS/2);
 
-    EXPECT_CALL(allocator, free(memory, sizeof(Class), alignof(Class))).Times(1);
-    EXPECT_CALL(allocator, free(counter, sizeof(root::reference_counter), alignof(Class))).Times(1);
+    EXPECT_CALL(allocator, free(memory)).Times(1);
+    EXPECT_CALL(allocator, free(counter)).Times(1);
 
     for(int i = 0; i < NUM_THREADS; i++) {
         threads[i] = std::thread([&weaks, &strongs, i](){

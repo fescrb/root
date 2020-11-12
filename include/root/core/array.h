@@ -122,7 +122,7 @@ public:
     ~array() {
         root_assert((m_allocator && m_data && m_length) ^ (!m_allocator && !m_data && !m_length));
         if(m_allocator && m_data && m_length)
-            m_allocator->free(m_data, sizeof(T) * m_length, alignof(T));
+            m_allocator->free(m_data);
     }
 
     template<typename I>

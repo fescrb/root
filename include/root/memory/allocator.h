@@ -20,6 +20,7 @@
 #pragma once
 
 #include <cstdlib>
+#include <new>
 #include <root/core/primitives.h>
 #include <root/memory/private/reference_counter.h>
 
@@ -31,9 +32,8 @@ class allocator {
 public:
     template<typename C, typename... Args>
     inline auto make(Args... args) -> C* {
-        C* ptr = static_cast<C*>(malloc(sizeof(C), alignof(C)));
-        new (ptr) C(args...);
-        return ptr;
+        void* ptr = malloc(sizeof(C), alignof(C));
+        return new (ptr) C(args...);
     }
 
     template<typename C, typename... Args>
@@ -47,11 +47,11 @@ public:
     template<typename C>
     inline auto del(C* ptr) -> void {
         ptr->~C();
-        free(ptr, sizeof(C), alignof(C));
+        free(ptr);
     }
 
     virtual auto malloc(const u64& bytes, const u64& alignment) -> void* = 0;
-    virtual auto free(void* mem, const u64& bytes, const u64& alignment) -> void = 0;
+    virtual auto free(void* mem) -> void = 0;
 
     inline static auto default_allocator() -> allocator* {
         return m_default_allocator;

@@ -19,19 +19,29 @@
 
 #pragma once
 
-#include <root/graphics/vk_handle_container.h>
-#include <root/graphics/window.h>
-#include <root/memory/strong_ptr.h>
+#include <vulkan/vulkan.h>
+
+#include <root/memory/allocator.h>
 
 namespace root {
 
 namespace graphics {
 
-class instance;
-
-class surface : public vk_handle_container<VkSurfaceKHR,surface> {
+class vk_allocation_callbacks {
 public:
-    surface(const strong_ptr<instance>& i, window& w);
+    vk_allocation_callbacks() : m_callbacks() {
+        m_callbacks.pUserData = nullptr;
+    }
+
+    vk_allocation_callbacks(allocator* alloc);
+
+    inline operator const VkAllocationCallbacks*() const {
+        if (!m_callbacks.pUserData) return nullptr;
+        return &m_callbacks;
+    }    
+
+protected:
+    VkAllocationCallbacks m_callbacks;
 };
 
 } // namespace graphics

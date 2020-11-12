@@ -60,7 +60,7 @@ TEST_F(array_tests, blank_init) {
     EXPECT_EQ(array.size(), ARRAY_SIZE);
     EXPECT_TRUE(array);
 
-    EXPECT_CALL(allocator, free(memory, sizeof(int) * ARRAY_SIZE, alignof(int))).Times(1);
+    EXPECT_CALL(allocator, free(memory)).Times(1);
 }
 
 TEST_F(array_tests, index_operator) {
@@ -78,7 +78,7 @@ TEST_F(array_tests, index_operator) {
         EXPECT_EQ(array[i], basic_array[i]);
     }
 
-    EXPECT_CALL(allocator, free(memory, sizeof(int) * ARRAY_SIZE, alignof(int))).Times(1);
+    EXPECT_CALL(allocator, free(memory)).Times(1);
 }
 
 TEST_F(array_tests, initializer_lists) {
@@ -96,7 +96,7 @@ TEST_F(array_tests, initializer_lists) {
         EXPECT_EQ(array[i], basic_array[i]);
     }
 
-    EXPECT_CALL(allocator, free(memory, sizeof(int) * ARRAY_SIZE, alignof(int))).Times(1);
+    EXPECT_CALL(allocator, free(memory)).Times(1);
 }
 
 TEST_F(array_tests, move_constructor) {
@@ -119,7 +119,7 @@ TEST_F(array_tests, move_constructor) {
     EXPECT_EQ(array.size(), 0);
     EXPECT_FALSE(array);
 
-    EXPECT_CALL(allocator, free(memory, sizeof(int) * ARRAY_SIZE, alignof(int))).Times(1);
+    EXPECT_CALL(allocator, free(memory)).Times(1);
 }
 
 TEST_F(array_tests, move_make_operator) {
@@ -142,7 +142,7 @@ TEST_F(array_tests, move_make_operator) {
     EXPECT_EQ(array.size(), 0);
     EXPECT_FALSE(array);
 
-    EXPECT_CALL(allocator, free(memory, sizeof(int) * ARRAY_SIZE, alignof(int))).Times(1);
+    EXPECT_CALL(allocator, free(memory)).Times(1);
 }
 
 TEST_F(array_tests, raw) {
@@ -158,7 +158,7 @@ TEST_F(array_tests, raw) {
         EXPECT_EQ(array.data()[i], basic_array[i]);
     }
 
-    EXPECT_CALL(allocator, free(memory, sizeof(int) * ARRAY_SIZE, alignof(int))).Times(1);
+    EXPECT_CALL(allocator, free(memory)).Times(1);
 }
 
 TEST_F(array_tests, const_index) {
@@ -172,5 +172,5 @@ TEST_F(array_tests, const_index) {
         EXPECT_EQ(array[i], basic_array[i]);
     }
 
-    EXPECT_CALL(allocator, free(memory, sizeof(int) * ARRAY_SIZE, alignof(int))).Times(1);
+    EXPECT_CALL(allocator, free(memory)).Times(1);
 }
