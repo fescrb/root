@@ -24,9 +24,9 @@
 
 namespace root {
 
-surface::surface(window& w) {
+surface::surface(const graphics::instance* i, window& w) {
 #if defined(ROOT_LINUX)
-    VkResult res = glfwCreateWindowSurface(instance::get()->handle, w.handle, NULL, &handle);
+    VkResult res = glfwCreateWindowSurface(i->handle(), w.handle, NULL, &handle);
     if(res != VK_SUCCESS) {
         // TODO: error handling
         log::e("surface", "glfwCreateWindowSurface failed with {}", res);

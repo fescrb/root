@@ -25,9 +25,13 @@
 
 namespace root {
 
+namespace graphics {
+class instance;
+}
+
 class surface {
 public:
-    surface(window& w);
+    surface(const graphics::instance* i, window& w);
 
     VkSurfaceKHR handle;
 };
