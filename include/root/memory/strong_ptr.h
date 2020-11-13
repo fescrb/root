@@ -105,7 +105,7 @@ private:
  */
 template<typename C, typename... Args>
 inline auto make_strong(Args... args) -> strong_ptr<C> {
-    return allocator::default_allocator()->make_strong<C>(args...);
+    return allocator::get_default()->make_strong<C>(args...);
 }
 
 // TODO: non-member get/clear/swap

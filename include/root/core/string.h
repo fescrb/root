@@ -29,21 +29,21 @@ namespace root {
 
 class string : public array<i8> {
 public:
-    explicit inline string(const char* str, allocator* alloc = allocator::default_allocator()) 
+    explicit inline string(const char* str, allocator* alloc = allocator::get_default()) 
     :   array(strlen(str), alloc) {
         memcpy(m_data, str, m_length * sizeof(i8));
     }
 
-    explicit inline string(const u64& length, allocator* alloc = allocator::default_allocator()) 
+    explicit inline string(const u64& length, allocator* alloc = allocator::get_default()) 
     : array(length, alloc) {}
 
-    explicit inline string(const string_slice& slice, allocator* alloc = allocator::default_allocator())
+    explicit inline string(const string_slice& slice, allocator* alloc = allocator::get_default())
     :   array(slice.size()+1, alloc) {
         memcpy(m_data, slice.data(), m_length * sizeof(element_type));
         m_data[m_length-1] = '\0';
     }
 
-    explicit inline string(const string_view& view, allocator* alloc = allocator::default_allocator())
+    explicit inline string(const string_view& view, allocator* alloc = allocator::get_default())
     :   array(view.size()+1, alloc) {
         memcpy(m_data, view.data(), m_length * sizeof(element_type));
         m_data[m_length-1] = '\0';

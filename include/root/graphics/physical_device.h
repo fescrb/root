@@ -31,7 +31,7 @@ namespace root {
 
 class physical_device final {
 public:
-    explicit physical_device(const VkPhysicalDevice& h, allocator* alloc = allocator::default_allocator());
+    explicit physical_device(const VkPhysicalDevice& h, allocator* alloc = allocator::get_default());
 
     VkPhysicalDevice handle;
 

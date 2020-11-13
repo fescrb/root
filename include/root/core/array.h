@@ -39,7 +39,7 @@ public:
         m_allocator(0),
         m_data(0) {}
 
-    explicit inline array(const std::initializer_list<T>& init_l, allocator* alloc = allocator::default_allocator())
+    explicit inline array(const std::initializer_list<T>& init_l, allocator* alloc = allocator::get_default())
     :   m_length(init_l.size()), 
         m_allocator(alloc) {
         m_data = reinterpret_cast<T*>(alloc->malloc(sizeof(T) * init_l.size(), alignof(T)));
@@ -74,7 +74,7 @@ public:
         return *this;
     }
 
-    explicit inline array(const u64& length, allocator* alloc = allocator::default_allocator())
+    explicit inline array(const u64& length, allocator* alloc = allocator::get_default())
     :   m_length(length), 
         m_allocator(alloc) {
         m_data = reinterpret_cast<T*>(alloc->malloc(sizeof(T) * length, alignof(T)));

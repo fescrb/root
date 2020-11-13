@@ -36,7 +36,7 @@ public:
         m_byte_size(0),
         m_allocator(nullptr) {}
 
-    explicit buffer(const u64& byte_size, const u64& alignment = 1, allocator* alloc = allocator::default_allocator())
+    explicit buffer(const u64& byte_size, const u64& alignment = 1, allocator* alloc = allocator::get_default())
     :   m_byte_size(byte_size),
         m_allocator(alloc),
         m_alignment(alignment) {

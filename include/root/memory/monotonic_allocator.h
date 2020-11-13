@@ -26,7 +26,7 @@ namespace root {
 // TODO: most of the functionality
 class monotonic_allocator : public allocator {
 public:
-    monotonic_allocator(const u64& bytes, allocator* backing_resource = allocator::default_allocator())
+    monotonic_allocator(const u64& bytes, allocator* backing_resource = allocator::get_default())
     :   m_size(bytes),
         m_memory(static_cast<u8*>(backing_resource->malloc(bytes, 1))),
         m_head(m_memory),

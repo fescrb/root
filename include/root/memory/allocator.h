@@ -53,11 +53,11 @@ public:
     virtual auto malloc(const u64& bytes, const u64& alignment) -> void* = 0;
     virtual auto free(void* mem) -> void = 0;
 
-    inline static auto default_allocator() -> allocator* {
+    inline static auto get_default() -> allocator* {
         return m_default_allocator;
     }
 
-    inline static auto set_default_allocator(allocator* alloc) -> void {
+    inline static auto set_default(allocator* alloc) -> void {
         m_default_allocator = alloc;
     }
 

@@ -27,7 +27,7 @@ template<typename C>
 struct managed_ptr final {
     C                   *m_memory{nullptr};
     reference_counter   *m_ref_count{nullptr};
-    allocator           *m_allocator{allocator::default_allocator()};
+    allocator           *m_allocator{allocator::get_default()};
 
     /*
      * Assigning this struct is probably unintentional. 

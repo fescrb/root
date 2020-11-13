@@ -26,7 +26,7 @@ namespace root {
 
 class semaphore : public vk_handle_container<VkSemaphore,semaphore> {
 public:
-    semaphore(const device& dev, allocator* alloc = allocator::default_allocator());
+    semaphore(const device& dev, allocator* alloc = allocator::get_default());
 
     ~semaphore();
 

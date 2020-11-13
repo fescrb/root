@@ -42,7 +42,7 @@ public:
     // TODO: 
     // * subpass class
     // * Create renderpasses out of initializer lists
-    renderpass(const device& d, const attachment& attachment, allocator* alloc = allocator::default_allocator());
+    renderpass(const device& d, const attachment& attachment, allocator* alloc = allocator::get_default());
 
     inline auto handle() const -> VkRenderPass {
         return m_handle;

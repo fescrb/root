@@ -27,6 +27,7 @@ namespace graphics {
 
 auto init(allocator* alloc) -> void {
     if (!instance::get()) instance::set(alloc->make_strong<instance>());
+    // TODO: give the name of the binary
     if (!window::get_default()) window::set_default(alloc->make_strong<window>(640u, 480u, "Test"));
 }
 

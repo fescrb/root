@@ -37,7 +37,7 @@ public:
     asset_manager(asset_manager&&) = delete;
 private:
     explicit asset_manager(const string_view& asset_root = path::binary_location(), 
-                           allocator* alloc = allocator::default_allocator());
+                           allocator* alloc = allocator::get_default());
 
     auto load_buffer(const string_view& id) -> buffer;
 

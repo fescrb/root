@@ -155,7 +155,7 @@ inline auto format_to<>(buffer_writer& dst,const format_string& fmt) -> void {
 
 class formatter {
 public:
-    explicit formatter(allocator* alloc = allocator::default_allocator())
+    explicit formatter(allocator* alloc = allocator::get_default())
     :   m_allocator(alloc) {}
 
     template<typename T>

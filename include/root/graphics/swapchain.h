@@ -33,7 +33,7 @@ namespace graphics {
 
 class swapchain : public vk_handle_container<VkSwapchainKHR,swapchain> {
 public:
-    swapchain(const surface& s, const device& d, allocator* alloc = allocator::default_allocator());
+    swapchain(const surface& s, const device& d, allocator* alloc = allocator::get_default());
 
     auto refresh(const surface& s, const device& d) -> void;
 

@@ -27,7 +27,7 @@ struct shader {
     shader(const shader_module& module, 
            VkShaderStageFlagBits stage_flags, 
            const string_view& funcname,
-           allocator* alloc = allocator::default_allocator())
+           allocator* alloc = allocator::get_default())
     :   func_name(funcname, alloc),
         info {
             VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,

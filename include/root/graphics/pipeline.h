@@ -39,7 +39,7 @@ public:
              const pipeline_layout& pl,
              const raster& r,
              const renderpass& rp,
-             allocator* alloc = allocator::default_allocator())
+             allocator* alloc = allocator::get_default())
     :   m_handle(VK_NULL_HANDLE),
         m_device_handle(dev.handle),
         m_alloc(alloc) {

@@ -31,7 +31,7 @@ namespace graphics {
 
 class instance final : public vk_handle_container<VkInstance,instance> {
 public:
-    instance(allocator* alloc = allocator::default_allocator());
+    instance(allocator* alloc = allocator::get_default());
     ~instance();
 
     static inline auto get() -> strong_ptr<instance>& {
@@ -43,7 +43,7 @@ public:
         m_instance = i;
     }
 
-    auto physical_devices(allocator* alloc = allocator::default_allocator()) const -> array<::root::physical_device>;
+    auto physical_devices(allocator* alloc = allocator::get_default()) const -> array<::root::physical_device>;
 
 private:
     vk_allocation_callbacks m_callbacks;

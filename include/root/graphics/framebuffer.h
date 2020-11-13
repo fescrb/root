@@ -32,13 +32,13 @@ public:
                 const renderpass& rp, 
                 const array_slice<VkImageView>& attachments, 
                 VkExtent3D dimensions, 
-                allocator* alloc = allocator::default_allocator());
+                allocator* alloc = allocator::get_default());
 
     framebuffer(const device& dev, 
                 const renderpass& rp, 
                 const array_slice<VkImageView>& attachments, 
                 VkExtent2D dimensions, 
-                allocator* alloc = allocator::default_allocator())
+                allocator* alloc = allocator::get_default())
     :   framebuffer(dev, rp, attachments, {dimensions.width, dimensions.height, 1}, alloc) {}
 
     framebuffer(const framebuffer&) = delete;
