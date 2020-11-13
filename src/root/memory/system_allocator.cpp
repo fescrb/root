@@ -38,7 +38,7 @@ auto system_allocator::malloc(const u64& byte_size, const u64& alignment) -> voi
 #endif
 }
 
-auto system_allocator::free(void* mem, const u64&, const u64&) -> void {
+auto system_allocator::free(void* mem) -> void {
 #if defined(ROOT_WIN)
     return _aligned_free(mem);
 #else

@@ -19,21 +19,4 @@
 
 #pragma once
 
-#include <root/graphics/vk_handle_container.h>
-#include <root/graphics/window.h>
-#include <root/memory/strong_ptr.h>
-
-namespace root {
-
-namespace graphics {
-
-class instance;
-
-class surface : public vk_handle_container<VkSurfaceKHR,surface> {
-public:
-    surface(const strong_ptr<instance>& i, window& w);
-};
-
-} // namespace graphics
-
-} // namespace root
+int root_main(int arg_c, char** arg_v);

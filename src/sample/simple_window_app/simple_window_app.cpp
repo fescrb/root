@@ -24,6 +24,7 @@
 #include <root/graphics/instance.h>
 #include <root/io/log.h>
 
+#include <root/root.h>
 #include <root/graphics/window.h>
 #include <root/graphics/surface.h>
 #include <root/graphics/device.h>
@@ -43,14 +44,12 @@
 #include <GLFW/glfw3.h>
 #endif
 
-int main() {
-    root::instance::init();
-
+int root_main(int arg_c, char** arg_v) {
     root::window window(640u, 480u, "Test");
 
-    root::surface surface(window);
+    root::graphics::surface surface(root::graphics::instance::get(), window);
 
-    auto devices = root::instance::get()->physical_devices();
+    auto devices = root::graphics::instance::get()->physical_devices();
 
     root::device* device = nullptr;
 
@@ -85,7 +84,7 @@ int main() {
         abort();
     }
 
-    root::swapchain swapchain(surface, *device);
+    root::graphics::swapchain swapchain(surface, *device);
 
     root::log::d("", "swapchain created viewport {} scissor {}", swapchain.viewport(), swapchain.scissor());
 
@@ -108,11 +107,11 @@ int main() {
 
     root::pipeline pipeline(*device, shaders, vertex_input, input_assembly, pipeline_layout, raster, renderpass);
 
-    root::array<root::framebuffer> framebuffers(swapchain.swapchain_images.size());
+    root::array<root::graphics::framebuffer> framebuffers(swapchain.swapchain_images.size());
 
     for(root::u32 i = 0; i < framebuffers.size(); i++) {
         framebuffers[i] = std::move(
-            root::framebuffer(
+            root::graphics::framebuffer(
                 *device, 
                 renderpass, 
                 swapchain.swapchain_images.range(i, i+1),
@@ -158,4 +157,6 @@ int main() {
         }
         swapchain.present(root::array_slice<root::semaphore>(&present_s, 1), image);
     }
+
+    return 0;
 }

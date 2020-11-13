@@ -25,6 +25,7 @@
 #include <root/io/private/format_string.h>
 
 #include <cstring>
+#include <cwchar>
 
 namespace root {
 
@@ -63,6 +64,16 @@ inline auto strlen<const char>(const char* const& object, const string_view&) ->
 
 template<> 
 inline auto format_to<const char>(buffer_writer& dst, const char* const& object, const string_view&) -> void {
+    dst.write(object, strlen(object));
+}
+
+template<> 
+inline auto strlen<const wchar_t>(const wchar_t* const& object, const string_view&) -> u64 {
+    return ::wcslen(object);
+}
+
+template<> 
+inline auto format_to<const wchar_t>(buffer_writer& dst, const wchar_t* const& object, const string_view&) -> void {
     dst.write(object, strlen(object));
 }
 

@@ -36,10 +36,10 @@ public:
         
     }
 
-    virtual auto free(void* mem, const u64& bytes, const u64& alignment) -> void override {}
+    virtual auto free(void* mem) -> void override {}
 
     virtual ~monotonic_allocator() {
-        m_backing_resource->free(m_memory, m_size, 1);
+        m_backing_resource->free(m_memory);
     }
 
 protected:

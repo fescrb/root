@@ -24,7 +24,7 @@
 namespace root {
 
 struct attachment {
-    attachment(const swapchain& sw) {
+    attachment(const graphics::swapchain& sw) {
         description.flags = 0;
         description.format = sw.format;
         description.samples = VK_SAMPLE_COUNT_1_BIT;

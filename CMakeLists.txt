@@ -20,6 +20,8 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/src/root/math)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/src/root/graphics)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/src/root/asset)
 
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/src/root/main)
+
 add_library(root STATIC $<TARGET_OBJECTS:root_core> 
                         $<TARGET_OBJECTS:root_memory> 
                         $<TARGET_OBJECTS:root_io> 
@@ -28,7 +30,7 @@ add_library(root STATIC $<TARGET_OBJECTS:root_core>
 
 target_link_libraries(root ${Vulkan_LIBRARY} glfw3 dl pthread)
 
-install(TARGETS root ARCHIVE DESTINATION lib)
+install(TARGETS root root_main ARCHIVE DESTINATION lib)
 
 if(${CMAKE_BUILD_TYPE} MATCHES "Test")
     add_executable(root_test $<TARGET_OBJECTS:root_core_test> 

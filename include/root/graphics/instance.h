@@ -19,31 +19,37 @@
 
 #pragma once
 
-#include <vulkan/vulkan.h>
-
 #include <root/core/array.h>
+#include <root/memory/strong_ptr.h>
+#include <root/graphics/vk_handle_container.h>
+#include <root/graphics/vk_allocation_callbacks.h>
 #include <root/graphics/physical_device.h>
 
 namespace root {
 
-class instance final {
+namespace graphics {
+
+class instance final : public vk_handle_container<VkInstance,instance> {
 public:
+    instance(allocator* alloc = allocator::default_allocator());
+    ~instance();
 
-    static auto init() -> void;
-
-    static inline auto get() -> instance* {
+    static inline auto get() -> strong_ptr<instance>& {
+        // TODO maybe auto generate if none exists
         return m_instance;
     }
 
-    auto physical_devices(allocator* alloc = allocator::default_allocator()) const -> array<physical_device>;
+    static inline auto set(const strong_ptr<instance>& i) -> void {
+        m_instance = i;
+    }
 
-    VkInstance handle;
+    auto physical_devices(allocator* alloc = allocator::default_allocator()) const -> array<::root::physical_device>;
 
 private:
-    inline instance(const VkInstance& h)
-    :   handle(h) {}
-
-    static instance* m_instance;
+    vk_allocation_callbacks m_callbacks;
+    static strong_ptr<instance> m_instance;
 };
+
+} // namespace graphics
 
 } // namespace root

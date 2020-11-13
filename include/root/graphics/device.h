@@ -26,7 +26,7 @@ namespace root {
 
 class device final {
 public:
-    device(const physical_device& d, const surface& s);
+    device(const physical_device& d, const graphics::surface& s);
 
     static device auto_select_device();
 

@@ -30,9 +30,12 @@
 
 namespace root {
 
-instance* instance::m_instance = nullptr;
+namespace graphics {
 
-auto instance::init() -> void {
+strong_ptr<instance> instance::m_instance;
+
+instance::instance(allocator* alloc)
+:   m_callbacks(alloc)  {
     VkInstanceCreateInfo create_info;
     create_info.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
     create_info.pNext = nullptr;
@@ -88,17 +91,22 @@ auto instance::init() -> void {
 #endif
 
     VkInstance handle;
-    VkResult res = vkCreateInstance(&create_info, nullptr, &handle);
+    VkResult res = vkCreateInstance(&create_info, m_callbacks, &m_handle);
     if (res != VK_SUCCESS) {
         log::e("instance", "vkCreateInstance failed with {}", res);
         abort();
     }
-    m_instance = new instance(handle); // TODO: perhaps provide allocator?
+}
+
+instance::~instance() {
+    if(*this) {
+        vkDestroyInstance(m_handle, m_callbacks);
+    }
 }
 
 auto instance::physical_devices(allocator* alloc) const -> array<physical_device> {
     u32 num;
-    VkResult res = vkEnumeratePhysicalDevices(handle, &num, nullptr);
+    VkResult res = vkEnumeratePhysicalDevices(m_handle, &num, nullptr);
     if (res != VK_SUCCESS) {
         log::e("instance", "vkEnumeratePhysicalDevices failed with {}", res);
         abort();
@@ -106,7 +114,7 @@ auto instance::physical_devices(allocator* alloc) const -> array<physical_device
     
     array<VkPhysicalDevice> phys_devices(num, alloc);
     
-    res = vkEnumeratePhysicalDevices(handle, &num, phys_devices.data());
+    res = vkEnumeratePhysicalDevices(m_handle, &num, phys_devices.data());
     if (res != VK_SUCCESS) {
         log::e("instance", "vkEnumeratePhysicalDevices failed with {}", res);
         abort();
@@ -120,5 +128,7 @@ auto instance::physical_devices(allocator* alloc) const -> array<physical_device
 
     return devices;
 }
+
+} // namespace graphics
 
 } // namespace root

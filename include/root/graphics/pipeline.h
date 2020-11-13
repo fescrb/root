@@ -81,11 +81,7 @@ public:
         }
 
         // Cleanup
-        m_alloc->free(
-            shader_info, 
-            sizeof(VkPipelineShaderStageCreateInfo)*shaders.size(), 
-            alignof(VkPipelineShaderStageCreateInfo)
-        );
+        m_alloc->free(shader_info);
     }
 
     inline auto handle() const -> VkPipeline {

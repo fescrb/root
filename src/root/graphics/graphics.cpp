@@ -17,22 +17,17 @@
  * along with The Root Engine.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#pragma once
+#include <root/graphics/graphics.h>
 
-#include <root/graphics/vk_handle_container.h>
-#include <root/graphics/window.h>
-#include <root/memory/strong_ptr.h>
+#include <root/graphics/instance.h>
 
 namespace root {
 
 namespace graphics {
 
-class instance;
-
-class surface : public vk_handle_container<VkSurfaceKHR,surface> {
-public:
-    surface(const strong_ptr<instance>& i, window& w);
-};
+auto init(allocator* alloc) -> void {
+    if (!instance::get()) instance::set(alloc->make_strong<instance>());
+}
 
 } // namespace graphics
 

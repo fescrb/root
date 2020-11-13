@@ -20,7 +20,6 @@
 #pragma once
 
 #include <root/memory/private/managed_ptr.h>
-#include <root/memory/allocator.h>
 
 namespace root {
 
@@ -29,14 +28,6 @@ template<typename C> class weak_ptr;
 template<typename C>
 class strong_ptr final {
 public:
-    template<typename... Args>
-    static strong_ptr<C> make(allocator* alloc, Args... args) {
-        C* memory = alloc->make<C>(args...);
-        reference_counter* ref_counter = alloc->make<reference_counter>();
-        strong_ptr<C> ptr = strong_ptr<C>(memory, ref_counter, alloc);
-        return ptr;
-    }
-
     strong_ptr(const strong_ptr& other)
     :   m_ptr(other.m_ptr){
         lock();
@@ -46,69 +37,116 @@ public:
         m_ptr.m_memory = std::move(other.m_ptr.m_memory);
         m_ptr.m_ref_count = std::move(other.m_ptr.m_ref_count);
         m_ptr.m_allocator = std::move(other.m_ptr.m_allocator);
+        other.clear_without_ref_count_change();
     };
 
     strong_ptr() {}
 
-    auto operator=(const strong_ptr<C>& other) -> strong_ptr<C>& {
-        if(this != &other) {
-            unlock();
-            m_ptr.m_memory = other.m_ptr.m_memory;
-            m_ptr.m_ref_count = other.m_ptr.m_ref_count;
-            m_ptr.m_allocator = other.m_ptr.m_allocator;
-            lock();
-        } 
-        return *this;
-    }
+    inline auto operator=(const strong_ptr<C>& other) -> strong_ptr<C>&;
 
-    auto operator=(strong_ptr<C>&& other) -> strong_ptr<C>& {
-        unlock();
-        m_ptr.m_memory = std::move(other.m_ptr.m_memory);
-        m_ptr.m_ref_count = std::move(other.m_ptr.m_ref_count);
-        m_ptr.m_allocator = std::move(other.m_ptr.m_allocator);
-        lock();
-        return *this;
-    }
+    inline auto operator=(strong_ptr<C>&& other) -> strong_ptr<C>&;
 
     ~strong_ptr() {
         unlock();
     }
 
+    /**
+     * @return a reference to the underlying object.
+     */
     inline auto operator*() const -> C& {
         return *m_ptr.m_memory;
     }
 
+    /**
+     * @return the stored pointer.
+     */
     inline auto operator->() const -> C* {
         return m_ptr.m_memory;
     }
 
-    inline auto valid() const -> bool {
+    /**
+     * @return the stored pointer.
+     */
+    inline auto get() const -> C* {
+        return m_ptr.m_memory;
+    }
+
+    /**
+     * @return true iff stored pointer isn't null.
+     */
+    inline operator bool() const {
         return m_ptr.m_memory != nullptr;
     }
 
-    inline operator bool() const {
-        return valid();
-    }
-
-    inline auto clear() -> void {
-        unlock();
-        m_ptr.m_memory = nullptr;
-        m_ptr.m_ref_count = nullptr;   
-    }
+    /**
+     * Clear the pointer. Losing a reference and maybe deallocating.
+     */
+    inline auto clear() -> void ;
 
 private:
     strong_ptr(C* memory, reference_counter* counter, allocator* alloc)
     :   m_ptr(memory, counter, alloc) {
     }
 
-    auto lock() -> void ;
+    inline auto lock() -> void ;
     inline auto unlock() -> void;
 
+    inline auto clear_without_ref_count_change() -> void;
     static auto check_ref_count_for_deletion(managed_ptr<C>& man_ptr) -> void;
 
     managed_ptr<C> m_ptr;
     friend class weak_ptr<C>;
+    friend class allocator;
 };
+
+/**
+ * Make a strong_ptr using the default allocator.
+ * @return newly created strong_ptr
+ */
+template<typename C, typename... Args>
+inline auto make_strong(Args... args) -> strong_ptr<C> {
+    return allocator::default_allocator()->make_strong<C>(args...);
+}
+
+// TODO: non-member get/clear/swap
+
+/*
+ * Implementations of strong_ptr member methods.
+ */
+template <typename C>
+inline auto strong_ptr<C>::operator=(const strong_ptr<C>& other) -> strong_ptr<C>& {
+    if(this != &other) {
+        unlock();
+        m_ptr.m_memory = other.m_ptr.m_memory;
+        m_ptr.m_ref_count = other.m_ptr.m_ref_count;
+        m_ptr.m_allocator = other.m_ptr.m_allocator;
+        lock();
+    } 
+    return *this;
+}
+
+template <typename C>
+inline auto strong_ptr<C>::operator=(strong_ptr<C>&& other) -> strong_ptr<C>& {
+    unlock();
+    m_ptr.m_memory = std::move(other.m_ptr.m_memory);
+    m_ptr.m_ref_count = std::move(other.m_ptr.m_ref_count);
+    m_ptr.m_allocator = std::move(other.m_ptr.m_allocator);
+    other.clear_without_ref_count_change();
+    return *this;
+}
+
+template <typename C>
+inline auto strong_ptr<C>::clear() -> void {
+    unlock();
+    clear_without_ref_count_change();
+}
+
+
+template <typename C>
+inline auto strong_ptr<C>::clear_without_ref_count_change() -> void {
+    m_ptr.m_memory = nullptr;
+    m_ptr.m_ref_count = nullptr;   
+}
 
 template <typename C>
 inline auto strong_ptr<C>::check_ref_count_for_deletion(managed_ptr<C>& man_ptr) -> void {

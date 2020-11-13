@@ -19,20 +19,13 @@
 
 #pragma once
 
-#include <root/graphics/vk_handle_container.h>
-#include <root/graphics/window.h>
-#include <root/memory/strong_ptr.h>
+#include <root/memory/allocator.h>
 
 namespace root {
 
 namespace graphics {
 
-class instance;
-
-class surface : public vk_handle_container<VkSurfaceKHR,surface> {
-public:
-    surface(const strong_ptr<instance>& i, window& w);
-};
+auto init(allocator* alloc = allocator::default_allocator()) -> void;
 
 } // namespace graphics
 

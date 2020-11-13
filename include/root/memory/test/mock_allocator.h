@@ -25,6 +25,6 @@ namespace root {
 class mock_allocator : public allocator {
 public:
     MOCK_METHOD(void*, malloc, (const u64&, const u64&));
-    MOCK_METHOD(void, free, (void*, const u64&, const u64&));
+    MOCK_METHOD(void, free, (void*));
 };
 } // namespace root

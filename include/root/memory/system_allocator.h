@@ -26,7 +26,7 @@ namespace root {
 class system_allocator final : public allocator {
 public:
     virtual auto malloc(const u64& bytes, const u64& alignment) -> void*;
-    virtual auto free(void* mem, const u64& bytes, const u64& alignment) -> void;
+    virtual auto free(void* mem) -> void;
 
     static system_allocator universal_instance;
 };

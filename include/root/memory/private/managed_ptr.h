@@ -20,8 +20,7 @@
 #pragma once
 
 #include <root/memory/private/reference_counter.h>
-
-#include <iostream>
+#include <root/memory/allocator.h>
 
 namespace root {
 template<typename C>
