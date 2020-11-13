@@ -87,6 +87,12 @@ public:
     inline operator string_slice() {
         return string_slice(m_data, 0, m_length);
     }
+
+    inline auto operator=(string&& other) -> string& {
+        array<element_type>::operator=(std::move(other));
+        return *this;
+    }
+
 };
 
 } // namespace root

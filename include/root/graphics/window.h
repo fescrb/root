@@ -23,7 +23,7 @@
 struct GLFWwindow;
 #endif
 
-#include <root/core/string_view.h>
+#include <root/core/string.h>
 #include <root/memory/strong_ptr.h>
 
 namespace root {
@@ -32,7 +32,26 @@ namespace graphics {
 
 class window {
 public:
-    window(const u32 width, const u32 height, const string_view& title);
+    window(const u32 width, const u32 height, const string_view& title, allocator* alloc = allocator::get_default());
+    window() = delete;
+    window(const window&) = delete;
+    inline window(window&& other)
+    :   m_handle(std::move(other.m_handle)),
+        m_title(std::move(other.m_title)) {
+        other.m_handle = nullptr;
+    }
+
+    auto operator=(const window&) -> window& = delete;
+    inline auto operator=(window&& other) -> window& {
+        if (this != &other) {
+            m_handle = std::move(other.m_handle);
+            m_title = std::move(other.m_title);  
+            other.m_handle = nullptr; 
+        }
+        return *this;
+    }
+
+    ~window();
 
 #if !defined(ROOT_ANDROID)
     inline auto handle() const -> GLFWwindow* {
@@ -49,6 +68,7 @@ public:
     }
 
 private:
+    string m_title;
 #if !defined(ROOT_ANDROID)
     GLFWwindow* m_handle;
 #endif
