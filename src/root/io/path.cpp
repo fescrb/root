@@ -33,23 +33,37 @@ namespace root {
 
 namespace path {
 
-auto binary_location() -> const string_view& {
+auto exe_path() -> string_view {
     static string_view location;
-#if defined(ROOT_LINUX)
     static char location_str[PATH_MAX];
     if(!location.size()) {
+#if defined(ROOT_LINUX)
         size_t loc_len = readlink("/proc/self/exe", location_str, PATH_MAX);
         location_str[loc_len] = '\0'; // readlink doesn't nul-terminate strings
-        location = dirname(location_str);
-    } 
+        location = string_view(location_str);
 #endif
 #if defined(ROOT_WIN)
-    static char location_str[MAX_PATH];
-    if(!location.size()) {
         GetModuleFileNameA(nullptr, location_str, MAX_PATH);
-        location = dirname(location_str);
-    } 
+        location = string_view(location_str);
 #endif
+    }
+    return location;
+}
+
+auto binary_location() -> const string_view& {
+    static string_view location;
+    if(!location.size()) {
+        location = dirname(exe_path());
+    } 
+    return location;
+}
+
+
+auto binary_name() -> const string_view& {
+    static string_view location;
+    if(!location.size()) {
+        location = basename(exe_path());
+    } 
     return location;
 }
 

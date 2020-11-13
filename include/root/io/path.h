@@ -66,6 +66,8 @@ constexpr auto ext(const string_view& path) -> string_view {
 
 auto binary_location() -> const string_view&;
 
+auto binary_name() -> const string_view&;
+
 inline auto join(const string_view& lhs, const string_view& rhs, allocator* alloc = allocator::get_default()) -> string {
     formatter formatter(alloc);
     return formatter.format("{}{}{}", lhs, FOLDER_DELIMITER, rhs);

@@ -28,6 +28,11 @@
 #define ROOT_TESTS_BINARY_PATH ""
 #endif
 
+#if !defined(ROOT_TESTS_BINARY_NAME)
+#pragma message( "ROOT_TESTS_BINARY_NAME not defined. Cannot test binary_name()." )
+#define ROOT_TESTS_BINARY_NAME ""
+#endif
+
 #include <iostream>
 
 using ::testing::Return;
@@ -91,6 +96,16 @@ TEST(path_tests, binary_location) {
     } 
 }
 
+
+TEST(path_tests, binary_name) {
+    constexpr root::string_view BINARY_NAME = ROOT_TESTS_BINARY_NAME;
+
+    if(BINARY_NAME.size()) {
+        EXPECT_EQ(BINARY_NAME, root::path::binary_name());
+    } 
+}
+
+
 TEST(path_tests, join) {
     constexpr const char* FOLDER_LOCATION = "/home/user";
     constexpr const char* FILE = "file.frag";
@@ -102,7 +117,6 @@ TEST(path_tests, join) {
     EXPECT_CALL(mock_allocator, malloc(strlen(FOLDER_LOCATION) + sizeof(root::path::FOLDER_DELIMITER) + strlen(FILE) +1, alignof(char))).WillOnce(Return(memory));
 
     root::string full_path = root::path::join(FOLDER_LOCATION, FILE, &mock_allocator);
-    printf("%s\n", full_path.data());
     EXPECT_EQ(strcmp(full_path.data(), FULL_PATH), 0);
     
     EXPECT_CALL(mock_allocator, free(memory));
