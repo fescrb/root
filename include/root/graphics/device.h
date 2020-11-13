@@ -24,6 +24,8 @@
 
 namespace root {
 
+namespace graphics {
+
 class device final {
 public:
     device(const  graphics::physical_device& d, const graphics::surface& s);
@@ -52,5 +54,7 @@ private:
     u32 m_present_family_index;
     const  graphics::physical_device& m_physical_device;
 };
+
+} // namespace graphics
 
 } // namespace root

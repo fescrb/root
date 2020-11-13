@@ -24,6 +24,8 @@
 
 namespace root {
 
+namespace graphics {
+
 class semaphore : public vk_handle_container<VkSemaphore,semaphore> {
 public:
     semaphore(const device& dev, allocator* alloc = allocator::get_default());
@@ -34,5 +36,7 @@ private:
     VkDevice m_device_handle;
     allocator* m_alloc;
 };
+
+} // namespace graphics
 
 } // namespace root

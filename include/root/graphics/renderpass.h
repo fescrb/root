@@ -25,6 +25,8 @@
 
 namespace root {
 
+namespace graphics {
+
 class renderpass final {
 public:
     inline renderpass() 
@@ -60,5 +62,7 @@ private:
     VkDevice m_device_handle;
     allocator* m_alloc;
 };
+
+} // namespace graphics
 
 } // namespace root

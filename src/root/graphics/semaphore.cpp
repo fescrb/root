@@ -23,6 +23,8 @@
 
 namespace root {
 
+namespace graphics {
+
 semaphore::semaphore(const device& dev, allocator* alloc)
 :   m_device_handle(dev.handle),
     m_alloc(alloc) {
@@ -39,5 +41,7 @@ semaphore::~semaphore() {
         vkDestroySemaphore(m_device_handle, m_handle, nullptr);
     }
 }
+
+} // namespace graphics
 
 } // namespace root

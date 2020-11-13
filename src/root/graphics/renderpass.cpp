@@ -23,6 +23,8 @@
 
 namespace root {
 
+namespace graphics {
+
 renderpass::renderpass(const device& d, const attachment& attachment, allocator* alloc)
 :   renderpass(){
     m_device_handle = d.handle;
@@ -70,5 +72,7 @@ renderpass::~renderpass() {
         vkDestroyRenderPass(m_device_handle, m_handle, nullptr);
     }
 }
+
+} // namespace graphics
 
 } // namespace root

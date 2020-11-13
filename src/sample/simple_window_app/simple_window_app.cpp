@@ -49,7 +49,7 @@ int root_main(int arg_c, char** arg_v) {
 
     auto devices = root::graphics::instance::get()->physical_devices();
 
-    root::device* device = nullptr;
+    root::graphics::device* device = nullptr;
 
     root::log::d("", "Found {} devices", devices.size());
 
@@ -71,7 +71,7 @@ int root_main(int arg_c, char** arg_v) {
 
         if(devices[i].has_graphics_queue() && devices[i].has_present_queue(surface)) {
             root::log::d("", "Device {} has both a present and a graphics queue", i);
-            device = new root::device(devices[i], surface);
+            device = new root::graphics::device(devices[i], surface);
         } else {
             root::log::d("", "Device {} does not have both a present and a graphics queue", i);
         }
@@ -86,24 +86,24 @@ int root_main(int arg_c, char** arg_v) {
 
     root::log::d("", "swapchain created viewport {} scissor {}", swapchain.viewport(), swapchain.scissor());
 
-    root::shader_module vert(*device, "vert.spv");
-    root::shader_module frag(*device, "frag.spv");
+    root::graphics::shader_module vert(*device, "vert.spv");
+    root::graphics::shader_module frag(*device, "frag.spv");
 
-    root::shader shaders[2] = {
-        root::shader(vert, VK_SHADER_STAGE_VERTEX_BIT, "main"), 
-        root::shader(frag, VK_SHADER_STAGE_FRAGMENT_BIT, "main")
+    root::graphics::shader shaders[2] = {
+        root::graphics::shader(vert, VK_SHADER_STAGE_VERTEX_BIT, "main"), 
+        root::graphics::shader(frag, VK_SHADER_STAGE_FRAGMENT_BIT, "main")
     };
 
-    root::vertex_input vertex_input;
-    root::input_assembly input_assembly(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST);
+    root::graphics::vertex_input vertex_input;
+    root::graphics::input_assembly input_assembly(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST);
 
-    root::pipeline_layout pipeline_layout(*device, swapchain);
-    root::raster raster;
+    root::graphics::pipeline_layout pipeline_layout(*device, swapchain);
+    root::graphics::raster raster;
 
-    root::attachment attachment(swapchain);
-    root::renderpass renderpass(*device, attachment);
+    root::graphics::attachment attachment(swapchain);
+    root::graphics::renderpass renderpass(*device, attachment);
 
-    root::pipeline pipeline(*device, shaders, vertex_input, input_assembly, pipeline_layout, raster, renderpass);
+    root::graphics::pipeline pipeline(*device, shaders, vertex_input, input_assembly, pipeline_layout, raster, renderpass);
 
     root::array<root::graphics::framebuffer> framebuffers(swapchain.swapchain_images.size());
 
@@ -119,14 +119,14 @@ int root_main(int arg_c, char** arg_v) {
         root::log::d("", "Framebuffer[{}] extent {} ", i, framebuffers[i].entent());
     }
 
-    root::command_pool command_pool(*device);
+    root::graphics::command_pool command_pool(*device);
 
-    root::semaphore acquire_s(*device);
-    root::semaphore present_s(*device);
+    root::graphics::semaphore acquire_s(*device);
+    root::graphics::semaphore present_s(*device);
 
     while(!glfwWindowShouldClose(root::graphics::window::get_default()->handle())){
         glfwPollEvents();
-        root::command_buffer buffer(command_pool);
+        root::graphics::command_buffer buffer(command_pool);
         root::u32 image = swapchain.acquire(acquire_s);
 
 
@@ -153,7 +153,7 @@ int root_main(int arg_c, char** arg_v) {
             root::log::e("simple_window_app", "vkQueueSubmit failed with {}", submit_result);
             abort();
         }
-        swapchain.present(root::array_slice<root::semaphore>(&present_s, 1), image);
+        swapchain.present(root::array_slice<root::graphics::semaphore>(&present_s, 1), image);
     }
 
     return 0;

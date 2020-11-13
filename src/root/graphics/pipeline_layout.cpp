@@ -22,6 +22,9 @@
 #include <root/io/log.h>
 
 namespace root {
+
+namespace graphics {
+
 pipeline_layout::pipeline_layout(const device& dev, const VkViewport& vp, const VkRect2D& sc) 
 :   viewport(vp),
     scissor(sc),
@@ -94,5 +97,7 @@ pipeline_layout::~pipeline_layout() {
         vkDestroyPipelineLayout(m_device_handle, m_handle, nullptr);
     }
 }
+
+} // namespace graphics
 
 } // namespace root

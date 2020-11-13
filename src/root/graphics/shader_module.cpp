@@ -23,6 +23,8 @@
 
 namespace root {
 
+namespace graphics {
+
 shader_module::shader_module(const device& d,const buffer& buf) {
     VkShaderModuleCreateInfo create_info;
     create_info.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
@@ -37,5 +39,7 @@ shader_module::shader_module(const device& d,const buffer& buf) {
         log::e("shader_module", "vkCreateShaderModule failed with {}", res);
     }
 }
+
+} // namespace graphics
 
 } // namespace root

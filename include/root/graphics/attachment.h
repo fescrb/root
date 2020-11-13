@@ -23,8 +23,10 @@
 
 namespace root {
 
+namespace graphics {
+
 struct attachment {
-    attachment(const graphics::swapchain& sw) {
+    attachment(const swapchain& sw) {
         description.flags = 0;
         description.format = sw.format;
         description.samples = VK_SAMPLE_COUNT_1_BIT;
@@ -38,5 +40,7 @@ struct attachment {
 
     VkAttachmentDescription description;
 };
+
+} // namespace graphics
 
 } // namespace root

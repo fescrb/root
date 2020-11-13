@@ -23,6 +23,8 @@
 
 namespace root {
 
+namespace graphics {
+
 struct shader {
     shader(const shader_module& module, 
            VkShaderStageFlagBits stage_flags, 
@@ -42,5 +44,7 @@ struct shader {
     const string func_name; // TODO this means we cannot copy this. Think about making this a strong_ptr or interned string?
     const VkPipelineShaderStageCreateInfo info;
 };
+
+} // namespace graphics
 
 } // namespace root

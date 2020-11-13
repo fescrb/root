@@ -23,6 +23,8 @@
 
 namespace root {
 
+namespace graphics {
+
 command_buffer::command_buffer(const command_pool& pool)
 :   vk_handle_container(),
     m_command_pool(pool) {
@@ -90,5 +92,7 @@ command_buffer::~command_buffer() {
         vkFreeCommandBuffers(m_command_pool.device(), m_command_pool.handle(), 1, &m_handle);
     }
 }
+
+} // namespace graphics
 
 } // namespace root

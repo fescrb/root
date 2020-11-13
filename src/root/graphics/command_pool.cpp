@@ -23,7 +23,9 @@
 
 namespace root {
 
-command_pool::command_pool(const root::device& dev, allocator* alloc)
+namespace graphics {
+
+command_pool::command_pool(const root::graphics::device& dev, allocator* alloc)
 :   vk_handle_container(),
     m_device_handle(dev.handle),
     m_alloc(alloc) {
@@ -46,5 +48,7 @@ command_pool::~command_pool() {
         vkDestroyCommandPool(m_device_handle, m_handle, nullptr);
     }
 }
+
+} // namespace graphics
 
 } // namespace root

@@ -23,6 +23,8 @@
 
 namespace root {
 
+namespace graphics {
+
 struct vertex_input {
     vertex_input() {
         // Can be used for vertex shaders with vertex info in the 
@@ -38,5 +40,7 @@ struct vertex_input {
 
     VkPipelineVertexInputStateCreateInfo info;
 };
+
+} // namespace graphics
 
 } // namespace root

@@ -23,6 +23,8 @@
 
 namespace root {
 
+namespace graphics {
+
 struct raster {
     raster() {
         info.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
@@ -45,5 +47,7 @@ struct raster {
 
     VkPipelineRasterizationStateCreateInfo info;
 };
+
+} // namespace graphics
 
 } // namespace root

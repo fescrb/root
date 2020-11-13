@@ -27,6 +27,8 @@
 
 namespace root {
 
+namespace graphics {
+
 class queue : public vk_handle_container<VkQueue,queue> {
 public:
     queue(const device& dev, const u32& family_index, const u32& index = 0);
@@ -38,5 +40,7 @@ private:
     u32 m_family_index;
     u32 m_index;
 };
+
+} // namespace graphics
 
 } // namespace root

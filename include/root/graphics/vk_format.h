@@ -23,6 +23,8 @@
 
 namespace root {
 
+// Must be in the base root namespace
+
 inline constexpr auto to_string(const VkResult& result) -> const char* {
     switch(result) {
         case VK_SUCCESS:

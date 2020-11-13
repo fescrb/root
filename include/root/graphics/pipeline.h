@@ -30,6 +30,8 @@
 
 namespace root {
 
+namespace graphics {
+
 class pipeline {
 public:
     pipeline(const device& dev, 
@@ -99,5 +101,7 @@ private:
     VkDevice m_device_handle;
     allocator* m_alloc;
 };
+
+} // namespace graphics
 
 } // namespace root

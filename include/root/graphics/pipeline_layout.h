@@ -27,6 +27,8 @@
 
 namespace root {
 
+namespace graphics {
+
 class pipeline_layout {
 public:
     pipeline_layout(const device& dev, const VkViewport& vp, const VkRect2D& sc);
@@ -53,5 +55,7 @@ private:
     VkDevice m_device_handle;
     allocator* m_alloc;
 };
+
+} // namespace graphics
 
 } // namespace root

@@ -24,10 +24,12 @@
 
 namespace root {
 
+namespace graphics {
+
 class command_pool : public vk_handle_container<VkCommandPool, command_pool> {
 public:
     // TODO: take into account present/compute pools?
-    command_pool(const root::device& dev, allocator* alloc = allocator::get_default());
+    command_pool(const device& dev, allocator* alloc = allocator::get_default());
 
     ~command_pool();
 
@@ -39,5 +41,7 @@ public:
     VkDevice m_device_handle;
     allocator* m_alloc;
 };
+
+} // namespace graphics
 
 } // namespace root

@@ -27,6 +27,8 @@
 
 namespace root {
 
+namespace graphics {
+
 device::device(const graphics::physical_device& d, const graphics::surface& s)
 :   handle(VK_NULL_HANDLE),
     m_graphics_family_index(d.graphics_queue_family_index()),
@@ -107,5 +109,7 @@ auto device::get_present_queue() const -> VkQueue {
     vkGetDeviceQueue(handle, m_present_family_index, 0, &ret);
     return ret;
 }
+
+} // namespace graphics
 
 } // namespace root

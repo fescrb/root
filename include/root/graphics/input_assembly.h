@@ -23,6 +23,8 @@
 
 namespace root {
 
+namespace graphics {
+
 struct input_assembly {
     input_assembly() = delete;
     input_assembly(const VkPrimitiveTopology topology) {
@@ -35,5 +37,7 @@ struct input_assembly {
 
     VkPipelineInputAssemblyStateCreateInfo info;
 };
+
+} // namespace graphics
 
 } // namespace root

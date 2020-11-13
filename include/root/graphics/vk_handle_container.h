@@ -24,6 +24,8 @@
 
 namespace root {
 
+namespace graphics {
+
 template<typename vk_handle_t, typename subclass_t>
 class vk_handle_container {
 public:
@@ -55,5 +57,7 @@ protected:
 
     vk_handle_t m_handle;
 };
+
+} // namespace graphics
 
 } // namespace root

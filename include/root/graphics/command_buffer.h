@@ -30,6 +30,8 @@
 
 namespace root {
 
+namespace graphics {
+
 class command_buffer : public vk_handle_container<VkCommandBuffer,command_buffer> {
 public:
     command_buffer(const command_pool& pool);
@@ -47,5 +49,7 @@ public:
 private:
     const command_pool& m_command_pool;
 };
+
+} // namespace graphics
 
 } // namespace root

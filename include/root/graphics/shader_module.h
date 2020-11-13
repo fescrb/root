@@ -27,6 +27,8 @@
 
 namespace root {
 
+namespace graphics {
+
 class shader_module {
 public:
     explicit shader_module(const device& d, const buffer& b);
@@ -35,5 +37,7 @@ public:
 
     VkShaderModule handle;
 };
+
+} // namespace graphics
 
 } // namespace root
