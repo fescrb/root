@@ -25,11 +25,12 @@
 
 #include <root/memory/allocator.h>
 #include <root/core/array.h>
-#include <root/graphics/surface.h>
 
 namespace root {
 
 namespace graphics {
+
+class surface;
 
 class physical_device final : public vk_handle_container<VkPhysicalDevice,physical_device>{
 public:
@@ -55,12 +56,12 @@ public:
     }
 
     auto has_graphics_queue() const -> bool;
-    auto has_present_queue(const surface& s) const -> bool;
+    auto has_present_queue(const strong_ptr<surface>& s) const -> bool;
     
     auto graphics_queue_family_index() const -> u32;
-    auto present_queue_family_index(const surface& s) const -> u32;
+    auto present_queue_family_index(const strong_ptr<surface>& s) const -> u32;
 
-    auto can_present(const surface& s, const u32& family_queue_index) const -> VkBool32;
+    auto can_present(const strong_ptr<surface>& s, const u32& family_queue_index) const -> VkBool32;
 
     static constexpr u32 FAMILY_INVALID = std::numeric_limits<uint32_t>::max();
 

@@ -45,8 +45,6 @@
 #endif
 
 int root_main(int arg_c, char** arg_v) {
-    root::graphics::surface surface(root::graphics::instance::get(), root::graphics::window::get_default());
-
     auto devices = root::graphics::instance::get()->physical_devices();
 
     root::graphics::device* device = nullptr;
@@ -69,9 +67,9 @@ int root_main(int arg_c, char** arg_v) {
             root::log::d("", "Queue {}:{}", j, family_properties[j]);
         }
 
-        if(devices[i].has_graphics_queue() && devices[i].has_present_queue(surface)) {
+        if(devices[i].has_graphics_queue() && devices[i].has_present_queue(root::graphics::surface::get_default())) {
             root::log::d("", "Device {} has both a present and a graphics queue", i);
-            device = new root::graphics::device(devices[i], surface);
+            device = new root::graphics::device(devices[i], root::graphics::surface::get_default());
         } else {
             root::log::d("", "Device {} does not have both a present and a graphics queue", i);
         }
@@ -82,7 +80,7 @@ int root_main(int arg_c, char** arg_v) {
         abort();
     }
 
-    root::graphics::swapchain swapchain(surface, *device);
+    root::graphics::swapchain swapchain(root::graphics::surface::get_default(), *device);
 
     root::log::d("", "swapchain created viewport {} scissor {}", swapchain.viewport(), swapchain.scissor());
 

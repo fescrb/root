@@ -23,6 +23,7 @@
 #include <root/io/log.h>
 
 #if !defined(ROOT_ANDROID)
+#include <root/graphics/window.h>
 #include <GLFW/glfw3.h>
 #endif
 
@@ -30,18 +31,28 @@ namespace root {
 
 namespace graphics {
 
+strong_ptr<surface> surface::m_default_surface;
+
 #if !defined(ROOT_ANDROID)
-surface::surface(const strong_ptr<instance>& i, const strong_ptr<window>& w) {
+surface::surface(const strong_ptr<instance>& i, const strong_ptr<window>& w, allocator* alloc)
+:   vk_handle_container(),
+    m_callbacks(alloc),
+    m_instance(i) {
     root_assert(i && w);
-    VkResult res = glfwCreateWindowSurface(i->handle(), w->handle(), NULL, &m_handle);
+    VkResult res = glfwCreateWindowSurface(i->handle(), w->handle(), m_callbacks, &m_handle);
     if(res != VK_SUCCESS) {
-        // TODO: error handling
         log::e("surface", "glfwCreateWindowSurface failed with {}", res);
         abort();
     }
 }
 #endif
 
-} // namespace 
+surface::~surface() {
+    if(*this) {
+        vkDestroySurfaceKHR(m_instance->handle(), m_handle, m_callbacks);
+    }
+}
+
+} // namespace graphics
 
 } // namespace root

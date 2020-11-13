@@ -17,9 +17,10 @@
  * along with The Root Engine.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <root/core/array.h>
 #include <root/graphics/physical_device.h>
+
 #include <root/io/log.h>
+#include <root/graphics/surface.h>
 
 namespace root {
 
@@ -89,7 +90,7 @@ auto physical_device::has_graphics_queue() const -> bool {
     return graphics_queue_family_index() != FAMILY_INVALID;
 }
 
-auto physical_device::has_present_queue(const surface& s) const -> bool {
+auto physical_device::has_present_queue(const strong_ptr<surface>& s) const -> bool {
     return present_queue_family_index(s) != FAMILY_INVALID;
 }
 
@@ -105,7 +106,7 @@ auto physical_device::graphics_queue_family_index() const -> u32 {
     return FAMILY_INVALID;
 }
 
-auto physical_device::present_queue_family_index(const surface& s) const -> u32 {
+auto physical_device::present_queue_family_index(const strong_ptr<surface>& s) const -> u32 {
     auto& fam_props = queue_family_properties();
 
     for(u32 i = 0; i < fam_props.size(); i++) {
@@ -117,9 +118,9 @@ auto physical_device::present_queue_family_index(const surface& s) const -> u32 
     return FAMILY_INVALID;
 }
 
-auto physical_device::can_present(const surface& s, const u32& family_queue_index) const -> VkBool32 {
+auto physical_device::can_present(const strong_ptr<surface>& s, const u32& family_queue_index) const -> VkBool32 {
     VkBool32 present_support = false;
-    vkGetPhysicalDeviceSurfaceSupportKHR(m_handle, family_queue_index, s.handle(), &present_support);
+    vkGetPhysicalDeviceSurfaceSupportKHR(m_handle, family_queue_index, s->handle(), &present_support);
     return present_support;
 }
 

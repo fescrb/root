@@ -19,23 +19,61 @@
 
 #pragma once
 
-#include <root/graphics/vk_handle_container.h>
-#include <root/graphics/window.h>
 #include <root/memory/strong_ptr.h>
+#include <root/graphics/vk_handle_container.h>
+#include <root/graphics/vk_allocation_callbacks.h>
+
+#include <root/graphics/instance.h>
 
 namespace root {
 
 namespace graphics {
 
-class instance;
+class window;
 
-class surface : public vk_handle_container<VkSurfaceKHR,surface> {
+class surface final : public vk_handle_container<VkSurfaceKHR,surface> {
 public:
 #if defined(ROOT_ANDROID)
     surface(const strong_ptr<instance>& i /*, android_app**/);
 #else
-    surface(const strong_ptr<instance>& i, const strong_ptr<window>& w);
+    surface(const strong_ptr<instance>& i, const strong_ptr<window>& w, allocator* alloc = allocator::get_default());
 #endif
+
+    ~surface();
+
+    surface() = delete;
+    surface(const surface&) = delete;
+    inline surface(surface&& other) {
+        m_handle = std::move(other.m_handle);
+        m_callbacks = std::move(other.m_callbacks);
+        m_instance = std::move(other.m_instance);
+        other.clear();
+    }
+
+    auto operator=(const surface&) -> surface& = delete;
+    inline auto operator=(surface&& other) -> surface& {
+        if(this != &other) {
+            m_handle = std::move(other.m_handle);
+            m_callbacks = std::move(other.m_callbacks);
+            m_instance = std::move(other.m_instance);
+            other.clear();
+        }
+        return *this;
+    }
+
+    static inline auto get_default() -> strong_ptr<surface>& {
+        return m_default_surface;
+    }
+
+    static inline auto set_default(const strong_ptr<surface>& s) -> void {
+        m_default_surface = s;
+    }
+
+private:
+    vk_allocation_callbacks m_callbacks;
+    strong_ptr<instance> m_instance;
+
+    static strong_ptr<surface> m_default_surface;
 };
 
 } // namespace graphics

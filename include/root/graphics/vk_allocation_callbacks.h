@@ -35,6 +35,21 @@ public:
 
     vk_allocation_callbacks(allocator* alloc);
 
+    vk_allocation_callbacks(const vk_allocation_callbacks&) = default;
+    vk_allocation_callbacks(vk_allocation_callbacks&&) = default;
+
+    inline auto operator=(const vk_allocation_callbacks& other) -> vk_allocation_callbacks& {
+        m_callbacks = other.m_callbacks;
+        return *this;
+    }
+
+    inline auto operator=(vk_allocation_callbacks&& other) -> vk_allocation_callbacks& {
+        if(this != &other) {
+            m_callbacks = std::move(other.m_callbacks);
+        }
+        return *this;
+    }
+
     inline operator const VkAllocationCallbacks*() const {
         if (!m_callbacks.pUserData) return nullptr;
         return &m_callbacks;

@@ -25,15 +25,15 @@ namespace root {
 
 namespace graphics {
 
-swapchain::swapchain(const surface& s, const device& d, allocator* alloc)
+swapchain::swapchain(const strong_ptr<surface>& s, const device& d, allocator* alloc)
 :   vk_handle_container(),
     m_device(d),
     m_alloc(alloc) {
     refresh(s, d);
 }
 
-auto swapchain::refresh(const surface& s, const device& d) -> void {
-    vkGetPhysicalDeviceSurfaceCapabilitiesKHR(d.get_physical_device().handle(), s.handle(), &surface_capabilities);
+auto swapchain::refresh(const strong_ptr<surface>& s, const device& d) -> void {
+    vkGetPhysicalDeviceSurfaceCapabilitiesKHR(d.get_physical_device().handle(), s->handle(), &surface_capabilities);
 
     log::d("swapchain","surface_capabilities: {}", surface_capabilities);
 
@@ -42,7 +42,7 @@ auto swapchain::refresh(const surface& s, const device& d) -> void {
      */
 
     u32 format_count = 0;
-    vkGetPhysicalDeviceSurfaceFormatsKHR(d.get_physical_device().handle(), s.handle(), &format_count, nullptr);
+    vkGetPhysicalDeviceSurfaceFormatsKHR(d.get_physical_device().handle(), s->handle(), &format_count, nullptr);
 
     if(format_count == 0) {
         log::e("swapchain", "no formats supported");
@@ -50,7 +50,7 @@ auto swapchain::refresh(const surface& s, const device& d) -> void {
     }
 
     array<VkSurfaceFormatKHR> temp_formats = array<VkSurfaceFormatKHR>(format_count);
-    vkGetPhysicalDeviceSurfaceFormatsKHR(d.get_physical_device().handle(), s.handle(), &format_count, temp_formats.data());
+    vkGetPhysicalDeviceSurfaceFormatsKHR(d.get_physical_device().handle(), s->handle(), &format_count, temp_formats.data());
 
     for(int i = 0; i < temp_formats.size(); i++) {
         log::d("swapchain", "format {}: {}", i, temp_formats[i]);
@@ -63,7 +63,7 @@ auto swapchain::refresh(const surface& s, const device& d) -> void {
      */
 
     uint32_t present_mode_count;
-    vkGetPhysicalDeviceSurfacePresentModesKHR(d.get_physical_device().handle(), s.handle(), &present_mode_count, nullptr);
+    vkGetPhysicalDeviceSurfacePresentModesKHR(d.get_physical_device().handle(), s->handle(), &present_mode_count, nullptr);
 
 
     if(present_mode_count == 0) {
@@ -72,7 +72,7 @@ auto swapchain::refresh(const surface& s, const device& d) -> void {
     }
 
     array<VkPresentModeKHR> temp_modes = array<VkPresentModeKHR>(present_mode_count);
-    vkGetPhysicalDeviceSurfacePresentModesKHR(d.get_physical_device().handle(), s.handle(), &present_mode_count, temp_modes.data());
+    vkGetPhysicalDeviceSurfacePresentModesKHR(d.get_physical_device().handle(), s->handle(), &present_mode_count, temp_modes.data());
 
     for(int i = 0; i < temp_modes.size(); i++) {
         log::d("swapchain", "present mode {}: {}", i, temp_modes[i]);
@@ -99,7 +99,7 @@ auto swapchain::refresh(const surface& s, const device& d) -> void {
 
     VkSwapchainCreateInfoKHR create_info;
     create_info.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
-    create_info.surface = s.handle();
+    create_info.surface = s->handle();
     create_info.minImageCount = surface_capabilities.minImageCount;
     create_info.imageFormat = surface_format.format;
     create_info.imageColorSpace = surface_format.colorSpace;

@@ -20,6 +20,10 @@
 #include <root/graphics/graphics.h>
 
 #include <root/graphics/instance.h>
+#if !defined(ROOT_ANDROID)
+#include <root/graphics/window.h>
+#endif
+#include <root/graphics/surface.h>
 
 namespace root {
 
@@ -28,7 +32,10 @@ namespace graphics {
 auto init(allocator* alloc) -> void {
     if (!instance::get()) instance::set(alloc->make_strong<instance>());
     // TODO: give the name of the binary
+#if !defined(ROOT_ANDROID)
     if (!window::get_default()) window::set_default(alloc->make_strong<window>(640u, 480u, "Test"));
+    if (!surface::get_default()) surface::set_default(alloc->make_strong<surface>(instance::get(), window::get_default()));
+#endif
 }
 
 } // namespace graphics

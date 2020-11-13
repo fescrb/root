@@ -46,7 +46,7 @@ protected:
 
     inline constexpr vk_handle_container(vk_handle_container&& other) noexcept 
     :   m_handle(std::move(other.m_handle)) {
-        other.m_handle = VK_NULL_HANDLE;
+        other.clear();
     }
 
     inline constexpr vk_handle_container(const subclass_t& other) noexcept
@@ -54,6 +54,10 @@ protected:
 
     inline constexpr vk_handle_container(const vk_handle_t& handle) noexcept
     :   m_handle(handle) {}
+
+    inline auto clear() -> void {
+        m_handle = VK_NULL_HANDLE;
+    }
 
     vk_handle_t m_handle;
 };

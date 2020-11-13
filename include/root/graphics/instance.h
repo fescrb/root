@@ -34,8 +34,24 @@ public:
     instance(allocator* alloc = allocator::get_default());
     ~instance();
 
+    instance(const instance&) = delete;
+    inline instance(instance&& other) {
+        m_handle = std::move(other.m_handle);
+        m_callbacks = std::move(other.m_callbacks);
+        other.clear();
+    }
+
+    auto operator=(const instance&) -> instance& = delete;
+    inline auto operator=(instance&& other) -> instance& {
+        if(this != &other) {
+            m_handle = std::move(other.m_handle);
+            m_callbacks = std::move(other.m_callbacks);
+            other.clear();
+        }
+        return *this;
+    }
+
     static inline auto get() -> strong_ptr<instance>& {
-        // TODO maybe auto generate if none exists
         return m_instance;
     }
 

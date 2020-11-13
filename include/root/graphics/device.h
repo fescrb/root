@@ -28,7 +28,7 @@ namespace graphics {
 
 class device final {
 public:
-    device(const physical_device& d, const surface& s);
+    device(const physical_device& d, const strong_ptr<surface>& s);
 
     static device auto_select_device();
 

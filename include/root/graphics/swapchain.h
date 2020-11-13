@@ -33,9 +33,9 @@ namespace graphics {
 
 class swapchain : public vk_handle_container<VkSwapchainKHR,swapchain> {
 public:
-    swapchain(const surface& s, const device& d, allocator* alloc = allocator::get_default());
+    swapchain(const strong_ptr<surface>& s, const device& d, allocator* alloc = allocator::get_default());
 
-    auto refresh(const surface& s, const device& d) -> void;
+    auto refresh(const strong_ptr<surface>& s, const device& d) -> void;
 
     inline auto viewport() const -> VkViewport {
         VkViewport vp;
