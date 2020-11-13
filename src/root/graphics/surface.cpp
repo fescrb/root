@@ -30,16 +30,17 @@ namespace root {
 
 namespace graphics {
 
-surface::surface(const strong_ptr<instance>& i, window& w) {
 #if !defined(ROOT_ANDROID)
-    VkResult res = glfwCreateWindowSurface(i->handle(), w.handle, NULL, &m_handle);
+surface::surface(const strong_ptr<instance>& i, const strong_ptr<window>& w) {
+    root_assert(i && w);
+    VkResult res = glfwCreateWindowSurface(i->handle(), w->handle(), NULL, &m_handle);
     if(res != VK_SUCCESS) {
         // TODO: error handling
         log::e("surface", "glfwCreateWindowSurface failed with {}", res);
         abort();
     }
-#endif
 }
+#endif
 
 } // namespace 
 

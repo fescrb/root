@@ -45,9 +45,7 @@
 #endif
 
 int root_main(int arg_c, char** arg_v) {
-    root::window window(640u, 480u, "Test");
-
-    root::graphics::surface surface(root::graphics::instance::get(), window);
+    root::graphics::surface surface(root::graphics::instance::get(), root::graphics::window::get_default());
 
     auto devices = root::graphics::instance::get()->physical_devices();
 
@@ -126,7 +124,7 @@ int root_main(int arg_c, char** arg_v) {
     root::semaphore acquire_s(*device);
     root::semaphore present_s(*device);
 
-    while(!glfwWindowShouldClose(window.handle)){
+    while(!glfwWindowShouldClose(root::graphics::window::get_default()->handle())){
         glfwPollEvents();
         root::command_buffer buffer(command_pool);
         root::u32 image = swapchain.acquire(acquire_s);

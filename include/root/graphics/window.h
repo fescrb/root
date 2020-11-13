@@ -24,16 +24,38 @@ struct GLFWwindow;
 #endif
 
 #include <root/core/string_view.h>
+#include <root/memory/strong_ptr.h>
 
 namespace root {
+
+namespace graphics {
 
 class window {
 public:
     window(const u32 width, const u32 height, const string_view& title);
 
 #if !defined(ROOT_ANDROID)
-    GLFWwindow* handle;
+    inline auto handle() const -> GLFWwindow* {
+        return m_handle;
+    }
 #endif
+
+    inline static auto get_default() -> strong_ptr<window>& {
+        return m_default_window;
+    }
+
+    inline static auto set_default(const strong_ptr<window>& w) -> void {
+        m_default_window = w;
+    }
+
+private:
+#if !defined(ROOT_ANDROID)
+    GLFWwindow* m_handle;
+#endif
+
+    static strong_ptr<window> m_default_window;
 };
+
+} // namespace graphics
 
 } // namespace root

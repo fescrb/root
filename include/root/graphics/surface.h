@@ -31,7 +31,11 @@ class instance;
 
 class surface : public vk_handle_container<VkSurfaceKHR,surface> {
 public:
-    surface(const strong_ptr<instance>& i, window& w);
+#if defined(ROOT_ANDROID)
+    surface(const strong_ptr<instance>& i /*, android_app**/);
+#else
+    surface(const strong_ptr<instance>& i, const strong_ptr<window>& w);
+#endif
 };
 
 } // namespace graphics
