@@ -26,7 +26,7 @@ namespace root {
 
 class device final {
 public:
-    device(const physical_device& d, const graphics::surface& s);
+    device(const  graphics::physical_device& d, const graphics::surface& s);
 
     static device auto_select_device();
 
@@ -35,7 +35,7 @@ public:
     auto get_graphics_queue() const -> VkQueue;
     auto get_present_queue() const -> VkQueue;
     
-    inline auto get_physical_device() const -> const physical_device& {
+    inline auto get_physical_device() const -> const  graphics::physical_device& {
         return m_physical_device;
     }
 
@@ -50,7 +50,7 @@ public:
 private:
     u32 m_graphics_family_index;
     u32 m_present_family_index;
-    const physical_device& m_physical_device;
+    const  graphics::physical_device& m_physical_device;
 };
 
 } // namespace root

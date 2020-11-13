@@ -27,14 +27,14 @@
 
 namespace root {
 
-device::device(const physical_device& d, const graphics::surface& s)
+device::device(const graphics::physical_device& d, const graphics::surface& s)
 :   handle(VK_NULL_HANDLE),
     m_graphics_family_index(d.graphics_queue_family_index()),
     m_present_family_index(d.present_queue_family_index(s)),
     m_physical_device(d) {
     auto& fam_props = d.queue_family_properties();
 
-    root_assert(m_graphics_family_index != physical_device::FAMILY_INVALID);
+    root_assert(m_graphics_family_index !=  graphics::physical_device::FAMILY_INVALID);
 
     if(d.graphics_queue_family_index() != d.present_queue_family_index(s)) {
         log::e("device", "graphics family differs from present family, we do not handle this currently");
@@ -69,10 +69,10 @@ device::device(const physical_device& d, const graphics::surface& s)
 
 #if defined(ROOT_DEBUG)
     u32 num_layer_property;
-    vkEnumerateDeviceLayerProperties(d.handle, &num_layer_property, nullptr);
+    vkEnumerateDeviceLayerProperties(d.handle(), &num_layer_property, nullptr);
 
     array<VkLayerProperties> layer_properties(num_layer_property);
-    vkEnumerateDeviceLayerProperties(d.handle, &num_layer_property, layer_properties.data());
+    vkEnumerateDeviceLayerProperties(d.handle(), &num_layer_property, layer_properties.data());
 
     for(int i = 0; i < num_layer_property; i++) {
         log::d("device", "Device Layer Properties {}: {}", i, layer_properties[i]);
@@ -89,7 +89,7 @@ device::device(const physical_device& d, const graphics::surface& s)
     device_create.ppEnabledLayerNames = nullptr;
 #endif
 
-    VkResult res = vkCreateDevice(d.handle, &device_create, nullptr, &handle);
+    VkResult res = vkCreateDevice(d.handle(), &device_create, nullptr, &handle);
 
     if(res != VK_SUCCESS) {
         log::e("device", "vkCreateDevice failed with {}", res);

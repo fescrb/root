@@ -27,15 +27,6 @@ namespace root {
 template<typename vk_handle_t, typename subclass_t>
 class vk_handle_container {
 public:
-    inline constexpr vk_handle_container() noexcept 
-    :   m_handle(VK_NULL_HANDLE) {}
-    inline constexpr vk_handle_container(const vk_handle_container& other) noexcept 
-    :   m_handle(other.m_handle) {}
-    inline constexpr vk_handle_container(vk_handle_container&& other) noexcept 
-    :   m_handle(std::move(other.m_handle)) {
-        other.m_handle = VK_NULL_HANDLE;
-    }
-
     inline auto handle() const -> const vk_handle_t& {
         return m_handle;
     }
@@ -45,8 +36,22 @@ public:
     }
 
 protected:
+    inline constexpr vk_handle_container() noexcept 
+    :   m_handle(VK_NULL_HANDLE) {}
+
+    inline constexpr vk_handle_container(const vk_handle_container& other) noexcept 
+    :   m_handle(other.m_handle) {}
+
+    inline constexpr vk_handle_container(vk_handle_container&& other) noexcept 
+    :   m_handle(std::move(other.m_handle)) {
+        other.m_handle = VK_NULL_HANDLE;
+    }
+
     inline constexpr vk_handle_container(const subclass_t& other) noexcept
     :   m_handle(other.m_handle) {}
+
+    inline constexpr vk_handle_container(const vk_handle_t& handle) noexcept
+    :   m_handle(handle) {}
 
     vk_handle_t m_handle;
 };

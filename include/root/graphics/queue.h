@@ -29,12 +29,14 @@ namespace root {
 
 class queue : public vk_handle_container<VkQueue,queue> {
 public:
-    queue(const device& dev, const u32& family_index);
+    queue(const device& dev, const u32& family_index, const u32& index = 0);
 
-    auto submit(const array_slice<>)
+    //auto submit(const array_slice<>)
 
 private:
     VkDevice m_device_handle;
+    u32 m_family_index;
+    u32 m_index;
 };
 
 } // namespace root

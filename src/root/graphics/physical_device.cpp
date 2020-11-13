@@ -23,24 +23,26 @@
 
 namespace root {
 
+namespace graphics {
+
 physical_device::physical_device(const VkPhysicalDevice& h, allocator* alloc)
-:   handle(h),
+:   vk_handle_container(h),
     m_alloc(alloc),
     m_properties(nullptr),
     m_memory_properties(nullptr) {
     // Get queue families
 
     u32 num_queues;
-    vkGetPhysicalDeviceQueueFamilyProperties(handle, &num_queues, nullptr);
+    vkGetPhysicalDeviceQueueFamilyProperties(m_handle, &num_queues, nullptr);
 
     array<VkQueueFamilyProperties> props(num_queues, m_alloc);
-    vkGetPhysicalDeviceQueueFamilyProperties(handle, &num_queues, props.data());
+    vkGetPhysicalDeviceQueueFamilyProperties(m_handle, &num_queues, props.data());
 
     m_family_properties = std::move(props);
 
     // Get extensions
     u32 num_extensions;
-    VkResult res = vkEnumerateDeviceExtensionProperties(handle, nullptr, &num_extensions, nullptr);
+    VkResult res = vkEnumerateDeviceExtensionProperties(m_handle, nullptr, &num_extensions, nullptr);
 
     if(res != VK_SUCCESS) {
         log::e("physical_device", "vkEnumerateDeviceExtensionProperties failed with {}", res);
@@ -48,7 +50,7 @@ physical_device::physical_device(const VkPhysicalDevice& h, allocator* alloc)
     }
 
     array<VkExtensionProperties> extens(num_extensions, m_alloc);
-    res = vkEnumerateDeviceExtensionProperties(handle, nullptr, &num_extensions, extens.data());
+    res = vkEnumerateDeviceExtensionProperties(m_handle, nullptr, &num_extensions, extens.data());
     
     if(res != VK_SUCCESS) {
         log::e("physical_device", "vkEnumerateDeviceExtensionProperties failed with {}", res);
@@ -61,7 +63,7 @@ physical_device::physical_device(const VkPhysicalDevice& h, allocator* alloc)
 auto physical_device::properties() -> VkPhysicalDeviceProperties* {
     if(m_properties == nullptr) {
         m_properties = reinterpret_cast<VkPhysicalDeviceProperties*>(m_alloc->malloc(sizeof(VkPhysicalDeviceProperties), alignof(VkPhysicalDeviceProperties)));
-        vkGetPhysicalDeviceProperties(handle, m_properties);
+        vkGetPhysicalDeviceProperties(m_handle, m_properties);
     }
     return m_properties;
 }
@@ -73,7 +75,7 @@ auto physical_device::extensions() const -> const array<VkExtensionProperties>& 
 auto physical_device::memory_properties() -> VkPhysicalDeviceMemoryProperties* {
     if(m_memory_properties == nullptr) {
         m_memory_properties = reinterpret_cast<VkPhysicalDeviceMemoryProperties*>(m_alloc->malloc(sizeof(VkPhysicalDeviceMemoryProperties), alignof(VkPhysicalDeviceMemoryProperties)));
-        vkGetPhysicalDeviceMemoryProperties(handle, m_memory_properties);
+        vkGetPhysicalDeviceMemoryProperties(m_handle, m_memory_properties);
     }
     return m_memory_properties;
 }
@@ -117,9 +119,10 @@ auto physical_device::present_queue_family_index(const graphics::surface& s) con
 
 auto physical_device::can_present(const graphics::surface& s, const u32& family_queue_index) const -> VkBool32 {
     VkBool32 present_support = false;
-    vkGetPhysicalDeviceSurfaceSupportKHR(handle, family_queue_index, s.handle(), &present_support);
+    vkGetPhysicalDeviceSurfaceSupportKHR(m_handle, family_queue_index, s.handle(), &present_support);
     return present_support;
 }
 
+} // namespace graphics
 
 } // namespace root

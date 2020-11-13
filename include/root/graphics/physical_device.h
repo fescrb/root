@@ -21,7 +21,7 @@
 
 #include <limits>
 
-#include <vulkan/vulkan.h>
+#include <root/graphics/vk_handle_container.h>
 
 #include <root/memory/allocator.h>
 #include <root/core/array.h>
@@ -29,15 +29,13 @@
 
 namespace root {
 
-class physical_device final {
+namespace graphics {
+
+class physical_device final : public vk_handle_container<VkPhysicalDevice,physical_device>{
 public:
-    explicit physical_device(const VkPhysicalDevice& h, allocator* alloc = allocator::get_default());
-
-    VkPhysicalDevice handle;
-
     auto operator=(const physical_device&) -> physical_device& = delete;
     inline auto operator=(physical_device&& other) -> physical_device& {
-        handle = std::move(other.handle);
+        m_handle = std::move(other.m_handle);
         m_alloc = std::move(other.m_alloc);
         m_properties = std::move(other.m_properties);
         m_extensions = std::move(other.m_extensions);
@@ -67,11 +65,17 @@ public:
     static constexpr u32 FAMILY_INVALID = std::numeric_limits<uint32_t>::max();
 
 private:
+    explicit physical_device(const VkPhysicalDevice& h, allocator* alloc = allocator::get_default());
+
+    friend class instance;
+
     allocator *m_alloc;
     VkPhysicalDeviceProperties *m_properties;
     VkPhysicalDeviceMemoryProperties *m_memory_properties;
     array<VkQueueFamilyProperties> m_family_properties;
     array<VkExtensionProperties> m_extensions;
 };
+
+} // namespace graphics
 
 } // namespace root
