@@ -59,10 +59,12 @@ public:
         m_instance = i;
     }
 
-    auto physical_devices(allocator* alloc = allocator::get_default()) const -> array<physical_device>;
+    auto physical_devices() const -> const array<physical_device>&;
 
 private:
+    allocator* m_alloc;
     vk_allocation_callbacks m_callbacks;
+    array<physical_device> m_physical_devices;
     static strong_ptr<instance> m_instance;
 };
 

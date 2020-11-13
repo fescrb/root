@@ -45,22 +45,22 @@
 #endif
 
 int root_main(int arg_c, char** arg_v) {
-    auto devices = root::graphics::instance::get()->physical_devices();
+    auto& devices = root::graphics::instance::get()->physical_devices();
 
     root::graphics::device* device = nullptr;
 
     root::log::d("", "Found {} devices", devices.size());
 
     for(int i = 0; i < devices.size(); i++) {
-        root::log::d("", "Device {}: {}", i, *(devices[i].properties()));
+        root::log::d("", "Device {}: {}", i, devices[i].properties());
 
-        auto& extension_properties = devices[i].extensions();
+        auto extension_properties = devices[i].extensions();
 
         for(int j = 0; j < extension_properties.size(); j++) {
             root::log::d("", "Extension {}:{}", j, extension_properties[j]);
         }
 
-        auto& family_properties = devices[i].queue_family_properties();
+        auto family_properties = devices[i].queue_family_properties();
         
         root::log::d("", "Device {} has {} queues", i, family_properties.size());
         for(int j = 0; j < family_properties.size(); j++) {

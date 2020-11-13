@@ -34,26 +34,19 @@ class surface;
 
 class physical_device final : public vk_handle_container<VkPhysicalDevice,physical_device>{
 public:
-    auto operator=(const physical_device&) -> physical_device& = delete;
+    auto operator=(const physical_device& other) -> physical_device& {
+        m_handle = other.m_handle;
+        return *this;
+    }
     inline auto operator=(physical_device&& other) -> physical_device& {
         m_handle = std::move(other.m_handle);
-        m_alloc = std::move(other.m_alloc);
-        m_properties = std::move(other.m_properties);
-        m_extensions = std::move(other.m_extensions);
-        m_memory_properties = std::move(other.m_memory_properties);
-        m_family_properties = std::move(other.m_family_properties);
         return *this;
     }
 
-    auto properties() -> VkPhysicalDeviceProperties*;
-    auto memory_properties() -> VkPhysicalDeviceMemoryProperties*;
-    auto queue_family_properties() const -> const array<VkQueueFamilyProperties>&;
-    auto extensions() const -> const array<VkExtensionProperties>&;
-
-    ~physical_device() {
-        if (m_properties) m_alloc->free(m_properties);
-        if (m_memory_properties) m_alloc->free(m_properties);
-    }
+    auto properties() const -> VkPhysicalDeviceProperties;
+    auto memory_properties() const -> VkPhysicalDeviceMemoryProperties;
+    auto queue_family_properties(allocator* alloc = allocator::get_default()) const -> const array<VkQueueFamilyProperties>;
+    auto extensions(allocator* alloc = allocator::get_default()) const -> const array<VkExtensionProperties>;
 
     auto has_graphics_queue() const -> bool;
     auto has_present_queue(const strong_ptr<surface>& s) const -> bool;
@@ -66,15 +59,9 @@ public:
     static constexpr u32 FAMILY_INVALID = std::numeric_limits<uint32_t>::max();
 
 private:
-    explicit physical_device(const VkPhysicalDevice& h, allocator* alloc = allocator::get_default());
+    explicit physical_device(const VkPhysicalDevice& h);
 
     friend class instance;
-
-    allocator *m_alloc;
-    VkPhysicalDeviceProperties *m_properties;
-    VkPhysicalDeviceMemoryProperties *m_memory_properties;
-    array<VkQueueFamilyProperties> m_family_properties;
-    array<VkExtensionProperties> m_extensions;
 };
 
 } // namespace graphics

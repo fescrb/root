@@ -35,7 +35,8 @@ namespace graphics {
 strong_ptr<instance> instance::m_instance;
 
 instance::instance(allocator* alloc)
-:   m_callbacks(alloc)  {
+:   m_alloc(alloc),
+    m_callbacks(alloc)  {
     VkInstanceCreateInfo create_info;
     create_info.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
     create_info.pNext = nullptr;
@@ -65,7 +66,7 @@ instance::instance(allocator* alloc)
 #endif
 
 #if !defined(ROOT_ANDROID)
-    // TODO where do I put this?
+    // TODO: Move this to a different location. Ensure that it cannot be called more than once.
     if(glfwInit() != GLFW_TRUE) {
         log::e("instance", "glfwInit failed");
         abort();
@@ -96,6 +97,29 @@ instance::instance(allocator* alloc)
         log::e("instance", "vkCreateInstance failed with {}", res);
         abort();
     }
+
+    u32 num;
+    res = vkEnumeratePhysicalDevices(m_handle, &num, nullptr);
+    if (res != VK_SUCCESS) {
+        log::e("instance", "vkEnumeratePhysicalDevices failed with {}", res);
+        abort();
+    }
+    
+    array<VkPhysicalDevice> phys_devices(num, m_alloc);
+    
+    res = vkEnumeratePhysicalDevices(m_handle, &num, phys_devices.data());
+    if (res != VK_SUCCESS) {
+        log::e("instance", "vkEnumeratePhysicalDevices failed with {}", res);
+        abort();
+    }
+
+    array<physical_device> devices(num, m_alloc);
+
+    for(int i = 0; i < num; i++) {
+        devices[i] = physical_device(phys_devices[i]);
+    }
+
+    m_physical_devices = std::move(devices);
 }
 
 instance::~instance() {
@@ -104,29 +128,8 @@ instance::~instance() {
     }
 }
 
-auto instance::physical_devices(allocator* alloc) const -> array<physical_device> {
-    u32 num;
-    VkResult res = vkEnumeratePhysicalDevices(m_handle, &num, nullptr);
-    if (res != VK_SUCCESS) {
-        log::e("instance", "vkEnumeratePhysicalDevices failed with {}", res);
-        abort();
-    }
-    
-    array<VkPhysicalDevice> phys_devices(num, alloc);
-    
-    res = vkEnumeratePhysicalDevices(m_handle, &num, phys_devices.data());
-    if (res != VK_SUCCESS) {
-        log::e("instance", "vkEnumeratePhysicalDevices failed with {}", res);
-        abort();
-    }
-
-    array<physical_device> devices(num, alloc);
-
-    for(int i = 0; i < num; i++) {
-        devices[i] = std::move(physical_device(phys_devices[i]));
-    }
-
-    return devices;
+auto instance::physical_devices() const -> const array<physical_device>& {
+    return m_physical_devices;
 }
 
 } // namespace graphics

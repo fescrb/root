@@ -85,7 +85,7 @@ public:
         return m_data[index];
     }
 
-    inline auto operator[](const u64& index) const -> T {
+    inline auto operator[](const u64& index) const -> const T& {
         root_assert(index < m_length);
         return m_data[index];
     }
