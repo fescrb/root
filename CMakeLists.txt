@@ -11,6 +11,10 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/src/build/RootSetup.cmake)
 
 if(${CMAKE_BUILD_TYPE} MATCHES "Test")
     add_definitions(-DROOT_TESTS_BINARY_PATH=\"${CMAKE_CURRENT_SOURCE_DIR}/bin\")
+    add_definitions(-DROOT_TESTS_BINARY_NAME=\"root_test\")
+    if(WIN32)
+        add_definitions(-DROOT_TESTS_BINARY_NAME=\"root_test.exe\")
+    endif(WIN32)
 endif(${CMAKE_BUILD_TYPE} MATCHES "Test")
 
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/src/root/core)
