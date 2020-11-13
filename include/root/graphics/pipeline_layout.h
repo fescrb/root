@@ -34,7 +34,7 @@ public:
     pipeline_layout(const device& dev, const VkViewport& vp, const VkRect2D& sc);
 
     // Makes a pipeline with a swapchain target
-    pipeline_layout(const device& dev, const graphics::swapchain& sw) 
+    pipeline_layout(const device& dev, const swapchain& sw) 
     :   pipeline_layout(dev, sw.viewport(), sw.scissor()) {}
 
     const VkViewport viewport;

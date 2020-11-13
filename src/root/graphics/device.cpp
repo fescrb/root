@@ -29,14 +29,14 @@ namespace root {
 
 namespace graphics {
 
-device::device(const graphics::physical_device& d, const graphics::surface& s)
+device::device(const physical_device& d, const surface& s)
 :   handle(VK_NULL_HANDLE),
     m_graphics_family_index(d.graphics_queue_family_index()),
     m_present_family_index(d.present_queue_family_index(s)),
     m_physical_device(d) {
     auto& fam_props = d.queue_family_properties();
 
-    root_assert(m_graphics_family_index !=  graphics::physical_device::FAMILY_INVALID);
+    root_assert(m_graphics_family_index !=  physical_device::FAMILY_INVALID);
 
     if(d.graphics_queue_family_index() != d.present_queue_family_index(s)) {
         log::e("device", "graphics family differs from present family, we do not handle this currently");

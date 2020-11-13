@@ -54,7 +54,7 @@ auto command_buffer::begin() -> void {
 }
 
 
-auto command_buffer::start_render_pass(const renderpass& rp, const graphics::framebuffer& fb) -> void {
+auto command_buffer::start_render_pass(const renderpass& rp, const framebuffer& fb) -> void {
     // TODO check if were valid before doin this
     VkRenderPassBeginInfo begin_info;
     begin_info.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;

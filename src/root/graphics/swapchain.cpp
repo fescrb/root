@@ -25,14 +25,14 @@ namespace root {
 
 namespace graphics {
 
-swapchain::swapchain(const graphics::surface& s, const device& d, allocator* alloc)
+swapchain::swapchain(const surface& s, const device& d, allocator* alloc)
 :   vk_handle_container(),
     m_device(d),
     m_alloc(alloc) {
     refresh(s, d);
 }
 
-auto swapchain::refresh(const graphics::surface& s, const device& d) -> void {
+auto swapchain::refresh(const surface& s, const device& d) -> void {
     vkGetPhysicalDeviceSurfaceCapabilitiesKHR(d.get_physical_device().handle(), s.handle(), &surface_capabilities);
 
     log::d("swapchain","surface_capabilities: {}", surface_capabilities);

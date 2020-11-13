@@ -38,7 +38,7 @@ public:
 
     // Could be const would like a const command_buffer to be immutable
     auto begin() -> void;
-    auto start_render_pass(const renderpass& rp, const graphics::framebuffer& fb) -> void;
+    auto start_render_pass(const renderpass& rp, const framebuffer& fb) -> void;
     auto bind_pipeline(const pipeline& p) -> void;
     auto draw(u32 vertex_count, u32 instance_count, u32 first_vertex, u32 first_instance) -> void;
     auto end_render_pass() -> void;
