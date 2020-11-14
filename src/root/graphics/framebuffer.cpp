@@ -31,7 +31,7 @@ framebuffer::framebuffer(const device& dev,
                          VkExtent3D dimensions, 
                          allocator* alloc) 
 :   vk_handle_container(),
-    m_device_handle(dev.handle),
+    m_device_handle(dev.handle()),
     m_extent({dimensions.width, dimensions.height}),
     m_alloc(alloc) {
     VkFramebufferCreateInfo framebuffer_create_info;

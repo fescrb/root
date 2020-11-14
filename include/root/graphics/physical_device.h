@@ -34,6 +34,14 @@ class surface;
 
 class physical_device final : public vk_handle_container<VkPhysicalDevice,physical_device>{
 public:
+    physical_device() : vk_handle_container() {}
+
+    physical_device(const physical_device& other)
+    :   vk_handle_container(other) {}
+
+    physical_device(physical_device&& other)
+    :   vk_handle_container(std::move(other)) {}
+
     auto operator=(const physical_device& other) -> physical_device& {
         m_handle = other.m_handle;
         return *this;

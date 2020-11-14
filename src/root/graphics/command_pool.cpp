@@ -27,7 +27,7 @@ namespace graphics {
 
 command_pool::command_pool(const root::graphics::device& dev, allocator* alloc)
 :   vk_handle_container(),
-    m_device_handle(dev.handle),
+    m_device_handle(dev.handle()),
     m_alloc(alloc) {
     VkCommandPoolCreateInfo command_pool_create_info;
     command_pool_create_info.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;

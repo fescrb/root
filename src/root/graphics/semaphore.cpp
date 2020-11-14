@@ -26,7 +26,7 @@ namespace root {
 namespace graphics {
 
 semaphore::semaphore(const device& dev, allocator* alloc)
-:   m_device_handle(dev.handle),
+:   m_device_handle(dev.handle()),
     m_alloc(alloc) {
     VkSemaphoreCreateInfo semaphore_info;
     semaphore_info.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;

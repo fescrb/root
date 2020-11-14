@@ -33,7 +33,7 @@ shader_module::shader_module(const device& d,const buffer& buf) {
     create_info.codeSize = buf.size();
     create_info.pCode = reinterpret_cast<uint32_t*>(buf.data());
 
-    VkResult res = vkCreateShaderModule(d.handle, &create_info, nullptr, &handle);
+    VkResult res = vkCreateShaderModule(d.handle(), &create_info, nullptr, &handle);
 
     if(res != VK_SUCCESS) {
         log::e("shader_module", "vkCreateShaderModule failed with {}", res);

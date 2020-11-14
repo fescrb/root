@@ -29,7 +29,7 @@ pipeline_layout::pipeline_layout(const device& dev, const VkViewport& vp, const 
 :   viewport(vp),
     scissor(sc),
     m_handle(VK_NULL_HANDLE),
-    m_device_handle(dev.handle),
+    m_device_handle(dev.handle()),
     m_alloc(nullptr) {
     viewport_state.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
     viewport_state.pNext = nullptr;

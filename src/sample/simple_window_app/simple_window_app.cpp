@@ -45,47 +45,12 @@
 #endif
 
 int root_main(int arg_c, char** arg_v) {
-    auto& devices = root::graphics::instance::get()->physical_devices();
-
-    root::graphics::device* device = nullptr;
-
-    root::log::d("", "Found {} devices", devices.size());
-
-    for(int i = 0; i < devices.size(); i++) {
-        root::log::d("", "Device {}: {}", i, devices[i].properties());
-
-        auto extension_properties = devices[i].extensions();
-
-        for(int j = 0; j < extension_properties.size(); j++) {
-            root::log::d("", "Extension {}:{}", j, extension_properties[j]);
-        }
-
-        auto family_properties = devices[i].queue_family_properties();
-        
-        root::log::d("", "Device {} has {} queues", i, family_properties.size());
-        for(int j = 0; j < family_properties.size(); j++) {
-            root::log::d("", "Queue {}:{}", j, family_properties[j]);
-        }
-
-        if(devices[i].has_graphics_queue() && devices[i].has_present_queue(root::graphics::surface::get_default())) {
-            root::log::d("", "Device {} has both a present and a graphics queue", i);
-            device = new root::graphics::device(devices[i], root::graphics::surface::get_default());
-        } else {
-            root::log::d("", "Device {} does not have both a present and a graphics queue", i);
-        }
-    }
-
-    if(!device) {
-        root::log::e("", "No suitable device found");
-        abort();
-    }
-
-    root::graphics::swapchain swapchain(root::graphics::surface::get_default(), *device);
+    root::graphics::swapchain swapchain(root::graphics::surface::get_default(), *root::graphics::device::get_default());
 
     root::log::d("", "swapchain created viewport {} scissor {}", swapchain.viewport(), swapchain.scissor());
 
-    root::graphics::shader_module vert(*device, "vert.spv");
-    root::graphics::shader_module frag(*device, "frag.spv");
+    root::graphics::shader_module vert(*root::graphics::device::get_default(), "vert.spv");
+    root::graphics::shader_module frag(*root::graphics::device::get_default(), "frag.spv");
 
     root::graphics::shader shaders[2] = {
         root::graphics::shader(vert, VK_SHADER_STAGE_VERTEX_BIT, "main"), 
@@ -95,20 +60,20 @@ int root_main(int arg_c, char** arg_v) {
     root::graphics::vertex_input vertex_input;
     root::graphics::input_assembly input_assembly(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST);
 
-    root::graphics::pipeline_layout pipeline_layout(*device, swapchain);
+    root::graphics::pipeline_layout pipeline_layout(*root::graphics::device::get_default(), swapchain);
     root::graphics::raster raster;
 
     root::graphics::attachment attachment(swapchain);
-    root::graphics::renderpass renderpass(*device, attachment);
+    root::graphics::renderpass renderpass(*root::graphics::device::get_default(), attachment);
 
-    root::graphics::pipeline pipeline(*device, shaders, vertex_input, input_assembly, pipeline_layout, raster, renderpass);
+    root::graphics::pipeline pipeline(*root::graphics::device::get_default(), shaders, vertex_input, input_assembly, pipeline_layout, raster, renderpass);
 
     root::array<root::graphics::framebuffer> framebuffers(swapchain.swapchain_images.size());
 
     for(root::u32 i = 0; i < framebuffers.size(); i++) {
         framebuffers[i] = std::move(
             root::graphics::framebuffer(
-                *device, 
+                *root::graphics::device::get_default(), 
                 renderpass, 
                 swapchain.swapchain_images.range(i, i+1),
                 swapchain.extent
@@ -117,10 +82,10 @@ int root_main(int arg_c, char** arg_v) {
         root::log::d("", "Framebuffer[{}] extent {} ", i, framebuffers[i].entent());
     }
 
-    root::graphics::command_pool command_pool(*device);
+    root::graphics::command_pool command_pool(*root::graphics::device::get_default());
 
-    root::graphics::semaphore acquire_s(*device);
-    root::graphics::semaphore present_s(*device);
+    root::graphics::semaphore acquire_s(*root::graphics::device::get_default());
+    root::graphics::semaphore present_s(*root::graphics::device::get_default());
 
     while(!glfwWindowShouldClose(root::graphics::window::get_default()->handle())){
         glfwPollEvents();
@@ -146,7 +111,7 @@ int root_main(int arg_c, char** arg_v) {
         submit_info.pCommandBuffers = &(buffer.handle());
         submit_info.signalSemaphoreCount = 1;
         submit_info.pSignalSemaphores = &(present_s.handle());
-        VkResult submit_result = vkQueueSubmit(device->get_graphics_queue(), 1, &submit_info, VK_NULL_HANDLE);
+        VkResult submit_result = vkQueueSubmit(root::graphics::device::get_default()->get_graphics_queue(), 1, &submit_info, VK_NULL_HANDLE);
         if (submit_result != VK_SUCCESS) {
             root::log::e("simple_window_app", "vkQueueSubmit failed with {}", submit_result);
             abort();

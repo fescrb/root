@@ -25,18 +25,25 @@
 #include <root/graphics/window.h>
 #endif
 #include <root/graphics/surface.h>
+#include <root/graphics/device.h>
 
 namespace root {
 
 namespace graphics {
 
 auto init(allocator* alloc) -> void {
-    if (!instance::get()) instance::set(alloc->make_strong<instance>());
+    if (!instance::get()) 
+        instance::set(alloc->make_strong<instance>());
     // TODO: give the name of the binary
 #if !defined(ROOT_ANDROID)
-    if (!window::get_default()) window::set_default(alloc->make_strong<window>(640u, 480u, path::binary_name()));
-    if (!surface::get_default()) surface::set_default(alloc->make_strong<surface>(instance::get(), window::get_default()));
+    if (!window::get_default()) 
+        window::set_default(alloc->make_strong<window>(640u, 480u, path::binary_name()));
+    if (!surface::get_default()) 
+        surface::set_default(alloc->make_strong<surface>(instance::get(), window::get_default()));
 #endif
+    if (!device::get_default()) 
+        device::set_default(device::auto_select_device(instance::get(), surface::get_default()));
+    
 }
 
 } // namespace graphics

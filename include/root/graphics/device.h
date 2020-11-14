@@ -19,6 +19,7 @@
 
 #pragma once
 
+#include <root/graphics/vk_handle_container.h>
 #include <root/graphics/physical_device.h>
 #include <root/graphics/surface.h>
 
@@ -26,13 +27,20 @@ namespace root {
 
 namespace graphics {
 
-class device final {
+class device final : public vk_handle_container<VkDevice,device> {
 public:
-    device(const physical_device& d, const strong_ptr<surface>& s);
+    /*
+     * TODO: allow making & selecting a device without a target surface
+     */
+    device(const physical_device& phys_d, 
+           const strong_ptr<surface>& target_surface, 
+           allocator* alloc = allocator::get_default());
 
-    static device auto_select_device();
+    ~device();
 
-    VkDevice handle;
+    static auto auto_select_device(const strong_ptr<instance>& i, 
+                                   const strong_ptr<surface>& target_surface, 
+                                   allocator* alloc = allocator::get_default()) -> strong_ptr<device>;
 
     auto get_graphics_queue() const -> VkQueue;
     auto get_present_queue() const -> VkQueue;
@@ -49,10 +57,21 @@ public:
         return m_present_family_index;
     }
 
+    static inline auto get_default() -> strong_ptr<device>& {
+        return m_default_device;
+    }
+
+    static inline auto set_default(const strong_ptr<device>& d) -> void {
+        m_default_device = d;
+    }
+
 private:
+    vk_allocation_callbacks m_callbacks;
     u32 m_graphics_family_index;
     u32 m_present_family_index;
-    const  physical_device& m_physical_device;
+    physical_device m_physical_device;
+
+    static strong_ptr<device> m_default_device;
 };
 
 } // namespace graphics

@@ -43,7 +43,7 @@ public:
              const renderpass& rp,
              allocator* alloc = allocator::get_default())
     :   m_handle(VK_NULL_HANDLE),
-        m_device_handle(dev.handle),
+        m_device_handle(dev.handle()),
         m_alloc(alloc) {
         VkGraphicsPipelineCreateInfo pipeline_create;
         pipeline_create.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;

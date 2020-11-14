@@ -26,8 +26,8 @@ namespace root {
 namespace graphics {
 
 renderpass::renderpass(const device& d, const attachment& attachment, allocator* alloc)
-:   renderpass(){
-    m_device_handle = d.handle;
+:   renderpass() {
+    m_device_handle = d.handle();
     m_alloc = alloc;
 
     VkAttachmentReference color_attachment_ref;
@@ -59,7 +59,7 @@ renderpass::renderpass(const device& d, const attachment& attachment, allocator*
     renderpass_info.pDependencies = nullptr;
 
     // TODO: pass our own allocator
-    VkResult res = vkCreateRenderPass(d.handle, &renderpass_info, nullptr, &m_handle);
+    VkResult res = vkCreateRenderPass(d.handle(), &renderpass_info, nullptr, &m_handle);
 
     if(res != VK_SUCCESS) {
         log::e("renderpass", "vkCreateRenderPass failed with {}", res);

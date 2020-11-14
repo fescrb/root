@@ -115,7 +115,7 @@ auto swapchain::refresh(const strong_ptr<surface>& s, const device& d) -> void {
     create_info.clipped = VK_TRUE; // Don't care covered pixels
     create_info.oldSwapchain = handle();
 
-    VkResult res = vkCreateSwapchainKHR(d.handle, &create_info, nullptr, &m_handle);
+    VkResult res = vkCreateSwapchainKHR(d.handle(), &create_info, nullptr, &m_handle);
 
     if(res != VK_SUCCESS) {
         log::e("swapchain", "vkCreateSwapchainKHR failed with {}", res);
@@ -123,9 +123,9 @@ auto swapchain::refresh(const strong_ptr<surface>& s, const device& d) -> void {
     }
 
     u32 num_images;
-    vkGetSwapchainImagesKHR(d.handle, handle(), &num_images, nullptr);
+    vkGetSwapchainImagesKHR(d.handle(), handle(), &num_images, nullptr);
     array<VkImage> temp_images(num_images, m_alloc);
-    vkGetSwapchainImagesKHR(d.handle, handle(), &num_images, temp_images.data());
+    vkGetSwapchainImagesKHR(d.handle(), handle(), &num_images, temp_images.data());
     
     array<VkImageView> temp_image_views(num_images, m_alloc);
     
@@ -151,7 +151,7 @@ auto swapchain::refresh(const strong_ptr<surface>& s, const device& d) -> void {
         subresource_range.layerCount = 1;
         view_create_info.subresourceRange = subresource_range;
 
-        res = vkCreateImageView(d.handle, &view_create_info, nullptr, &(temp_image_views[i]));
+        res = vkCreateImageView(d.handle(), &view_create_info, nullptr, &(temp_image_views[i]));
 
         if (res != VK_SUCCESS) {
             log::e("swapchain", "vkCreateImageView failed with {}", res);
@@ -164,7 +164,7 @@ auto swapchain::refresh(const strong_ptr<surface>& s, const device& d) -> void {
 auto swapchain::acquire(const semaphore& sem, const u64 timeout) -> u32 {
     u32 image_index;
     // TODO: deal with fences
-    VkResult res = vkAcquireNextImageKHR(m_device.handle, handle(), timeout, sem.handle(), VK_NULL_HANDLE, &image_index);
+    VkResult res = vkAcquireNextImageKHR(m_device.handle(), handle(), timeout, sem.handle(), VK_NULL_HANDLE, &image_index);
     // TODO: deal with out of date swapchain
     if(res != VK_SUCCESS) {
         log::e("swapchain", "vkAcquireNextImageKHR failed with {}", res);
