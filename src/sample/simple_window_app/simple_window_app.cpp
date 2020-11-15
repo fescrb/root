@@ -45,9 +45,7 @@
 #endif
 
 int root_main(int arg_c, char** arg_v) {
-    root::graphics::swapchain swapchain(root::graphics::surface::get_default(), root::graphics::device::get_default());
-
-    root::log::d("", "swapchain created viewport {} scissor {}", swapchain.viewport(), swapchain.scissor());
+    root::log::d("", "swapchain created viewport {} scissor {}", root::graphics::swapchain::get_default()->viewport(), root::graphics::swapchain::get_default()->scissor());
 
     root::graphics::shader_module vert(*root::graphics::device::get_default(), "vert.spv");
     root::graphics::shader_module frag(*root::graphics::device::get_default(), "frag.spv");
@@ -60,23 +58,23 @@ int root_main(int arg_c, char** arg_v) {
     root::graphics::vertex_input vertex_input;
     root::graphics::input_assembly input_assembly(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST);
 
-    root::graphics::pipeline_layout pipeline_layout(*root::graphics::device::get_default(), swapchain);
+    root::graphics::pipeline_layout pipeline_layout(*root::graphics::device::get_default(), *root::graphics::swapchain::get_default());
     root::graphics::raster raster;
 
-    root::graphics::attachment attachment(swapchain);
+    root::graphics::attachment attachment(*root::graphics::swapchain::get_default());
     root::graphics::renderpass renderpass(*root::graphics::device::get_default(), attachment);
 
     root::graphics::pipeline pipeline(*root::graphics::device::get_default(), shaders, vertex_input, input_assembly, pipeline_layout, raster, renderpass);
 
-    root::array<root::graphics::framebuffer> framebuffers(swapchain.swapchain_images.size());
+    root::array<root::graphics::framebuffer> framebuffers(root::graphics::swapchain::get_default()->swapchain_images.size());
 
     for(root::u32 i = 0; i < framebuffers.size(); i++) {
         framebuffers[i] = std::move(
             root::graphics::framebuffer(
                 *root::graphics::device::get_default(), 
                 renderpass, 
-                swapchain.swapchain_images.range(i, i+1),
-                swapchain.extent()
+                root::graphics::swapchain::get_default()->swapchain_images.range(i, i+1),
+                root::graphics::swapchain::get_default()->extent()
             )
         );
         root::log::d("", "Framebuffer[{}] extent {} ", i, framebuffers[i].entent());
@@ -90,7 +88,7 @@ int root_main(int arg_c, char** arg_v) {
     while(!glfwWindowShouldClose(root::graphics::window::get_default()->handle())){
         glfwPollEvents();
         root::graphics::command_buffer buffer(command_pool);
-        root::u32 image = swapchain.acquire(acquire_s);
+        root::u32 image = root::graphics::swapchain::get_default()->acquire(acquire_s);
 
 
         buffer.begin();
@@ -116,7 +114,7 @@ int root_main(int arg_c, char** arg_v) {
             root::log::e("simple_window_app", "vkQueueSubmit failed with {}", submit_result);
             abort();
         }
-        swapchain.present(root::array_slice<root::graphics::semaphore>(&present_s, 1), image);
+        root::graphics::swapchain::get_default()->present(root::array_slice<root::graphics::semaphore>(&present_s, 1), image);
     }
 
     return 0;

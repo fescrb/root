@@ -33,7 +33,7 @@ namespace graphics {
 
 class swapchain : public vk_handle_container<VkSwapchainKHR,swapchain>, public device::dependent{
 public:
-    swapchain(const strong_ptr<surface>& s, const strong_ptr<device>& d, allocator* alloc = allocator::get_default());
+    swapchain(const strong_ptr<device>& d, const strong_ptr<surface>& s, allocator* alloc = allocator::get_default());
     ~swapchain();
 
     auto refresh() -> void;
@@ -61,6 +61,14 @@ public:
         return m_surface_format;
     }
 
+    inline static auto get_default() -> strong_ptr<swapchain>& {
+        return m_default_swapchain;
+    }
+
+    inline static auto set_default(const strong_ptr<swapchain>& sw) -> void {
+        m_default_swapchain = sw;
+    }
+
     // TODO change the timeout if a time data type is made
     auto acquire(const semaphore& sem, const u64 timeout = UINT64_MAX) -> u32;
 
@@ -78,6 +86,8 @@ private:
     array<VkSurfaceFormatKHR> m_available_formats;
     array<VkPresentModeKHR> m_vailable_present_modes;
     allocator* m_alloc;
+
+    static strong_ptr<swapchain> m_default_swapchain;
 };
 
 } // namespace graphics

@@ -25,7 +25,9 @@ namespace root {
 
 namespace graphics {
 
-swapchain::swapchain(const strong_ptr<surface>& s, const strong_ptr<device>& d, allocator* alloc)
+strong_ptr<swapchain> swapchain::m_default_swapchain;
+
+swapchain::swapchain(const strong_ptr<device>& d, const strong_ptr<surface>& s, allocator* alloc)
 :   vk_handle_container(),
     device::dependent(d),
     m_surface(s),

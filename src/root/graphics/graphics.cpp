@@ -26,6 +26,7 @@
 #endif
 #include <root/graphics/surface.h>
 #include <root/graphics/device.h>
+#include <root/graphics/swapchain.h>
 
 namespace root {
 
@@ -43,7 +44,8 @@ auto init(allocator* alloc) -> void {
 #endif
     if (!device::get_default()) 
         device::set_default(device::auto_select_device(instance::get(), surface::get_default()));
-    
+    if (!swapchain::get_default())
+        swapchain::set_default(alloc->make_strong<swapchain>(device::get_default(),surface::get_default()));
 }
 
 } // namespace graphics
