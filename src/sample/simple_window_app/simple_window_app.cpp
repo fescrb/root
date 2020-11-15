@@ -45,7 +45,7 @@
 #endif
 
 int root_main(int arg_c, char** arg_v) {
-    root::graphics::swapchain swapchain(root::graphics::surface::get_default(), *root::graphics::device::get_default());
+    root::graphics::swapchain swapchain(root::graphics::surface::get_default(), root::graphics::device::get_default());
 
     root::log::d("", "swapchain created viewport {} scissor {}", swapchain.viewport(), swapchain.scissor());
 
@@ -76,7 +76,7 @@ int root_main(int arg_c, char** arg_v) {
                 *root::graphics::device::get_default(), 
                 renderpass, 
                 swapchain.swapchain_images.range(i, i+1),
-                swapchain.extent
+                swapchain.extent()
             )
         );
         root::log::d("", "Framebuffer[{}] extent {} ", i, framebuffers[i].entent());

@@ -38,6 +38,29 @@ public:
 
     ~device();
 
+    device() = delete;
+    device(const device&) = delete;
+    inline device(device&& other) {
+        m_handle = std::move(other.m_handle);
+        m_callbacks = std::move(other.m_callbacks);
+        m_graphics_family_index = std::move(other.m_graphics_family_index);
+        m_present_family_index = std::move(other.m_present_family_index);
+        m_physical_device = std::move(other.m_physical_device);
+    }
+
+    auto operator=(const device&) -> device& = delete; 
+    auto operator=(device&& other) -> device& {
+        if (this != &other) {
+            m_handle = std::move(other.m_handle);
+            m_callbacks = std::move(other.m_callbacks);
+            m_graphics_family_index = std::move(other.m_graphics_family_index);
+            m_present_family_index = std::move(other.m_present_family_index);
+            m_physical_device = std::move(other.m_physical_device);
+            other.clear();
+        }
+        return *this;
+    } 
+
     static auto auto_select_device(const strong_ptr<instance>& i, 
                                    const strong_ptr<surface>& target_surface, 
                                    allocator* alloc = allocator::get_default()) -> strong_ptr<device>;
@@ -64,6 +87,41 @@ public:
     static inline auto set_default(const strong_ptr<device>& d) -> void {
         m_default_device = d;
     }
+
+    inline auto wait_idle() const -> void {
+        vkDeviceWaitIdle(m_handle);
+    }
+
+    class dependent {
+    public:
+        inline auto get_device() const -> const strong_ptr<device>& {
+            return m_device;
+        }
+
+    protected:
+        dependent() = delete;
+        dependent(const dependent&) = default;
+        dependent(dependent&&) = default;
+        inline dependent(const strong_ptr<root::graphics::device>& dev) 
+        : m_device(dev) {}
+
+        inline auto operator=(const dependent& other) -> dependent& {
+            if (this != &other) {
+                m_device = other.m_device;
+            }
+            return *this;
+        }
+
+        inline auto operator=(dependent&& other) -> dependent& {
+            if (this != &other) {
+                m_device = std::move(other.m_device);
+            }
+            return *this;
+        }
+
+
+        strong_ptr<root::graphics::device> m_device;
+    };
 
 private:
     vk_allocation_callbacks m_callbacks;

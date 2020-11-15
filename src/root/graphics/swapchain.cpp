@@ -25,24 +25,19 @@ namespace root {
 
 namespace graphics {
 
-swapchain::swapchain(const strong_ptr<surface>& s, const device& d, allocator* alloc)
+swapchain::swapchain(const strong_ptr<surface>& s, const strong_ptr<device>& d, allocator* alloc)
 :   vk_handle_container(),
-    m_device(d),
+    device::dependent(d),
+    m_surface(s),
+    m_callbacks(alloc),
     m_alloc(alloc) {
-    refresh(s, d);
-}
-
-auto swapchain::refresh(const strong_ptr<surface>& s, const device& d) -> void {
-    vkGetPhysicalDeviceSurfaceCapabilitiesKHR(d.get_physical_device().handle(), s->handle(), &surface_capabilities);
-
-    log::d("swapchain","surface_capabilities: {}", surface_capabilities);
-
+    root_assert(s && d && alloc);
     /*
      * Formats
      */
 
     u32 format_count = 0;
-    vkGetPhysicalDeviceSurfaceFormatsKHR(d.get_physical_device().handle(), s->handle(), &format_count, nullptr);
+    vkGetPhysicalDeviceSurfaceFormatsKHR(m_device->get_physical_device().handle(), m_surface->handle(), &format_count, nullptr);
 
     if(format_count == 0) {
         log::e("swapchain", "no formats supported");
@@ -50,20 +45,20 @@ auto swapchain::refresh(const strong_ptr<surface>& s, const device& d) -> void {
     }
 
     array<VkSurfaceFormatKHR> temp_formats = array<VkSurfaceFormatKHR>(format_count);
-    vkGetPhysicalDeviceSurfaceFormatsKHR(d.get_physical_device().handle(), s->handle(), &format_count, temp_formats.data());
+    vkGetPhysicalDeviceSurfaceFormatsKHR(m_device->get_physical_device().handle(), m_surface->handle(), &format_count, temp_formats.data());
 
     for(int i = 0; i < temp_formats.size(); i++) {
         log::d("swapchain", "format {}: {}", i, temp_formats[i]);
     }
 
-    formats = std::move(temp_formats);
+    m_available_formats = std::move(temp_formats);
 
     /*
      * Present modes
      */
 
     uint32_t present_mode_count;
-    vkGetPhysicalDeviceSurfacePresentModesKHR(d.get_physical_device().handle(), s->handle(), &present_mode_count, nullptr);
+    vkGetPhysicalDeviceSurfacePresentModesKHR(m_device->get_physical_device().handle(), m_surface->handle(), &present_mode_count, nullptr);
 
 
     if(present_mode_count == 0) {
@@ -72,26 +67,39 @@ auto swapchain::refresh(const strong_ptr<surface>& s, const device& d) -> void {
     }
 
     array<VkPresentModeKHR> temp_modes = array<VkPresentModeKHR>(present_mode_count);
-    vkGetPhysicalDeviceSurfacePresentModesKHR(d.get_physical_device().handle(), s->handle(), &present_mode_count, temp_modes.data());
+    vkGetPhysicalDeviceSurfacePresentModesKHR(m_device->get_physical_device().handle(), m_surface->handle(), &present_mode_count, temp_modes.data());
 
     for(int i = 0; i < temp_modes.size(); i++) {
         log::d("swapchain", "present mode {}: {}", i, temp_modes[i]);
     }
 
-    present_modes = std::move(temp_modes);
-
-    /*
-     * Choose extent
-     */
-    // TODO: we can do this better?
-    extent = surface_capabilities.maxImageExtent; 
+    m_vailable_present_modes = std::move(temp_modes);
 
     /*
      * Choose format
      */
     // TODO
-    VkSurfaceFormatKHR surface_format = formats[0];
-    format = surface_format.format;
+    m_surface_format = m_available_formats[0];
+
+    refresh();
+}
+
+swapchain::~swapchain() {
+    if (*this) {
+        vkDestroySwapchainKHR(m_device->handle(), m_handle, m_callbacks);
+    }
+}
+
+auto swapchain::refresh() -> void {
+    vkGetPhysicalDeviceSurfaceCapabilitiesKHR(m_device->get_physical_device().handle(), m_surface->handle(), &m_surface_capabilities);
+
+    log::d("swapchain","surface_capabilities: {}", m_surface_capabilities);
+
+    /*
+     * Choose extent
+     */
+    // TODO: we can do this better?
+    m_extent = m_surface_capabilities.maxImageExtent; 
 
     /*
      * Create swapchain
@@ -99,23 +107,25 @@ auto swapchain::refresh(const strong_ptr<surface>& s, const device& d) -> void {
 
     VkSwapchainCreateInfoKHR create_info;
     create_info.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
-    create_info.surface = s->handle();
-    create_info.minImageCount = surface_capabilities.minImageCount;
-    create_info.imageFormat = surface_format.format;
-    create_info.imageColorSpace = surface_format.colorSpace;
-    create_info.imageExtent = extent;
+    create_info.pNext = nullptr;
+    create_info.flags = 0;
+    create_info.surface = m_surface->handle();
+    create_info.minImageCount = m_surface_capabilities.minImageCount + 1;
+    create_info.imageFormat = m_surface_format.format;
+    create_info.imageColorSpace = m_surface_format.colorSpace;
+    create_info.imageExtent = m_extent;
     create_info.imageArrayLayers = 1;
     create_info.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
     create_info.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE; // TODO handle sharing
     create_info.queueFamilyIndexCount = 0; 
     create_info.pQueueFamilyIndices = nullptr;
-    create_info.preTransform = surface_capabilities.currentTransform; 
+    create_info.preTransform = m_surface_capabilities.currentTransform; 
     create_info.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
     create_info.presentMode = VK_PRESENT_MODE_FIFO_KHR; // This mode is required to be supported
     create_info.clipped = VK_TRUE; // Don't care covered pixels
-    create_info.oldSwapchain = handle();
+    create_info.oldSwapchain = m_handle;
 
-    VkResult res = vkCreateSwapchainKHR(d.handle(), &create_info, nullptr, &m_handle);
+    VkResult res = vkCreateSwapchainKHR(m_device->handle(), &create_info, m_callbacks, &m_handle);
 
     if(res != VK_SUCCESS) {
         log::e("swapchain", "vkCreateSwapchainKHR failed with {}", res);
@@ -123,9 +133,9 @@ auto swapchain::refresh(const strong_ptr<surface>& s, const device& d) -> void {
     }
 
     u32 num_images;
-    vkGetSwapchainImagesKHR(d.handle(), handle(), &num_images, nullptr);
+    vkGetSwapchainImagesKHR(m_device->handle(), handle(), &num_images, nullptr);
     array<VkImage> temp_images(num_images, m_alloc);
-    vkGetSwapchainImagesKHR(d.handle(), handle(), &num_images, temp_images.data());
+    vkGetSwapchainImagesKHR(m_device->handle(), handle(), &num_images, temp_images.data());
     
     array<VkImageView> temp_image_views(num_images, m_alloc);
     
@@ -136,7 +146,7 @@ auto swapchain::refresh(const strong_ptr<surface>& s, const device& d) -> void {
         view_create_info.flags = 0;
         view_create_info.image = temp_images[i];
         view_create_info.viewType = VK_IMAGE_VIEW_TYPE_2D;
-        view_create_info.format = format;
+        view_create_info.format = m_surface_format.format;
         VkComponentMapping components;
         components.r = VK_COMPONENT_SWIZZLE_IDENTITY;
         components.g = VK_COMPONENT_SWIZZLE_IDENTITY;
@@ -151,7 +161,7 @@ auto swapchain::refresh(const strong_ptr<surface>& s, const device& d) -> void {
         subresource_range.layerCount = 1;
         view_create_info.subresourceRange = subresource_range;
 
-        res = vkCreateImageView(d.handle(), &view_create_info, nullptr, &(temp_image_views[i]));
+        res = vkCreateImageView(m_device->handle(), &view_create_info, m_callbacks, &(temp_image_views[i]));
 
         if (res != VK_SUCCESS) {
             log::e("swapchain", "vkCreateImageView failed with {}", res);
@@ -164,7 +174,7 @@ auto swapchain::refresh(const strong_ptr<surface>& s, const device& d) -> void {
 auto swapchain::acquire(const semaphore& sem, const u64 timeout) -> u32 {
     u32 image_index;
     // TODO: deal with fences
-    VkResult res = vkAcquireNextImageKHR(m_device.handle(), handle(), timeout, sem.handle(), VK_NULL_HANDLE, &image_index);
+    VkResult res = vkAcquireNextImageKHR(m_device->handle(), handle(), timeout, sem.handle(), VK_NULL_HANDLE, &image_index);
     // TODO: deal with out of date swapchain
     if(res != VK_SUCCESS) {
         log::e("swapchain", "vkAcquireNextImageKHR failed with {}", res);
@@ -193,7 +203,7 @@ auto swapchain::present(const array_slice<semaphore>& wait_semaphores, const u32
     present_info.pImageIndices = &image_index;
     present_info.pResults = nullptr;
 
-    VkResult res = vkQueuePresentKHR(m_device.get_present_queue(), &present_info);
+    VkResult res = vkQueuePresentKHR(m_device->get_present_queue(), &present_info);
     // TODO: deal with out of date swapchain
     if(res != VK_SUCCESS) {
         log::e("swapchain", "vkAcquireNextImageKHR failed with {}", res);

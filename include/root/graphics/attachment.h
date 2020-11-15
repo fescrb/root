@@ -28,7 +28,7 @@ namespace graphics {
 struct attachment {
     attachment(const swapchain& sw) {
         description.flags = 0;
-        description.format = sw.format;
+        description.format = sw.surface_format().format;
         description.samples = VK_SAMPLE_COUNT_1_BIT;
         description.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
         description.storeOp = VK_ATTACHMENT_STORE_OP_STORE;

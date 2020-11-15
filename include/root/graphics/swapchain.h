@@ -31,16 +31,17 @@ namespace root {
 
 namespace graphics {
 
-class swapchain : public vk_handle_container<VkSwapchainKHR,swapchain> {
+class swapchain : public vk_handle_container<VkSwapchainKHR,swapchain>, public device::dependent{
 public:
-    swapchain(const strong_ptr<surface>& s, const device& d, allocator* alloc = allocator::get_default());
+    swapchain(const strong_ptr<surface>& s, const strong_ptr<device>& d, allocator* alloc = allocator::get_default());
+    ~swapchain();
 
-    auto refresh(const strong_ptr<surface>& s, const device& d) -> void;
+    auto refresh() -> void;
 
     inline auto viewport() const -> VkViewport {
         VkViewport vp;
         vp.x = 0.0f, vp.y = 0.0f;
-        vp.width = static_cast<f32>(extent.width), vp.height = static_cast<f32>(extent.height);
+        vp.width = static_cast<f32>(m_extent.width), vp.height = static_cast<f32>(m_extent.height);
         vp.minDepth = 0.0f, vp.maxDepth = 1.0f;
         return vp;
     }
@@ -48,8 +49,16 @@ public:
     inline auto scissor() const -> VkRect2D {
         VkRect2D sc;
         sc.offset = {0, 0};
-        sc.extent = extent;
+        sc.extent = m_extent;
         return sc;
+    }
+
+    inline auto extent() const -> VkExtent2D {
+        return m_extent;
+    }
+
+    inline auto surface_format() const -> VkSurfaceFormatKHR {
+        return m_surface_format;
     }
 
     // TODO change the timeout if a time data type is made
@@ -57,15 +66,17 @@ public:
 
     auto present(const array_slice<semaphore>& wait_semaphores, const u32 image_index) -> void;
 
-    VkSurfaceCapabilitiesKHR surface_capabilities;
-    array<VkSurfaceFormatKHR> formats;
-    array<VkPresentModeKHR> present_modes;
-    VkFormat format;
-    VkExtent2D extent;
     array<VkImageView> swapchain_images; // TODO: Maybe function access?
 
 private:
-    const device& m_device;
+    strong_ptr<surface> m_surface;
+    VkSurfaceFormatKHR m_surface_format;
+    vk_allocation_callbacks m_callbacks;
+    VkPresentModeKHR m_present_mode;
+    VkExtent2D m_extent;
+    VkSurfaceCapabilitiesKHR m_surface_capabilities;
+    array<VkSurfaceFormatKHR> m_available_formats;
+    array<VkPresentModeKHR> m_vailable_present_modes;
     allocator* m_alloc;
 };
 
