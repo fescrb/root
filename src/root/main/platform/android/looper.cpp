@@ -17,22 +17,31 @@
  * along with The Root Engine.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <root/root.h>
+#include "looper.h"
 
-#include <root/graphics/graphics.h>
+#include <root/core/primitives.h>
 
-#if !defined(ROOT_ANDROID)
-int main(int argc, char** argv) {
-    root::graphics::init();
-    int res = root_main(argc, argv);
-    root::graphics::deinit();
-    return res;
+namespace root {
+
+namespace main {
+
+auto handle_cmd(android_app* state, i32 cmd) {
+    switch (cmd)
+    {
+    case APP_CMD_INIT_WINDOW:
+        ANativeWindow *window = state->window;
+        // TODO: root::graphics::init(window);
+        break;
+    
+    default:
+        break;
+    }
 }
-#else 
 
-#include "platform/android/looper.h"
-
-void android_main(struct android_app* state) {
-    root::main::loop(state);
+auto loop(android_app* state) ->  void {
+    state->onAppCmd = handle_cmd;
 }
-#endif
+
+} // namespace main
+
+} // namespace root

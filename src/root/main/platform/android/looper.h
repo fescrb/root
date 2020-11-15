@@ -17,22 +17,16 @@
  * along with The Root Engine.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <root/root.h>
+#pragma once
 
-#include <root/graphics/graphics.h>
+#include <android_native_app_glue.h>
 
-#if !defined(ROOT_ANDROID)
-int main(int argc, char** argv) {
-    root::graphics::init();
-    int res = root_main(argc, argv);
-    root::graphics::deinit();
-    return res;
-}
-#else 
+namespace root {
 
-#include "platform/android/looper.h"
+namespace main {
 
-void android_main(struct android_app* state) {
-    root::main::loop(state);
-}
-#endif
+auto loop(android_app* state) ->  void;
+
+} // namespace main
+
+} // namespace root
