@@ -48,6 +48,14 @@ auto init(allocator* alloc) -> void {
         swapchain::set_default(alloc->make_strong<swapchain>(device::get_default(),surface::get_default()));
 }
 
+auto deinit() -> void {
+    swapchain::set_default(strong_ptr<swapchain>());
+    device::set_default(strong_ptr<device>());
+    surface::set_default(strong_ptr<surface>());
+    window::set_default(strong_ptr<window>());
+    instance::set(strong_ptr<instance>());
+}
+
 } // namespace graphics
 
 } // namespace root

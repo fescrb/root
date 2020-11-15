@@ -23,5 +23,7 @@
 
 int main(int argc, char** argv) {
     root::graphics::init();
-    return root_main(argc, argv);
+    int res = root_main(argc, argv);
+    root::graphics::deinit();
+    return res;
 }

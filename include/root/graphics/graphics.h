@@ -27,6 +27,8 @@ namespace graphics {
 
 auto init(allocator* alloc = allocator::get_default()) -> void;
 
+auto deinit() -> void;
+
 } // namespace graphics
 
 } // namespace root
