@@ -66,14 +66,14 @@ int root_main(int arg_c, char** arg_v) {
 
     root::graphics::pipeline pipeline(*root::graphics::device::get_default(), shaders, vertex_input, input_assembly, pipeline_layout, raster, renderpass);
 
-    root::array<root::graphics::framebuffer> framebuffers(root::graphics::swapchain::get_default()->swapchain_images.size());
+    root::array<root::graphics::framebuffer> framebuffers(root::graphics::swapchain::get_default()->get_images().size());
 
     for(root::u32 i = 0; i < framebuffers.size(); i++) {
         framebuffers[i] = std::move(
             root::graphics::framebuffer(
                 *root::graphics::device::get_default(), 
                 renderpass, 
-                root::graphics::swapchain::get_default()->swapchain_images.range(i, i+1),
+                root::graphics::swapchain::get_default()->get_images().range(i, i+1),
                 root::graphics::swapchain::get_default()->extent()
             )
         );

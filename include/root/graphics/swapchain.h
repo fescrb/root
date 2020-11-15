@@ -69,12 +69,19 @@ public:
         m_default_swapchain = sw;
     }
 
+    inline auto get_images() const -> const array<VkImageView>& {
+        return m_swapchain_images;
+    }
+
     // TODO change the timeout if a time data type is made
     auto acquire(const semaphore& sem, const u64 timeout = UINT64_MAX) -> u32;
 
     auto present(const array_slice<semaphore>& wait_semaphores, const u32 image_index) -> void;
 
-    array<VkImageView> swapchain_images; // TODO: Maybe function access?
+    class observer {
+    public:
+        virtual auto on_swapchain_refreshed(const strong_ptr<swapchain>&) -> void = 0;
+    };
 
 private:
     strong_ptr<surface> m_surface;
@@ -85,6 +92,7 @@ private:
     VkSurfaceCapabilitiesKHR m_surface_capabilities;
     array<VkSurfaceFormatKHR> m_available_formats;
     array<VkPresentModeKHR> m_vailable_present_modes;
+    array<VkImageView> m_swapchain_images;
     allocator* m_alloc;
 
     static strong_ptr<swapchain> m_default_swapchain;

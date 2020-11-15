@@ -170,7 +170,7 @@ auto swapchain::refresh() -> void {
         }
     }
 
-    swapchain_images = std::move(temp_image_views);
+    m_swapchain_images = std::move(temp_image_views);
 }
 
 auto swapchain::acquire(const semaphore& sem, const u64 timeout) -> u32 {
