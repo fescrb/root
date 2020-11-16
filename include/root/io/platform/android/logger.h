@@ -50,7 +50,7 @@ private:
     template<int p, typename... Args> 
     inline auto log(const string_view& tag, const format_string& fmt, Args... args) -> void {
         string str = format(fmt, args...);
-        __android_log_buf_write(LOG_ID_MAIN, p, tag.size()? tag.data(), "", str.data());
+        __android_log_buf_write(LOG_ID_MAIN, p, tag.size()? tag.data(): "", str.data());
     }
     
 };

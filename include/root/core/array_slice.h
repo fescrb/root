@@ -104,7 +104,7 @@ public:
      * const methods
      ** */
 
-    template<typename I>
+    template<typename I, typename = std::enable_if_t<std::is_integral_v<I>>>
     inline auto operator[](const I& index) const -> std::add_const_t<T>& {
         root_assert(index < size());
         return m_data[index + m_first];
@@ -138,7 +138,7 @@ public:
      * Mutable methods
      * */
 
-    template<typename I>
+    template<typename I, typename = std::enable_if_t<std::is_integral_v<I>>>
     inline auto operator[](const I& index) -> T& {
         root_assert(index < size());
         return m_data[index + m_first];

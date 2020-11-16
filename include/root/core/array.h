@@ -80,12 +80,14 @@ public:
         m_data = reinterpret_cast<T*>(alloc->malloc(sizeof(T) * length, alignof(T)));
     }
 
-    inline auto operator[](const u64& index) -> T& {
+    template<typename I, typename = std::enable_if_t<std::is_integral_v<I>>>
+    inline auto operator[](const I& index) const -> std::add_const_t<T>& {
         root_assert(index < m_length);
         return m_data[index];
     }
 
-    inline auto operator[](const u64& index) const -> const T& {
+    template<typename I, typename = std::enable_if_t<std::is_integral_v<I>>>
+    inline auto operator[](const I& index) -> T& {
         root_assert(index < m_length);
         return m_data[index];
     }

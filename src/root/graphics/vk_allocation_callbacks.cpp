@@ -27,19 +27,19 @@ namespace root {
 
 namespace graphics {
 
-auto vk_alloc(void* user_data, size_t size, size_t alignment, VkSystemAllocationScope) -> void* {
+__attribute__((pcs("aapcs-vfp"))) auto vk_alloc(void* user_data, size_t size, size_t alignment, VkSystemAllocationScope) -> void* {
     root_assert(user_data != nullptr);
     return reinterpret_cast<allocator*>(user_data)->malloc(size, alignment);
 }
 
-auto vk_free(void* user_data, void* ptr) -> void {
+__attribute__((pcs("aapcs-vfp"))) auto vk_free(void* user_data, void* ptr) -> void {
     if (ptr != nullptr) {
         root_assert(user_data != nullptr);
         reinterpret_cast<allocator*>(user_data)->free(ptr);
     }
 }
 
-auto vk_realloc(void* user_data, void* original_ptr, size_t size, size_t alignment, VkSystemAllocationScope scope) -> void* {
+__attribute__((pcs("aapcs-vfp"))) auto vk_realloc(void* user_data, void* original_ptr, size_t size, size_t alignment, VkSystemAllocationScope scope) -> void* {
     void* new_mem = vk_alloc(user_data, size, alignment, scope);
     memcpy(new_mem, original_ptr, size);
     vk_free(user_data, original_ptr);

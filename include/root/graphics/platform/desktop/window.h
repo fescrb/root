@@ -19,9 +19,11 @@
 
 #pragma once
 
-#if !defined(ROOT_ANDROID)
-struct GLFWwindow;
+#if defined(ROOT_ANDROID)
+#error Android builds should not include window.h
 #endif
+
+struct GLFWwindow;
 
 #include <root/core/string.h>
 #include <root/memory/strong_ptr.h>
@@ -53,11 +55,9 @@ public:
 
     ~window();
 
-#if !defined(ROOT_ANDROID)
     inline auto handle() const -> GLFWwindow* {
         return m_handle;
     }
-#endif
 
     inline static auto get_default() -> strong_ptr<window>& {
         return m_default_window;

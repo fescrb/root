@@ -25,7 +25,6 @@
 #include <root/io/log.h>
 
 #include <root/root.h>
-#include <root/graphics/window.h>
 #include <root/graphics/surface.h>
 #include <root/graphics/device.h>
 #include <root/graphics/swapchain.h>
@@ -41,6 +40,7 @@
 #include <root/graphics/command_buffer.h>
 
 #if !defined(ROOT_ANDROID)
+#include <root/graphics/platform/desktop/window.h>
 #include <GLFW/glfw3.h>
 #endif
 

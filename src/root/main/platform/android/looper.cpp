@@ -26,10 +26,11 @@ namespace root {
 namespace main {
 
 auto handle_cmd(android_app* state, i32 cmd) {
+    ANativeWindow *window = nullptr;
     switch (cmd)
     {
     case APP_CMD_INIT_WINDOW:
-        ANativeWindow *window = state->window;
+        window = state->window;
         // TODO: root::graphics::init(window);
         break;
     

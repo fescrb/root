@@ -1,7 +1,15 @@
 # Platform defines
-if(UNIX)
+list(APPEND root_link_libraries ${Vulkan_LIBRARY})
+
+if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
     add_definitions(-DROOT_LINUX)
-endif(UNIX) 
+    list(APPEND root_link_libraries glfw3 dl pthread)
+endif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+
+if(${CMAKE_SYSTEM_NAME} MATCHES "Android")
+    set(CMAKE_ANDROID_API 26)
+    add_definitions(-DROOT_ANDROID)
+endif(${CMAKE_SYSTEM_NAME} MATCHES "Android")
 
 if(WIN32)
     add_definitions(/DROOT_WIN)

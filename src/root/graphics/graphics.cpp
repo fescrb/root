@@ -22,7 +22,7 @@
 #include <root/io/path.h>
 #include <root/graphics/instance.h>
 #if !defined(ROOT_ANDROID)
-#include <root/graphics/window.h>
+#include <root/graphics/platform/desktop/window.h>
 #endif
 #include <root/graphics/surface.h>
 #include <root/graphics/device.h>
@@ -52,7 +52,9 @@ auto deinit() -> void {
     swapchain::set_default(strong_ptr<swapchain>());
     device::set_default(strong_ptr<device>());
     surface::set_default(strong_ptr<surface>());
+#if !defined(ROOT_ANDROID)
     window::set_default(strong_ptr<window>());
+#endif
     instance::set(strong_ptr<instance>());
 }
 

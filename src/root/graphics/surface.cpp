@@ -23,7 +23,7 @@
 #include <root/io/log.h>
 
 #if !defined(ROOT_ANDROID)
-#include <root/graphics/window.h>
+#include <root/graphics/platform/desktop/window.h>
 #include <GLFW/glfw3.h>
 #endif
 

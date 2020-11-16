@@ -32,9 +32,9 @@ add_library(root STATIC $<TARGET_OBJECTS:root_core>
                         $<TARGET_OBJECTS:root_graphics>
                         $<TARGET_OBJECTS:root_asset>)
 
-target_link_libraries(root ${Vulkan_LIBRARY} glfw3 dl pthread)
+target_link_libraries(root ${root_link_libraries})
 
-install(TARGETS root root_main ARCHIVE DESTINATION lib)
+install(TARGETS root ARCHIVE DESTINATION lib)
 
 if(${CMAKE_BUILD_TYPE} MATCHES "Test")
     add_executable(root_test $<TARGET_OBJECTS:root_core_test> 

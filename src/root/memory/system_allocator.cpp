@@ -17,13 +17,7 @@
  * along with The Root Engine.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <cstdlib>
-
-#if defined(ROOT_WIN)
 #include <malloc.h>
-#endif
-
-auto& c_free = free;
 
 #include <root/memory/system_allocator.h>
 
@@ -34,7 +28,7 @@ auto system_allocator::malloc(const u64& byte_size, const u64& alignment) -> voi
 #if defined(ROOT_WIN)
     return _aligned_malloc(byte_size, alignment);
 #else
-    return aligned_alloc(alignment, byte_size);
+    return memalign(alignment, byte_size);
 #endif
 }
 
@@ -42,7 +36,7 @@ auto system_allocator::free(void* mem) -> void {
 #if defined(ROOT_WIN)
     return _aligned_free(mem);
 #else
-    return c_free(mem);
+    return ::free(mem);
 #endif
 }
 } // namespace root
