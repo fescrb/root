@@ -19,8 +19,8 @@
 
 #pragma once
 
-#include <android/log.h>
 #include <root/io/format.h>
+#include <android/log.h>
 
 namespace root {
 

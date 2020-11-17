@@ -19,4 +19,8 @@
 
 #pragma once
 
+#if !defined(ROOT_ANDROID)
 int root_main(int arg_c, char** arg_v);
+#else 
+void root_main(struct android_app* state);
+#endif

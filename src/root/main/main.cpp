@@ -34,5 +34,6 @@ int main(int argc, char** argv) {
 
 void android_main(struct android_app* state) {
     root::main::loop(state);
+    root_main(state);
 }
 #endif

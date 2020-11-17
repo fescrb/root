@@ -16,7 +16,7 @@
             android:configChanges="orientation|keyboardHidden|screenSize" >
 
             <meta-data android:name="android.app.lib_name"
-                android:value="main" />
+                android:value="native-lib" />
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
